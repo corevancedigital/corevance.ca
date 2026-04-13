@@ -27,12 +27,12 @@ export default function Home() {
   return (
     <div className="min-h-screen flex flex-col bg-white">
       {/* Header */}
-      <header className="flex items-center justify-between px-6 py-2 border-b border-gray-200 bg-white shadow-sm">
+      <header className="flex items-center justify-between px-6 py-1 border-b border-gray-200 bg-white shadow-sm">
         <Image
           src="/corevance-logo-full.png"
           alt="CoreVance"
-          width={140}
-          height={38}
+          width={120}
+          height={30}
           priority
           className="object-contain"
         />

@@ -506,7 +506,7 @@ function Footer() {
       <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-10">
         <div>
           <Image src="/corevance-logo-symbol.png" alt="CoreVance – Commercial FRP Wall Panel Installation & Supply" width={330} height={72} className="object-contain mb-5" />
-          <p className="text-gray-600 leading-relaxed text-sm">
+          <p className="text-gray-600 leading-relaxed text-sm" style={{ textAlign: "justify", hyphens: "auto" }}>
             We don&apos;t just install panels — we set the standard. Corevance delivers precision-engineered FRP solutions to commercial contractors and facility operators who refuse to compromise. From the first estimate to the final rivet, we bring craftsmanship, speed, and accountability to every project.
           </p>
         </div>

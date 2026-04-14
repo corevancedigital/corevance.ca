@@ -37,7 +37,7 @@ function Navbar() {
   return (
     <nav className="bg-white shadow-sm sticky top-0 z-50">
       <div className="max-w-6xl mx-auto flex items-center justify-between px-6 h-28">
-        <Image src="/corevance-logo-full-cropped.png" alt="CoreVance – FRP Wall Panel Installation GTA" width={360} height={96} priority className="object-contain" />
+        <Image src="/corevance-logo-symbol.png" alt="CoreVance – Commercial FRP Wall Panel Installation & Supply" width={440} height={96} priority className="object-contain" />
         <ul className="hidden md:flex gap-8 list-none">
           {[["#services","Services"],["#products","Products"]].map(([href,label]) => (
             <li key={href}>
@@ -505,7 +505,7 @@ function Footer() {
     <footer className="bg-white pt-16 pb-8 px-5 border-t-4 border-[#ff6b35]">
       <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-10">
         <div>
-          <Image src="/corevance-logo-full-cropped.png" alt="CoreVance – Commercial FRP Wall Panel Installation & Supply" width={248} height={72} className="object-contain mb-5" />
+          <Image src="/corevance-logo-symbol.png" alt="CoreVance – Commercial FRP Wall Panel Installation & Supply" width={330} height={72} className="object-contain mb-5" />
           <p className="text-gray-600 leading-relaxed text-sm">
             We don&apos;t just install panels — we set the standard. Corevance delivers precision-engineered FRP solutions to commercial contractors and facility operators who refuse to compromise. From the first estimate to the final rivet, we bring craftsmanship, speed, and accountability to every project.
           </p>

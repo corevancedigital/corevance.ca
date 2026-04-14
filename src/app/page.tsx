@@ -36,8 +36,8 @@ function TickerBar() {
 function Navbar() {
   return (
     <nav className="bg-white shadow-sm sticky top-0 z-50">
-      <div className="max-w-6xl mx-auto flex items-center justify-between px-6 h-20">
-        <Image src="/corevance-logo-full.png" alt="Corevance" width={240} height={64} priority className="object-contain" />
+      <div className="max-w-6xl mx-auto flex items-center justify-between px-6 h-28">
+        <Image src="/corevance-logo-full-cropped.png" alt="CoreVance – FRP Wall Panel Installation GTA" width={360} height={96} priority className="object-contain" />
         <ul className="hidden md:flex gap-8 list-none">
           {[["#services","Services"],["#products","Products"]].map(([href,label]) => (
             <li key={href}>
@@ -59,15 +59,15 @@ function Navbar() {
 function Hero() {
   return (
     <section className="relative flex items-center justify-center overflow-hidden" style={{ minHeight: "92vh" }}>
-      {/* Free CC0 construction video from Pexels */}
+      {/* CC0 construction site videos — Pexels verified */}
       <video
         autoPlay muted loop playsInline
         className="absolute inset-0 w-full h-full object-cover"
         style={{ filter: "brightness(0.38)" }}
       >
-        <source src="https://videos.pexels.com/video-files/3121458/3121458-hd_1920_1080_25fps.mp4" type="video/mp4" />
-        <source src="https://videos.pexels.com/video-files/3193658/3193658-hd_1920_1080_25fps.mp4" type="video/mp4" />
-        <source src="https://videos.pexels.com/video-files/2278095/2278095-hd_1920_1080_30fps.mp4" type="video/mp4" />
+        <source src="https://videos.pexels.com/video-files/13921040/13921040-hd_1920_1080_30fps.mp4" type="video/mp4" />
+        <source src="https://videos.pexels.com/video-files/9227135/9227135-hd_1920_1080_30fps.mp4" type="video/mp4" />
+        <source src="https://videos.pexels.com/video-files/855271/855271-hd_1920_1080_25fps.mp4" type="video/mp4" />
       </video>
       {/* Overlay tint */}
       <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, rgba(13,27,42,0.55) 0%, rgba(30,58,95,0.45) 100%)" }} />
@@ -339,19 +339,29 @@ function Accessories() {
   return (
     <section className="py-20 px-5 bg-white">
       <div className="max-w-6xl mx-auto">
-        <p className="text-center text-xs font-bold text-[#ff6b35] uppercase tracking-widest mb-3">FRP Installation Accessories</p>
-        <h2 className="text-center text-4xl font-bold text-[#1e3a5f] mb-3">Complete Your Installation</h2>
-        <p className="text-center text-gray-500 text-lg mb-12">Professional-grade accessories for every joint, corner, and edge</p>
+        <h2 className="text-center text-5xl font-bold text-[#1e3a5f] mb-3">FRP Installation Accessories</h2>
+        <p className="text-center text-lg font-semibold text-[#ff6b35] mb-2">Complete Your Installation</p>
+        <p className="text-center text-gray-500 text-base mb-12">Professional-grade accessories for every joint, corner, and edge</p>
 
-        {/* Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-5">
+        {/* Vertical list */}
+        <div className="max-w-3xl mx-auto flex flex-col gap-4">
           {ACCESSORIES.map(acc => (
-            <button key={acc.id} onClick={() => setModal(acc)}
-                    className="group bg-gray-50 border-2 border-gray-200 rounded-2xl p-6 text-center hover:border-[#ff6b35] hover:shadow-lg hover:-translate-y-1 transition-all cursor-pointer">
-              <div className="text-5xl mb-3">{acc.icon}</div>
-              <h4 className="font-semibold text-[#1e3a5f] text-sm group-hover:text-[#ff6b35] transition-colors">{acc.name}</h4>
-              <p className="text-gray-400 text-xs mt-1">Click to learn more</p>
-            </button>
+            <div key={acc.id}
+                 className="flex items-center gap-5 bg-gray-50 border-2 border-gray-200 rounded-2xl p-5 hover:border-[#ff6b35] hover:shadow-md transition-all group">
+              <div className="flex-shrink-0 w-14 h-14 rounded-xl flex items-center justify-center text-3xl"
+                   style={{ background: acc.bgColor }}>
+                {acc.icon}
+              </div>
+              <div className="flex-1 min-w-0">
+                <h4 className="font-bold text-[#1e3a5f] text-lg group-hover:text-[#ff6b35] transition-colors">{acc.name}</h4>
+                <p className="text-gray-400 text-sm mt-0.5">{acc.specs[0].label}: {acc.specs[0].value} · {acc.specs[1]?.label}: {acc.specs[1]?.value}</p>
+              </div>
+              <button onClick={() => setModal(acc)}
+                      aria-label={`Learn more about ${acc.name}`}
+                      className="flex-shrink-0 w-10 h-10 rounded-full border-2 border-[#ff6b35] text-[#ff6b35] text-xl font-bold flex items-center justify-center hover:bg-[#ff6b35] hover:text-white transition-all">
+                +
+              </button>
+            </div>
           ))}
         </div>
       </div>
@@ -460,7 +470,9 @@ function Footer() {
     <footer className="bg-[#1e3a5f] text-white pt-16 pb-8 px-5">
       <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-10">
         <div>
-          <Image src="/corevance-logo-full.png" alt="Corevance" width={180} height={48} className="object-contain mb-5 brightness-0 invert" />
+          <div className="bg-white rounded-xl px-4 py-3 inline-block mb-5">
+            <Image src="/corevance-logo-full-cropped.png" alt="CoreVance – FRP Wall Panel Installation GTA" width={248} height={72} className="object-contain" />
+          </div>
           <p className="text-gray-300 leading-relaxed text-sm">
             We don&apos;t just install panels — we set the standard. Corevance delivers precision-engineered FRP solutions to the commercial contractors and facility operators who refuse to compromise. From the first estimate to the final rivet, we bring craftsmanship, speed, and accountability to every project across the GTA.
           </p>

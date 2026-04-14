@@ -4,11 +4,10 @@ import Image from "next/image";
 
 /* ─────────────────────────── TICKER BAR ──────────────────────────── */
 function TickerBar() {
-  // 4× duplication → animate -50% gives a seamless 2-unit loop
   const core = [
     { kind: "info", icon: "📞", text: "437-849-3781",            href: "tel:4378493781" },
     { kind: "info", icon: "✉️", text: "corevancesales@gmail.com", href: "mailto:corevancesales@gmail.com" },
-    { kind: "cta",  icon: "📞", text: "Call us to discuss your project", href: "tel:4378493781" },
+    { kind: "cta",  icon: "📞", text: "Call or E-mail us to discuss your project", href: "tel:4378493781" },
   ];
   const items = [...core, ...core, ...core, ...core];
 
@@ -18,7 +17,7 @@ function TickerBar() {
         {items.map((item, i) =>
           item.kind === "cta" ? (
             <a key={i} href={item.href}
-               className="inline-flex items-center gap-1.5 bg-yellow-300 text-gray-900 font-bold text-xs px-4 py-1.5 rounded-full mx-5 flex-shrink-0 hover:bg-yellow-200 transition-colors whitespace-nowrap">
+               className="inline-flex items-center gap-1.5 bg-yellow-300 text-gray-900 font-bold text-xs px-4 py-1.5 rounded-full mx-4 flex-shrink-0 hover:bg-yellow-200 transition-colors whitespace-nowrap">
               {item.icon} {item.text}
             </a>
           ) : (
@@ -37,10 +36,10 @@ function TickerBar() {
 function Navbar() {
   return (
     <nav className="bg-white shadow-sm sticky top-0 z-50">
-      <div className="max-w-6xl mx-auto flex items-center justify-between px-6" style={{ paddingTop: 12, paddingBottom: 12 }}>
-        <Image src="/corevance-logo-full.png" alt="Corevance" width={200} height={52} priority className="object-contain" />
+      <div className="max-w-6xl mx-auto flex items-center justify-between px-6 h-20">
+        <Image src="/corevance-logo-full.png" alt="Corevance" width={240} height={64} priority className="object-contain" />
         <ul className="hidden md:flex gap-8 list-none">
-          {[["#contact","Get a Quote"],["#services","Services"],["#products","Products"]].map(([href,label]) => (
+          {[["#services","Services"],["#products","Products"]].map(([href,label]) => (
             <li key={href}>
               <a href={href} className="text-[#1e3a5f] font-semibold text-sm hover:text-[#ff6b35] transition-colors no-underline">
                 {label}
@@ -59,13 +58,19 @@ function Navbar() {
 /* ─────────────────────────── HERO ────────────────────────────────── */
 function Hero() {
   return (
-    <section className="relative flex items-center justify-center overflow-hidden" style={{ minHeight: "92vh", background: "#0d1b2a" }}>
-      {/* Atmospheric blobs */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute" style={{ top: "10%", left: "5%",  width: 500, height: 500, background: "rgba(255,107,53,0.07)", borderRadius: "50%", filter: "blur(80px)" }} />
-        <div className="absolute" style={{ bottom: "10%", right: "5%", width: 400, height: 400, background: "rgba(30,58,95,0.4)",   borderRadius: "50%", filter: "blur(80px)" }} />
-        <div className="absolute" style={{ top: "40%", left: "35%", width: 300, height: 300, background: "rgba(255,107,53,0.04)", borderRadius: "50%", filter: "blur(60px)" }} />
-      </div>
+    <section className="relative flex items-center justify-center overflow-hidden" style={{ minHeight: "92vh" }}>
+      {/* Free CC0 construction video from Pexels */}
+      <video
+        autoPlay muted loop playsInline
+        className="absolute inset-0 w-full h-full object-cover"
+        style={{ filter: "brightness(0.38)" }}
+      >
+        <source src="https://videos.pexels.com/video-files/3121458/3121458-hd_1920_1080_25fps.mp4" type="video/mp4" />
+        <source src="https://videos.pexels.com/video-files/3193658/3193658-hd_1920_1080_25fps.mp4" type="video/mp4" />
+        <source src="https://videos.pexels.com/video-files/2278095/2278095-hd_1920_1080_30fps.mp4" type="video/mp4" />
+      </video>
+      {/* Overlay tint */}
+      <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, rgba(13,27,42,0.55) 0%, rgba(30,58,95,0.45) 100%)" }} />
 
       <div className="relative z-10 text-center px-6 max-w-4xl mx-auto">
         <h1 className="text-5xl md:text-6xl font-bold text-white leading-[1.15] mb-10"
@@ -84,7 +89,6 @@ function Hero() {
         </div>
       </div>
 
-      {/* Scroll indicator */}
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
         <span className="text-white/40 text-xs tracking-widest uppercase">Scroll</span>
         <div className="w-px h-8 bg-gradient-to-b from-white/30 to-transparent" />
@@ -248,8 +252,6 @@ function ColorsAndSizes() {
       <div className="max-w-6xl mx-auto">
         <h2 className="text-center text-4xl font-bold text-[#1e3a5f] mb-3">Custom Sizes and Colors Available</h2>
         <p className="text-center text-gray-500 text-lg mb-8">In-stock options ready for immediate delivery · Special orders welcome</p>
-
-        {/* Tab switcher */}
         <div className="flex justify-center mb-10">
           <div className="inline-flex bg-gray-100 rounded-full p-1 gap-1">
             {(["colors", "sizes"] as const).map(t => (
@@ -261,7 +263,6 @@ function ColorsAndSizes() {
             ))}
           </div>
         </div>
-
         {tab === "colors" && (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-5 max-w-4xl mx-auto">
             {colors.map(({ name, bg }) => (
@@ -272,7 +273,6 @@ function ColorsAndSizes() {
             ))}
           </div>
         )}
-
         {tab === "sizes" && (
           <div className="max-w-3xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {sizes.map(({ dim, inches, tag }) => (
@@ -284,7 +284,6 @@ function ColorsAndSizes() {
             ))}
           </div>
         )}
-
         <p className="text-center mt-10 text-gray-500 text-sm">
           Need a non-standard specification?{" "}
           <a href="#contact" className="text-[#ff6b35] font-semibold hover:underline">Contact us</a>
@@ -295,103 +294,108 @@ function ColorsAndSizes() {
   );
 }
 
-/* ─────────────── ACCESSORIES — SQUARE-STYLE 60/40 ───────────────── */
-type Acc = { id: string; name: string; icon: string; bgColor: string; description: string; specs: { label: string; value: string }[] };
+/* ─────────────────── ACCESSORIES — GRID + MODAL ─────────────────── */
+type Acc = {
+  id: string; name: string; icon: string; bgColor: string;
+  description: string; specs: { label: string; value: string }[];
+};
 
 const ACCESSORIES: Acc[] = [
   {
-    id: "divider-bar", name: "Divider Bar", icon: "🔩", bgColor: "#e8edf2",
-    description: "PVC Divider Bar Molding creates a finished look and protects FRP panels when joining two panels together. Provides a sanitary sealing between seams where dirt, stains and bacteria can collect. Required for CFIA accepted installation.",
-    specs: [{ label: "Material", value: "PVC" }, { label: "Length", value: "8 ft" }, { label: "Thickness", value: "1/2 in" }, { label: "Finish", value: "Painted" }, { label: "Standard", value: "CFIA" }],
-  },
-  {
     id: "inside-corner", name: "Inside Corner", icon: "📐", bgColor: "#e8f0e8",
-    description: "Inside Corner molding creates a clean sanitary seal at 90° inside corners where two FRP panels meet. Eliminates hard-to-clean gaps and provides a professional, code-compliant corner finish.",
+    description: "Inside Corner molding creates a clean sanitary seal at 90° inside corners where two FRP panels meet. Eliminates hard-to-clean gaps and provides a professional, code-compliant corner finish. Essential for commercial kitchens and food processing facilities.",
     specs: [{ label: "Material", value: "PVC" }, { label: "Length", value: "8 ft" }, { label: "Angle", value: "90°" }, { label: "Application", value: "Inside corners" }],
   },
   {
     id: "end-cap", name: "End Cap", icon: "🔲", bgColor: "#f0e8e8",
-    description: "End Cap molding covers and protects exposed edges of FRP panels at terminations. Provides a professional finished appearance at wall edges, door frames, and panel ends.",
-    specs: [{ label: "Material", value: "PVC" }, { label: "Length", value: "8 ft" }, { label: "Application", value: "Panel edges" }],
+    description: "End Cap molding covers and protects exposed edges of FRP panels at terminations. Provides a professional finished appearance at wall edges, door frames, and panel ends. Moisture-resistant and bacteria-resistant.",
+    specs: [{ label: "Material", value: "PVC" }, { label: "Length", value: "8 ft" }, { label: "Finish", value: "Painted" }, { label: "Application", value: "Panel edges" }],
   },
   {
     id: "outside-corner", name: "Outside Corner", icon: "📏", bgColor: "#e8e8f0",
-    description: "Outside Corner molding protects and finishes exterior 90° corners where FRP panels meet. Guards against chipping, impact damage, and bacterial buildup at exposed corners.",
-    specs: [{ label: "Material", value: "PVC" }, { label: "Length", value: "8 ft" }, { label: "Angle", value: "90°" }, { label: "Application", value: "Outside corners" }],
+    description: "Outside Corner molding protects and finishes exterior 90° corners where FRP panels meet. Guards against chipping, impact damage, and bacterial buildup at exposed corners. Required for CFIA-accepted installations.",
+    specs: [{ label: "Material", value: "PVC" }, { label: "Length", value: "8 ft" }, { label: "Angle", value: "90°" }, { label: "Standard", value: "CFIA" }],
   },
   {
     id: "outside-corner-angle", name: "Outside Corner Angle", icon: "📐", bgColor: "#f0ede8",
-    description: "Outside Corner Angle provides protection for non-standard angled exterior corners. Ideal for unique wall configurations and custom installation requirements.",
+    description: "Outside Corner Angle provides protection for non-standard angled exterior corners. Ideal for unique wall configurations and custom installation requirements where standard 90° corners are insufficient.",
     specs: [{ label: "Material", value: "PVC" }, { label: "Length", value: "8 ft" }, { label: "Application", value: "Angled corners" }],
   },
   {
     id: "nylon-rivets", name: "Nylon Rivets", icon: "🔘", bgColor: "#ece8f0",
-    description: "Corrosion-resistant nylon rivets for secure FRP panel attachment. Non-metal construction prevents rust contamination — essential for food-safe and healthcare environments.",
-    specs: [{ label: "Material", value: "Nylon" }, { label: "Type", value: "Pop rivet" }, { label: "Feature", value: "Rust-free" }],
+    description: "Corrosion-resistant nylon rivets for secure FRP panel attachment. Non-metal construction prevents rust contamination — essential for food-safe and healthcare environments. Approved for CFIA food facility installations.",
+    specs: [{ label: "Material", value: "Nylon" }, { label: "Type", value: "Pop rivet" }, { label: "Feature", value: "Rust-free" }, { label: "Standard", value: "Food-safe" }],
   },
   {
     id: "titebond", name: "Titebond Adhesive", icon: "🪣", bgColor: "#e8f0ec",
-    description: "Professional-grade FRP panel adhesive formulated for permanent, moisture-resistant bonding. Specifically designed for commercial kitchen and food processing environments.",
-    specs: [{ label: "Type", value: "Contact cement" }, { label: "Coverage", value: "~40 sq ft/gal" }, { label: "Feature", value: "Moisture resistant" }],
+    description: "Professional-grade FRP panel adhesive formulated for permanent, moisture-resistant bonding to virtually any clean substrate. Specifically designed for commercial kitchen and food processing environments. Low VOC formula.",
+    specs: [{ label: "Type", value: "Contact cement" }, { label: "Coverage", value: "~40 sq ft/gal" }, { label: "Feature", value: "Moisture resistant" }, { label: "VOC", value: "Low VOC" }],
   },
 ];
 
 function Accessories() {
-  const [activeId, setActiveId] = useState(ACCESSORIES[0].id);
-  const active = ACCESSORIES.find(a => a.id === activeId)!;
+  const [modal, setModal] = useState<Acc | null>(null);
 
   return (
-    <section className="overflow-hidden">
-      <div className="flex flex-col lg:flex-row" style={{ minHeight: 620 }}>
+    <section className="py-20 px-5 bg-white">
+      <div className="max-w-6xl mx-auto">
+        <p className="text-center text-xs font-bold text-[#ff6b35] uppercase tracking-widest mb-3">FRP Installation Accessories</p>
+        <h2 className="text-center text-4xl font-bold text-[#1e3a5f] mb-3">Complete Your Installation</h2>
+        <p className="text-center text-gray-500 text-lg mb-12">Professional-grade accessories for every joint, corner, and edge</p>
 
-        {/* Left 60% — Visual panel */}
-        <div className="lg:w-[60%] flex items-center justify-center p-16 transition-colors duration-500"
-             style={{ background: active.bgColor }}>
-          <div className="text-center max-w-md">
-            <div className="text-[100px] mb-6 leading-none">{active.icon}</div>
-            <h3 className="text-3xl font-bold text-[#1e3a5f] mb-6">{active.name}</h3>
-            <div className="flex flex-wrap justify-center gap-3">
-              {active.specs.map(({ label, value }) => (
-                <div key={label} className="bg-white/80 rounded-xl px-4 py-3 text-center backdrop-blur-sm min-w-[90px]">
-                  <div className="text-[10px] font-bold text-[#ff6b35] uppercase tracking-widest border-b-2 border-[#ff6b35] pb-1 mb-1.5">{label}</div>
-                  <div className="text-sm font-bold text-[#1e3a5f]">{value}</div>
+        {/* Grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-5">
+          {ACCESSORIES.map(acc => (
+            <button key={acc.id} onClick={() => setModal(acc)}
+                    className="group bg-gray-50 border-2 border-gray-200 rounded-2xl p-6 text-center hover:border-[#ff6b35] hover:shadow-lg hover:-translate-y-1 transition-all cursor-pointer">
+              <div className="text-5xl mb-3">{acc.icon}</div>
+              <h4 className="font-semibold text-[#1e3a5f] text-sm group-hover:text-[#ff6b35] transition-colors">{acc.name}</h4>
+              <p className="text-gray-400 text-xs mt-1">Click to learn more</p>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Modal */}
+      {modal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4"
+             style={{ background: "rgba(0,0,0,0.6)" }}
+             onClick={() => setModal(null)}>
+          <div className="bg-white rounded-3xl shadow-2xl overflow-hidden w-full max-w-3xl max-h-[90vh] overflow-y-auto"
+               onClick={e => e.stopPropagation()}>
+            <div className="flex flex-col md:flex-row" style={{ minHeight: 420 }}>
+              {/* 60% image/visual side */}
+              <div className="md:w-[60%] flex flex-col items-center justify-center p-12 transition-colors"
+                   style={{ background: modal.bgColor }}>
+                <div className="text-[90px] mb-6 leading-none">{modal.icon}</div>
+                <h3 className="text-2xl font-bold text-[#1e3a5f] mb-6 text-center">{modal.name}</h3>
+                <div className="flex flex-wrap justify-center gap-3">
+                  {modal.specs.map(({ label, value }) => (
+                    <div key={label} className="bg-white/80 rounded-xl px-4 py-3 text-center backdrop-blur-sm min-w-[80px]">
+                      <div className="text-[9px] font-bold text-[#ff6b35] uppercase tracking-widest border-b-2 border-[#ff6b35] pb-1 mb-1.5">{label}</div>
+                      <div className="text-sm font-bold text-[#1e3a5f]">{value}</div>
+                    </div>
+                  ))}
                 </div>
-              ))}
+              </div>
+
+              {/* 40% details side */}
+              <div className="md:w-[40%] bg-white flex flex-col justify-center p-8">
+                <button onClick={() => setModal(null)}
+                        className="self-end text-gray-300 hover:text-gray-600 text-2xl leading-none mb-4 transition-colors">×</button>
+                <p className="text-xs font-bold text-[#ff6b35] uppercase tracking-widest mb-3">Installation Accessory</p>
+                <h3 className="text-2xl font-bold text-[#1e3a5f] mb-4">{modal.name}</h3>
+                <p className="text-gray-500 text-sm leading-relaxed mb-6">{modal.description}</p>
+                <a href="#contact"
+                   onClick={() => setModal(null)}
+                   className="inline-block bg-[#ff6b35] text-white font-semibold text-sm px-6 py-3 rounded-full text-center hover:bg-[#e55a28] transition-colors no-underline">
+                  Inquire about {modal.name}
+                </a>
+              </div>
             </div>
           </div>
         </div>
-
-        {/* Right 40% — Accordion */}
-        <div className="lg:w-[40%] bg-white flex flex-col justify-center py-16 px-10">
-          <p className="text-xs font-bold text-[#ff6b35] uppercase tracking-widest mb-3">FRP Installation Accessories</p>
-          <h2 className="text-3xl font-bold text-[#1e3a5f] mb-8 leading-tight">
-            Complete your installation with professional-grade accessories
-          </h2>
-          <div className="divide-y divide-gray-100">
-            {ACCESSORIES.map(acc => (
-              <div key={acc.id}>
-                <button onClick={() => setActiveId(acc.id)}
-                        className="w-full flex items-center justify-between py-4 text-left group">
-                  <span className={`font-semibold text-sm transition-colors ${activeId === acc.id ? "text-[#1e3a5f]" : "text-gray-400 group-hover:text-gray-700"}`}>
-                    {acc.name}
-                  </span>
-                  <span className={`text-xl font-light ml-4 transition-colors ${activeId === acc.id ? "text-[#ff6b35]" : "text-gray-300"}`}>
-                    {activeId === acc.id ? "−" : "+"}
-                  </span>
-                </button>
-                {activeId === acc.id && (
-                  <div className="pb-5">
-                    <p className="text-gray-500 text-sm leading-relaxed mb-3">{acc.description}</p>
-                    <a href="#contact" className="text-sm font-semibold text-[#1e3a5f] underline underline-offset-4 hover:text-[#ff6b35] transition-colors">
-                      Inquire about {acc.name} →
-                    </a>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
+      )}
     </section>
   );
 }
@@ -405,13 +409,13 @@ function Services() {
     { icon: "📋", title: "Project Consultation",      desc: "Complimentary on-site assessments and material planning. Expert recommendations to meet health code standards and optimize your installation approach." },
   ];
   return (
-    <section id="services" className="py-20 px-5 bg-white">
+    <section id="services" className="py-20 px-5 bg-gray-50">
       <div className="max-w-6xl mx-auto">
         <h2 className="text-center text-4xl font-bold text-[#1e3a5f] mb-3">Our Services</h2>
         <p className="text-center text-gray-500 text-lg mb-12">Comprehensive FRP solutions backed by decades of commercial installation expertise</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-7">
           {items.map(({ icon, title, desc }) => (
-            <div key={title} className="border-2 border-gray-200 rounded-2xl p-10 text-center hover:border-[#ff6b35] hover:-translate-y-2 hover:shadow-xl transition-all">
+            <div key={title} className="border-2 border-gray-200 rounded-2xl p-10 text-center hover:border-[#ff6b35] hover:-translate-y-2 hover:shadow-xl transition-all bg-white">
               <div className="text-6xl mb-5">{icon}</div>
               <h3 className="text-xl font-bold text-[#1e3a5f] mb-3">{title}</h3>
               <p className="text-gray-500 text-sm leading-relaxed">{desc}</p>
@@ -426,10 +430,10 @@ function Services() {
 /* ─────────────────────── WHY CHOOSE US ──────────────────────────── */
 function WhyChooseUs() {
   const features = [
-    { icon: "🏆", title: "Trusted Brand",       desc: "Established reputation for delivering excellence in commercial FRP installations across the Greater Toronto Area." },
-    { icon: "⚡", title: "Rapid Response",      desc: "Same-day delivery available for urgent projects. We understand contractor timelines and deliver accordingly." },
-    { icon: "🎯", title: "Expert Execution",    desc: "Certified installation teams with specialized commercial kitchen and food facility experience." },
-    { icon: "🤝", title: "Service Excellence",  desc: "Dedicated support from consultation through completion. Your success is our priority on every project." },
+    { icon: "🏆", title: "Trusted Brand",      desc: "Established reputation for delivering excellence in commercial FRP installations across the Greater Toronto Area." },
+    { icon: "⚡", title: "Rapid Response",     desc: "Same-day delivery available for urgent projects. We understand contractor timelines and deliver accordingly." },
+    { icon: "🎯", title: "Expert Execution",   desc: "Certified installation teams with specialized commercial kitchen and food facility experience." },
+    { icon: "🤝", title: "Service Excellence", desc: "Dedicated support from consultation through completion. Your success is our priority on every project." },
   ];
   return (
     <section className="py-20 px-5" style={{ background: "linear-gradient(135deg,#1e3a5f,#2d4f7a)" }}>
@@ -456,8 +460,10 @@ function Footer() {
     <footer className="bg-[#1e3a5f] text-white pt-16 pb-8 px-5">
       <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-10">
         <div>
-          <h3 className="text-[#ff6b35] font-bold text-lg mb-4">Corevance</h3>
-          <p className="text-gray-300 leading-loose text-sm">Professional FRP wall panel installation and supply services for commercial applications across the Greater Toronto Area.</p>
+          <Image src="/corevance-logo-full.png" alt="Corevance" width={180} height={48} className="object-contain mb-5 brightness-0 invert" />
+          <p className="text-gray-300 leading-relaxed text-sm">
+            We don&apos;t just install panels — we set the standard. Corevance delivers precision-engineered FRP solutions to the commercial contractors and facility operators who refuse to compromise. From the first estimate to the final rivet, we bring craftsmanship, speed, and accountability to every project across the GTA.
+          </p>
         </div>
         <div>
           <h3 className="text-[#ff6b35] font-bold text-lg mb-4">Services</h3>

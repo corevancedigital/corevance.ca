@@ -60,13 +60,20 @@ const HERO_VIDEOS = [
   "https://videos.pexels.com/video-files/6474074/6474074-hd_1920_1080_25fps.mp4",
   "https://videos.pexels.com/video-files/6474077/6474077-hd_1920_1080_25fps.mp4",
   "https://videos.pexels.com/video-files/6474078/6474078-hd_1920_1080_25fps.mp4",
-  "https://videos.pexels.com/video-files/13921040/13921040-hd_1920_1080_30fps.mp4",
-  "https://videos.pexels.com/video-files/9227135/9227135-hd_1920_1080_30fps.mp4",
 ];
 
 function Hero() {
   const [videoIdx, setVideoIdx] = useState(0);
+  const [fading, setFading] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
+
+  const goNext = () => {
+    setFading(true);
+    setTimeout(() => {
+      setVideoIdx(i => (i + 1) % HERO_VIDEOS.length);
+      setFading(false);
+    }, 900);
+  };
 
   useEffect(() => {
     const el = videoRef.current;
@@ -77,24 +84,23 @@ function Hero() {
 
   return (
     <section className="relative flex items-center justify-center overflow-hidden" style={{ minHeight: "92vh" }}>
-      {/* CC0 wall installation videos — rotate through playlist */}
+      {/* CC0 wall installation videos — smooth crossfade rotation */}
       <video
         ref={videoRef}
         autoPlay muted playsInline
-        onEnded={() => setVideoIdx(i => (i + 1) % HERO_VIDEOS.length)}
+        onEnded={goNext}
         className="absolute inset-0 w-full h-full object-cover"
-        style={{ filter: "brightness(0.38)" }}
+        style={{ filter: "brightness(0.38)", opacity: fading ? 0 : 1, transition: "opacity 0.9s ease-in-out" }}
         src={HERO_VIDEOS[0]}
       />
       {/* Overlay tint */}
       <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, rgba(13,27,42,0.55) 0%, rgba(30,58,95,0.45) 100%)" }} />
 
       <div className="relative z-10 text-center px-6 max-w-4xl mx-auto">
-        <h1 className="text-5xl md:text-7xl font-bold text-white leading-[1.1] mb-10"
-            style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}>
-          Expert FRP Wall Panel<br />
-          Installation &amp; Supply<br />
-          Across the GTA
+        <h1 className="text-5xl md:text-7xl font-bold text-white leading-[1.1] mb-10">
+          The Commercial Standard<br />
+          in FRP Wall Panel<br />
+          Installation &amp; Supply
         </h1>
         <div className="flex flex-wrap items-center justify-center gap-4">
           <a href="#contact"
@@ -475,16 +481,16 @@ function WhyChooseUs() {
     { icon: "🤝", title: "Service Excellence", desc: "Dedicated support from consultation through completion. Your success is our priority on every project." },
   ];
   return (
-    <section className="py-20 px-5 bg-white">
+    <section className="py-20 px-5" style={{ background: "linear-gradient(135deg,#0d1b2a,#1e3a5f)" }}>
       <div className="max-w-6xl mx-auto">
-        <h2 className="text-center text-4xl font-bold text-[#1e3a5f] mb-3">Why Choose Corevance</h2>
-        <p className="text-center text-gray-500 text-lg mb-12">Built from the core, engineered to advance your commercial projects</p>
+        <h2 className="text-center text-4xl font-bold text-white mb-3">Why Choose Corevance</h2>
+        <p className="text-center text-white/70 text-lg mb-12">Built from the core, engineered to advance your commercial projects</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {features.map(({ icon, title, desc }) => (
-            <div key={title} className="text-center p-9 rounded-2xl border-2 border-gray-200 bg-gray-50 hover:border-[#ff6b35] hover:-translate-y-1 hover:shadow-lg transition-all">
+            <div key={title} className="text-center p-9 rounded-2xl border-2 border-white/15 bg-white/8 hover:bg-white/12 hover:border-[#ff6b35] hover:-translate-y-1 transition-all">
               <div className="text-6xl mb-5">{icon}</div>
-              <h3 className="text-xl font-bold text-[#1e3a5f] mb-3">{title}</h3>
-              <p className="text-gray-500 leading-relaxed text-sm">{desc}</p>
+              <h3 className="text-xl font-bold text-white mb-3">{title}</h3>
+              <p className="text-white/70 leading-relaxed text-sm">{desc}</p>
             </div>
           ))}
         </div>
@@ -496,48 +502,46 @@ function WhyChooseUs() {
 /* ─────────────────────── FOOTER ─────────────────────────────────── */
 function Footer() {
   return (
-    <footer className="bg-[#1e3a5f] text-white pt-16 pb-8 px-5">
+    <footer className="bg-white pt-16 pb-8 px-5 border-t-4 border-[#ff6b35]">
       <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-10">
         <div>
-          <div className="bg-white rounded-xl px-4 py-3 inline-block mb-5">
-            <Image src="/corevance-logo-full-cropped.png" alt="CoreVance – FRP Wall Panel Installation GTA" width={248} height={72} className="object-contain" />
-          </div>
-          <p className="text-gray-300 leading-relaxed text-sm">
-            We don&apos;t just install panels — we set the standard. Corevance delivers precision-engineered FRP solutions to the commercial contractors and facility operators who refuse to compromise. From the first estimate to the final rivet, we bring craftsmanship, speed, and accountability to every project across the GTA.
+          <Image src="/corevance-logo-full-cropped.png" alt="CoreVance – Commercial FRP Wall Panel Installation & Supply" width={248} height={72} className="object-contain mb-5" />
+          <p className="text-gray-600 leading-relaxed text-sm">
+            We don&apos;t just install panels — we set the standard. Corevance delivers precision-engineered FRP solutions to commercial contractors and facility operators who refuse to compromise. From the first estimate to the final rivet, we bring craftsmanship, speed, and accountability to every project.
           </p>
         </div>
         <div>
-          <h3 className="text-[#ff6b35] font-bold text-lg mb-4">Services</h3>
+          <h3 className="text-[#1e3a5f] font-bold text-lg mb-4">Services</h3>
           {["Professional Installation","Material Supply","Custom Solutions","Get a Quote"].map(s => (
-            <a key={s} href="#services" className="block text-gray-300 hover:text-[#ff6b35] leading-loose text-sm transition-colors">{s}</a>
+            <a key={s} href="#services" className="block text-gray-500 hover:text-[#ff6b35] leading-loose text-sm transition-colors">{s}</a>
           ))}
         </div>
         <div>
-          <h3 className="text-[#ff6b35] font-bold text-lg mb-4">Contact Us</h3>
-          <p className="text-gray-300 text-sm leading-loose">📞 <a href="tel:4378493781" className="hover:text-[#ff6b35]">437-849-3781</a></p>
-          <p className="text-gray-300 text-sm leading-loose">✉️ <a href="mailto:corevancesales@gmail.com" className="hover:text-[#ff6b35]">corevancesales@gmail.com</a></p>
-          <p className="text-gray-300 text-sm mt-4 leading-loose">
-            <strong>Business Hours:</strong><br />
+          <h3 className="text-[#1e3a5f] font-bold text-lg mb-4">Contact Us</h3>
+          <p className="text-gray-600 text-sm leading-loose">📞 <a href="tel:4378493781" className="hover:text-[#ff6b35] transition-colors">437-849-3781</a></p>
+          <p className="text-gray-600 text-sm leading-loose">✉️ <a href="mailto:corevancesales@gmail.com" className="hover:text-[#ff6b35] transition-colors">corevancesales@gmail.com</a></p>
+          <p className="text-gray-600 text-sm mt-4 leading-loose">
+            <strong className="text-[#1e3a5f]">Business Hours:</strong><br />
             Mon–Fri: 8:00 AM – 6:00 PM<br />
             Saturday: 9:00 AM – 2:00 PM<br />
             Sunday: By Appointment
           </p>
         </div>
         <div>
-          <h3 className="text-[#ff6b35] font-bold text-lg mb-4">Product Standards</h3>
+          <h3 className="text-[#1e3a5f] font-bold text-lg mb-4">Product Standards</h3>
           {[
             "✓ Class C Fire Rating",
             "✓ Commercial Grade Materials",
             "✓ CFIA Accepted Installations",
             "✓ Expert Installation Crews",
           ].map(s => (
-            <p key={s} className="text-gray-300 text-sm leading-loose">{s}</p>
+            <p key={s} className="text-gray-600 text-sm leading-loose">{s}</p>
           ))}
         </div>
       </div>
-      <div className="text-center border-t border-white/10 pt-8 text-gray-400 text-sm">
-        <p>© 2025 Corevance. All rights reserved.</p>
-        <p className="mt-2 text-xs">Professional FRP wall panel installation and supply services in the Greater Toronto Area</p>
+      <div className="text-center border-t border-gray-200 pt-8 text-gray-400 text-sm">
+        <p className="text-[#1e3a5f] font-semibold">© 2025 Corevance. All rights reserved.</p>
+        <p className="mt-2 text-xs text-gray-400">Professional FRP wall panel installation and supply services</p>
       </div>
     </footer>
   );

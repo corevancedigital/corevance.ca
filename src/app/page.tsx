@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 
 /* ─────────────────────────── TICKER BAR ──────────────────────────── */
@@ -56,26 +56,45 @@ function Navbar() {
 }
 
 /* ─────────────────────────── HERO ────────────────────────────────── */
+const HERO_VIDEOS = [
+  "https://videos.pexels.com/video-files/6474074/6474074-hd_1920_1080_25fps.mp4",
+  "https://videos.pexels.com/video-files/6474077/6474077-hd_1920_1080_25fps.mp4",
+  "https://videos.pexels.com/video-files/6474078/6474078-hd_1920_1080_25fps.mp4",
+  "https://videos.pexels.com/video-files/13921040/13921040-hd_1920_1080_30fps.mp4",
+  "https://videos.pexels.com/video-files/9227135/9227135-hd_1920_1080_30fps.mp4",
+];
+
 function Hero() {
+  const [videoIdx, setVideoIdx] = useState(0);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const el = videoRef.current;
+    if (!el) return;
+    el.src = HERO_VIDEOS[videoIdx];
+    el.play().catch(() => {});
+  }, [videoIdx]);
+
   return (
     <section className="relative flex items-center justify-center overflow-hidden" style={{ minHeight: "92vh" }}>
-      {/* CC0 construction site videos — Pexels verified */}
+      {/* CC0 wall installation videos — rotate through playlist */}
       <video
-        autoPlay muted loop playsInline
+        ref={videoRef}
+        autoPlay muted playsInline
+        onEnded={() => setVideoIdx(i => (i + 1) % HERO_VIDEOS.length)}
         className="absolute inset-0 w-full h-full object-cover"
         style={{ filter: "brightness(0.38)" }}
-      >
-        <source src="https://videos.pexels.com/video-files/13921040/13921040-hd_1920_1080_30fps.mp4" type="video/mp4" />
-        <source src="https://videos.pexels.com/video-files/9227135/9227135-hd_1920_1080_30fps.mp4" type="video/mp4" />
-        <source src="https://videos.pexels.com/video-files/855271/855271-hd_1920_1080_25fps.mp4" type="video/mp4" />
-      </video>
+        src={HERO_VIDEOS[0]}
+      />
       {/* Overlay tint */}
       <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, rgba(13,27,42,0.55) 0%, rgba(30,58,95,0.45) 100%)" }} />
 
       <div className="relative z-10 text-center px-6 max-w-4xl mx-auto">
-        <h1 className="text-5xl md:text-6xl font-bold text-white leading-[1.15] mb-10"
+        <h1 className="text-5xl md:text-7xl font-bold text-white leading-[1.1] mb-10"
             style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}>
-          Transform Commercial Spaces with<br />Expert FRP Wall Panel Solutions
+          Expert FRP Wall Panel<br />
+          Installation &amp; Supply<br />
+          Across the GTA
         </h1>
         <div className="flex flex-wrap items-center justify-center gap-4">
           <a href="#contact"
@@ -294,40 +313,45 @@ function ColorsAndSizes() {
   );
 }
 
-/* ─────────────────── ACCESSORIES — GRID + MODAL ─────────────────── */
+/* ─────────────────── ACCESSORIES — LIST + MODAL ─────────────────── */
 type Acc = {
-  id: string; name: string; icon: string; bgColor: string;
+  id: string; name: string; img: string | null; emoji: string;
   description: string; specs: { label: string; value: string }[];
 };
 
 const ACCESSORIES: Acc[] = [
   {
-    id: "inside-corner", name: "Inside Corner", icon: "📐", bgColor: "#e8f0e8",
+    id: "divider-bar", name: "Divider Bar", img: "/acc_divider_bar.png", emoji: "⚊",
+    description: "Divider Bar creates a clean, professional joint between two FRP panels on the same wall plane. Allows for thermal expansion while sealing panel edges against moisture intrusion. Required for code-compliant installations in food processing facilities.",
+    specs: [{ label: "Material", value: "PVC" }, { label: "Length", value: "8 ft" }, { label: "Application", value: "Panel joints" }, { label: "Finish", value: "White" }],
+  },
+  {
+    id: "inside-corner", name: "Inside Corner", img: "/acc_inside_corner.png", emoji: "📐",
     description: "Inside Corner molding creates a clean sanitary seal at 90° inside corners where two FRP panels meet. Eliminates hard-to-clean gaps and provides a professional, code-compliant corner finish. Essential for commercial kitchens and food processing facilities.",
     specs: [{ label: "Material", value: "PVC" }, { label: "Length", value: "8 ft" }, { label: "Angle", value: "90°" }, { label: "Application", value: "Inside corners" }],
   },
   {
-    id: "end-cap", name: "End Cap", icon: "🔲", bgColor: "#f0e8e8",
+    id: "end-cap", name: "End Cap", img: "/acc_end_cap.png", emoji: "🔲",
     description: "End Cap molding covers and protects exposed edges of FRP panels at terminations. Provides a professional finished appearance at wall edges, door frames, and panel ends. Moisture-resistant and bacteria-resistant.",
     specs: [{ label: "Material", value: "PVC" }, { label: "Length", value: "8 ft" }, { label: "Finish", value: "Painted" }, { label: "Application", value: "Panel edges" }],
   },
   {
-    id: "outside-corner", name: "Outside Corner", icon: "📏", bgColor: "#e8e8f0",
+    id: "outside-corner", name: "Outside Corner", img: "/acc_outside_corner.png", emoji: "📏",
     description: "Outside Corner molding protects and finishes exterior 90° corners where FRP panels meet. Guards against chipping, impact damage, and bacterial buildup at exposed corners. Required for CFIA-accepted installations.",
     specs: [{ label: "Material", value: "PVC" }, { label: "Length", value: "8 ft" }, { label: "Angle", value: "90°" }, { label: "Standard", value: "CFIA" }],
   },
   {
-    id: "outside-corner-angle", name: "Outside Corner Angle", icon: "📐", bgColor: "#f0ede8",
+    id: "outside-corner-angle", name: "Outside Corner Angle", img: "/acc_outside_corner.png", emoji: "📐",
     description: "Outside Corner Angle provides protection for non-standard angled exterior corners. Ideal for unique wall configurations and custom installation requirements where standard 90° corners are insufficient.",
     specs: [{ label: "Material", value: "PVC" }, { label: "Length", value: "8 ft" }, { label: "Application", value: "Angled corners" }],
   },
   {
-    id: "nylon-rivets", name: "Nylon Rivets", icon: "🔘", bgColor: "#ece8f0",
+    id: "nylon-rivets", name: "Nylon Rivets", img: null, emoji: "🔘",
     description: "Corrosion-resistant nylon rivets for secure FRP panel attachment. Non-metal construction prevents rust contamination — essential for food-safe and healthcare environments. Approved for CFIA food facility installations.",
     specs: [{ label: "Material", value: "Nylon" }, { label: "Type", value: "Pop rivet" }, { label: "Feature", value: "Rust-free" }, { label: "Standard", value: "Food-safe" }],
   },
   {
-    id: "titebond", name: "Titebond Adhesive", icon: "🪣", bgColor: "#e8f0ec",
+    id: "titebond", name: "Titebond Adhesive", img: null, emoji: "🪣",
     description: "Professional-grade FRP panel adhesive formulated for permanent, moisture-resistant bonding to virtually any clean substrate. Specifically designed for commercial kitchen and food processing environments. Low VOC formula.",
     specs: [{ label: "Type", value: "Contact cement" }, { label: "Coverage", value: "~40 sq ft/gal" }, { label: "Feature", value: "Moisture resistant" }, { label: "VOC", value: "Low VOC" }],
   },
@@ -348,9 +372,12 @@ function Accessories() {
           {ACCESSORIES.map(acc => (
             <div key={acc.id}
                  className="flex items-center gap-5 bg-gray-50 border-2 border-gray-200 rounded-2xl p-5 hover:border-[#ff6b35] hover:shadow-md transition-all group">
-              <div className="flex-shrink-0 w-14 h-14 rounded-xl flex items-center justify-center text-3xl"
-                   style={{ background: acc.bgColor }}>
-                {acc.icon}
+              {/* Product thumbnail — white bg matches product photography */}
+              <div className="flex-shrink-0 w-16 h-16 rounded-xl bg-white border border-gray-200 flex items-center justify-center overflow-hidden">
+                {acc.img
+                  ? <Image src={acc.img} alt={acc.name} width={56} height={56} className="object-contain p-1" />
+                  : <span className="text-3xl">{acc.emoji}</span>
+                }
               </div>
               <div className="flex-1 min-w-0">
                 <h4 className="font-bold text-[#1e3a5f] text-lg group-hover:text-[#ff6b35] transition-colors">{acc.name}</h4>
@@ -366,7 +393,7 @@ function Accessories() {
         </div>
       </div>
 
-      {/* Modal */}
+      {/* Modal — image LEFT, details RIGHT */}
       {modal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4"
              style={{ background: "rgba(0,0,0,0.6)" }}
@@ -374,14 +401,16 @@ function Accessories() {
           <div className="bg-white rounded-3xl shadow-2xl overflow-hidden w-full max-w-3xl max-h-[90vh] overflow-y-auto"
                onClick={e => e.stopPropagation()}>
             <div className="flex flex-col md:flex-row" style={{ minHeight: 420 }}>
-              {/* 60% image/visual side */}
-              <div className="md:w-[60%] flex flex-col items-center justify-center p-12 transition-colors"
-                   style={{ background: modal.bgColor }}>
-                <div className="text-[90px] mb-6 leading-none">{modal.icon}</div>
+              {/* LEFT: product image on same clean bg as product photography */}
+              <div className="md:w-[60%] flex flex-col items-center justify-center p-12 bg-[#f7f7f7]">
+                {modal.img
+                  ? <Image src={modal.img} alt={modal.name} width={300} height={300} className="object-contain mb-6" />
+                  : <div className="text-[90px] mb-6 leading-none">{modal.emoji}</div>
+                }
                 <h3 className="text-2xl font-bold text-[#1e3a5f] mb-6 text-center">{modal.name}</h3>
                 <div className="flex flex-wrap justify-center gap-3">
                   {modal.specs.map(({ label, value }) => (
-                    <div key={label} className="bg-white/80 rounded-xl px-4 py-3 text-center backdrop-blur-sm min-w-[80px]">
+                    <div key={label} className="bg-white rounded-xl px-4 py-3 text-center shadow-sm min-w-[80px]">
                       <div className="text-[9px] font-bold text-[#ff6b35] uppercase tracking-widest border-b-2 border-[#ff6b35] pb-1 mb-1.5">{label}</div>
                       <div className="text-sm font-bold text-[#1e3a5f]">{value}</div>
                     </div>
@@ -389,7 +418,7 @@ function Accessories() {
                 </div>
               </div>
 
-              {/* 40% details side */}
+              {/* RIGHT: text details */}
               <div className="md:w-[40%] bg-white flex flex-col justify-center p-8">
                 <button onClick={() => setModal(null)}
                         className="self-end text-gray-300 hover:text-gray-600 text-2xl leading-none mb-4 transition-colors">×</button>
@@ -446,16 +475,16 @@ function WhyChooseUs() {
     { icon: "🤝", title: "Service Excellence", desc: "Dedicated support from consultation through completion. Your success is our priority on every project." },
   ];
   return (
-    <section className="py-20 px-5" style={{ background: "linear-gradient(135deg,#1e3a5f,#2d4f7a)" }}>
+    <section className="py-20 px-5 bg-white">
       <div className="max-w-6xl mx-auto">
-        <h2 className="text-center text-4xl font-bold text-white mb-3">Why Choose Corevance</h2>
-        <p className="text-center text-white/80 text-lg mb-12">Built from the core, engineered to advance your commercial projects</p>
+        <h2 className="text-center text-4xl font-bold text-[#1e3a5f] mb-3">Why Choose Corevance</h2>
+        <p className="text-center text-gray-500 text-lg mb-12">Built from the core, engineered to advance your commercial projects</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {features.map(({ icon, title, desc }) => (
-            <div key={title} className="text-center p-9 rounded-2xl border-2 border-white/20 bg-white/10 hover:bg-white/15 hover:-translate-y-1 transition-all">
+            <div key={title} className="text-center p-9 rounded-2xl border-2 border-gray-200 bg-gray-50 hover:border-[#ff6b35] hover:-translate-y-1 hover:shadow-lg transition-all">
               <div className="text-6xl mb-5">{icon}</div>
-              <h3 className="text-xl font-bold text-white mb-3">{title}</h3>
-              <p className="text-white/80 leading-relaxed text-sm">{desc}</p>
+              <h3 className="text-xl font-bold text-[#1e3a5f] mb-3">{title}</h3>
+              <p className="text-gray-500 leading-relaxed text-sm">{desc}</p>
             </div>
           ))}
         </div>

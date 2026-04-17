@@ -5,8 +5,8 @@ import Image from "next/image";
 /* ─────────────────────────── HERO ────────────────────────────────── */
 const HERO_VIDEOS = [
   "https://videos.pexels.com/video-files/6474074/6474074-hd_1920_1080_25fps.mp4",
-  "https://videos.pexels.com/video-files/6474077/6474077-hd_1920_1080_25fps.mp4",
-  "https://videos.pexels.com/video-files/6474078/6474078-hd_1920_1080_25fps.mp4",
+  // "https://videos.pexels.com/video-files/6474077/6474077-hd_1920_1080_25fps.mp4",
+  // "https://videos.pexels.com/video-files/6474078/6474078-hd_1920_1080_25fps.mp4",
 ];
 
 function Hero() {
@@ -26,11 +26,11 @@ function Hero() {
     const el = videoRef.current;
     if (!el) return;
     el.src = HERO_VIDEOS[videoIdx];
-    el.play().catch(() => {});
+    el.play().catch(() => { });
   }, [videoIdx]);
 
   return (
-    <section className="relative flex items-center justify-center overflow-hidden" style={{ minHeight: "100vh" }}>
+    <section className="relative flex items-center justify-center overflow-hidden" >
       {/* CC0 wall installation videos — smooth crossfade rotation */}
       <video
         ref={videoRef}
@@ -41,59 +41,63 @@ function Hero() {
         src={HERO_VIDEOS[0]}
       />
       {/* Overlay tint */}
-      <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, rgba(13,27,42,0.55) 0%, rgba(30,58,95,0.45) 100%)" }} />
+      <div className="absolute inset-0" style={{ background: "#fff", opacity: 0.005 }} />
 
-      <div className="relative z-10 w-full pt-16 pb-12 flex flex-col lg:flex-row items-center gap-8 px-6">
-        {/* Left — headline + CTA buttons */}
-        <div className="flex-1 min-w-0 text-left">
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-[1.1] mb-8">
-            The Commercial Standard<br />
-            in FRP Wall Panel<br />
-            Installation &amp; Supply
-          </h1>
-          <div className="flex flex-wrap items-center gap-4">
-            <a href="#products"
-               className="bg-white text-gray-900 font-semibold px-8 py-4 rounded-full text-base hover:bg-gray-100 transition-all no-underline">
-              Products
-            </a>
-            <a href="#contact"
-               className="bg-[#3b82f6] text-white font-semibold px-8 py-4 rounded-full text-base hover:bg-[#2563eb] transition-all no-underline">
-              Book Your Meeting Today
-            </a>
+      <div className="relative z-10 w-full container py-12">
+        <div className="w-full grid grid-cols-5 place-items-center gap-8">
+          {/* Left — headline + CTA buttons */}
+          <div className="col-span-3 ext-left">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-[1.1] mb-8">
+              The Commercial Standard<br />
+              in FRP Wall Panel<br />
+              Installation &amp; Supply
+            </h1>
+            <div className="flex flex-wrap items-center gap-4">
+              <a href="#products"
+                className="bg-white text-gray-900 font-semibold px-8 py-4 rounded-full text-base hover:bg-gray-100 transition-all no-underline">
+                Products
+              </a>
+              <a href="#contact"
+                className="bg-[#3b82f6] text-white font-semibold px-8 py-4 rounded-full text-base hover:bg-[#2563eb] transition-all no-underline">
+                Book Your Meeting Today
+              </a>
+            </div>
           </div>
-        </div>
 
-        {/* Right — contact form */}
-        <div className="w-full lg:w-[420px] shrink-0" id="contact">
-          <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-8 w-full">
-            <h2 className="text-2xl font-bold text-[#1e3a5f] mb-1 text-center">Tell Us About Your Project</h2>
-            <p className="text-gray-500 text-sm mb-5 text-center">Get expert consultation and a detailed quote within 24 hours</p>
-            <form action="https://formspree.io/f/YOUR_FORM_ID" method="POST" className="flex flex-col gap-4">
-              {[
-                { id: "name",  label: "Name *",  type: "text"  },
-                { id: "phone", label: "Phone *", type: "tel"   },
-                { id: "email", label: "Email *", type: "email" },
-              ].map(({ id, label, type }) => (
-                <div key={id}>
-                  <label htmlFor={id} className="block mb-1.5 font-semibold text-[#1e3a5f] text-sm">{label}</label>
-                  <input id={id} name={id} type={type} required autoComplete={id}
-                    className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#ff6b35] transition-colors" />
+          {/* Right — contact form */}
+          <div className="col-span-2 " id="contact">
+            <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-8 w-full">
+              <h2 className="text-2xl font-bold text-[#1e3a5f] mb-1 text-center">Tell Us About Your Project</h2>
+              <p className="text-gray-500 text-sm mb-5 text-center">Get expert consultation and a detailed quote within 24 hours</p>
+              <form action="https://formspree.io/f/YOUR_FORM_ID" method="POST" className="flex flex-col gap-4">
+                {[
+                  { id: "name", label: "Name *", type: "text" },
+                  { id: "phone", label: "Phone *", type: "tel" },
+                  { id: "email", label: "Email *", type: "email" },
+                ].map(({ id, label, type }) => (
+                  <div key={id}>
+                    <label htmlFor={id} className="block mb-1.5 font-semibold text-[#1e3a5f] text-sm">{label}</label>
+                    <input id={id} name={id} type={type} required autoComplete={id}
+                      className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#ff6b35] transition-colors" />
+                  </div>
+                ))}
+                <div>
+                  <label htmlFor="project" className="block mb-1.5 font-semibold text-[#1e3a5f] text-sm">Tell us about your project *</label>
+                  <textarea id="project" name="project" required rows={4}
+                    placeholder="Describe your project scope, timeline, square footage, and any specific requirements..."
+                    className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#ff6b35] transition-colors resize-y" />
                 </div>
-              ))}
-              <div>
-                <label htmlFor="project" className="block mb-1.5 font-semibold text-[#1e3a5f] text-sm">Tell us about your project *</label>
-                <textarea id="project" name="project" required rows={4}
-                  placeholder="Describe your project scope, timeline, square footage, and any specific requirements..."
-                  className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#ff6b35] transition-colors resize-y" />
-              </div>
-              <button type="submit"
-                className="w-full bg-[#ff6b35] text-white font-bold py-3.5 rounded-full text-base hover:bg-[#e55a28] hover:-translate-y-0.5 transition-all shadow-md">
-                Request Free Consultation
-              </button>
-            </form>
+                <button type="submit"
+                  className="w-full bg-[#ff6b35] text-white font-bold py-3.5 rounded-full text-base hover:bg-[#e55a28] hover:-translate-y-0.5 transition-all shadow-md">
+                  Request Free Consultation
+                </button>
+              </form>
+            </div>
           </div>
         </div>
+
       </div>
+
 
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
         <span className="text-white/40 text-xs tracking-widest uppercase">Scroll</span>
@@ -105,7 +109,7 @@ function Hero() {
 
 /* ──────────────── FLOATING PRODUCT PANEL ─────────────────────────── */
 function FloatingProductPanel() {
-  const [visible, setVisible]     = useState(false);
+  const [visible, setVisible] = useState(false);
   const [dismissed, setDismissed] = useState(false);
 
   useEffect(() => {
@@ -117,15 +121,15 @@ function FloatingProductPanel() {
   if (!visible || dismissed) return null;
 
   const products = [
-    { name: "8′ × 4′ Pebbled",  detail: "96″ × 48″ · Pebbled" },
-    { name: "8′ × 4′ Smooth",   detail: "96″ × 48″ · Smooth"  },
-    { name: "10′ × 4′ Pebbled", detail: "120″ × 48″ · Pebbled"},
-    { name: "10′ × 4′ Smooth",  detail: "120″ × 48″ · Smooth" },
+    { name: "8′ × 4′ Pebbled", detail: "96″ × 48″ · Pebbled" },
+    { name: "8′ × 4′ Smooth", detail: "96″ × 48″ · Smooth" },
+    { name: "10′ × 4′ Pebbled", detail: "120″ × 48″ · Pebbled" },
+    { name: "10′ × 4′ Smooth", detail: "120″ × 48″ · Smooth" },
   ];
 
   return (
     <div className="fixed right-5 top-1/2 -translate-y-1/2 z-40 w-60 rounded-2xl shadow-2xl border border-gray-100 overflow-hidden"
-         style={{ background: "white", animation: "slideInRight 0.3s ease" }}>
+      style={{ background: "white", animation: "slideInRight 0.3s ease" }}>
       <div className="flex items-center justify-between px-4 py-3" style={{ background: "#1e3a5f" }}>
         <span className="text-white font-bold text-xs uppercase tracking-wide">FRP Wall Panel Products</span>
         <button onClick={() => setDismissed(true)} className="text-white/60 hover:text-white text-base leading-none ml-2">×</button>
@@ -133,7 +137,7 @@ function FloatingProductPanel() {
       <div className="p-3">
         {products.map(p => (
           <a key={p.name} href="#products"
-             className="flex items-start gap-2 px-2.5 py-2.5 rounded-lg hover:bg-gray-50 transition-colors group no-underline">
+            className="flex items-start gap-2 px-2.5 py-2.5 rounded-lg hover:bg-gray-50 transition-colors group no-underline">
             <span className="text-[#ff6b35] text-xs mt-0.5 flex-shrink-0">▪</span>
             <div>
               <p className="font-semibold text-[#1e3a5f] text-xs group-hover:text-[#ff6b35] transition-colors">Class C – {p.name}</p>
@@ -153,10 +157,10 @@ function FloatingProductPanel() {
 /* ─────────────────────── PRODUCTS ───────────────────────────────── */
 function Products() {
   const products = [
-    { title: "Class C – 8′ × 4′ Pebbled",  specs: [["Size","8′ × 4′ (96″ × 48″)"], ["Finish","Pebbled texture"], ["Thickness","2mm"], ["Class","C Fire Rating"]] },
-    { title: "Class C – 8′ × 4′ Smooth",   specs: [["Size","8′ × 4′ (96″ × 48″)"], ["Finish","Smooth surface"],  ["Thickness","2mm"], ["Class","C Fire Rating"]] },
-    { title: "Class C – 10′ × 4′ Pebbled", specs: [["Size","10′ × 4′ (120″ × 48″)"],["Finish","Pebbled texture"], ["Thickness","2mm"], ["Class","C Fire Rating"]] },
-    { title: "Class C – 10′ × 4′ Smooth",  specs: [["Size","10′ × 4′ (120″ × 48″)"],["Finish","Smooth surface"],  ["Thickness","2mm"], ["Class","C Fire Rating"]] },
+    { title: "Class C – 8′ × 4′ Pebbled", specs: [["Size", "8′ × 4′ (96″ × 48″)"], ["Finish", "Pebbled texture"], ["Thickness", "2mm"], ["Class", "C Fire Rating"]] },
+    { title: "Class C – 8′ × 4′ Smooth", specs: [["Size", "8′ × 4′ (96″ × 48″)"], ["Finish", "Smooth surface"], ["Thickness", "2mm"], ["Class", "C Fire Rating"]] },
+    { title: "Class C – 10′ × 4′ Pebbled", specs: [["Size", "10′ × 4′ (120″ × 48″)"], ["Finish", "Pebbled texture"], ["Thickness", "2mm"], ["Class", "C Fire Rating"]] },
+    { title: "Class C – 10′ × 4′ Smooth", specs: [["Size", "10′ × 4′ (120″ × 48″)"], ["Finish", "Smooth surface"], ["Thickness", "2mm"], ["Class", "C Fire Rating"]] },
   ];
   return (
     <section id="products" className="py-20 px-5 bg-gray-50">
@@ -166,7 +170,7 @@ function Products() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-7">
           {products.map(({ title, specs }) => (
             <a key={title} href={`mailto:corevancesales@gmail.com?subject=Inquiry: ${title}`}
-               className="bg-white rounded-2xl shadow-md hover:-translate-y-2 hover:shadow-xl transition-all overflow-hidden group no-underline">
+              className="bg-white rounded-2xl shadow-md hover:-translate-y-2 hover:shadow-xl transition-all overflow-hidden group no-underline">
               <div className="h-48 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center text-5xl relative overflow-hidden">
                 📋
                 <div className="absolute inset-x-0 bottom-0 bg-[#ff6b35]/90 text-white text-center py-3 font-semibold text-sm translate-y-full group-hover:translate-y-0 transition-transform">
@@ -197,19 +201,19 @@ function ColorsAndSizes() {
   const [tab, setTab] = useState<"colors" | "sizes">("colors");
 
   const colors = [
-    { name: "Almond",     bg: "#f5f0e8" },
-    { name: "Ivory",      bg: "#fffff0" },
-    { name: "Beige",      bg: "#f5f5dc" },
+    { name: "Almond", bg: "#f5f0e8" },
+    { name: "Ivory", bg: "#fffff0" },
+    { name: "Beige", bg: "#f5f5dc" },
     { name: "Light Gray", bg: "#d3d3d3" },
-    { name: "Silver",     bg: "#c0c0c0" },
-    { name: "Black",      bg: "#1a1a1a" },
+    { name: "Silver", bg: "#c0c0c0" },
+    { name: "Black", bg: "#1a1a1a" },
   ];
 
   const sizes = [
-    { dim: "8′ × 4′",  inches: "96″ × 48″",  tag: "Standard"    },
-    { dim: "10′ × 4′", inches: "120″ × 48″", tag: "Standard"    },
-    { dim: "12′ × 4′", inches: "144″ × 48″", tag: "Large"       },
-    { dim: "10′ × 5′", inches: "120″ × 60″", tag: "Wide"        },
+    { dim: "8′ × 4′", inches: "96″ × 48″", tag: "Standard" },
+    { dim: "10′ × 4′", inches: "120″ × 48″", tag: "Standard" },
+    { dim: "12′ × 4′", inches: "144″ × 48″", tag: "Large" },
+    { dim: "10′ × 5′", inches: "120″ × 60″", tag: "Wide" },
     { dim: "12′ × 5′", inches: "144″ × 60″", tag: "Extra Large" },
   ];
 
@@ -222,8 +226,7 @@ function ColorsAndSizes() {
           <div className="inline-flex bg-gray-100 rounded-full p-1 gap-1">
             {(["colors", "sizes"] as const).map(t => (
               <button key={t} onClick={() => setTab(t)}
-                className={`px-8 py-2.5 rounded-full font-semibold text-sm transition-all capitalize ${
-                  tab === t ? "bg-white text-[#1e3a5f] shadow-sm" : "text-gray-400 hover:text-gray-600"}`}>
+                className={`px-8 py-2.5 rounded-full font-semibold text-sm transition-all capitalize ${tab === t ? "bg-white text-[#1e3a5f] shadow-sm" : "text-gray-400 hover:text-gray-600"}`}>
                 {t}
               </button>
             ))}
@@ -318,7 +321,7 @@ function Accessories() {
         <div className="max-w-3xl mx-auto flex flex-col gap-4">
           {ACCESSORIES.map(acc => (
             <div key={acc.id}
-                 className="flex items-center gap-5 bg-gray-50 border-2 border-gray-200 rounded-2xl p-5 hover:border-[#ff6b35] hover:shadow-md transition-all group">
+              className="flex items-center gap-5 bg-gray-50 border-2 border-gray-200 rounded-2xl p-5 hover:border-[#ff6b35] hover:shadow-md transition-all group">
               {/* Product thumbnail — white bg matches product photography */}
               <div className="flex-shrink-0 w-16 h-16 rounded-xl bg-white border border-gray-200 flex items-center justify-center overflow-hidden">
                 {acc.img
@@ -331,8 +334,8 @@ function Accessories() {
                 <p className="text-gray-400 text-sm mt-0.5">{acc.specs[0].label}: {acc.specs[0].value} · {acc.specs[1]?.label}: {acc.specs[1]?.value}</p>
               </div>
               <button onClick={() => setModal(acc)}
-                      aria-label={`Learn more about ${acc.name}`}
-                      className="flex-shrink-0 w-10 h-10 rounded-full border-2 border-[#ff6b35] text-[#ff6b35] text-xl font-bold flex items-center justify-center hover:bg-[#ff6b35] hover:text-white transition-all">
+                aria-label={`Learn more about ${acc.name}`}
+                className="flex-shrink-0 w-10 h-10 rounded-full border-2 border-[#ff6b35] text-[#ff6b35] text-xl font-bold flex items-center justify-center hover:bg-[#ff6b35] hover:text-white transition-all">
                 +
               </button>
             </div>
@@ -343,10 +346,10 @@ function Accessories() {
       {/* Modal — image LEFT, details RIGHT */}
       {modal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4"
-             style={{ background: "rgba(0,0,0,0.6)" }}
-             onClick={() => setModal(null)}>
+          style={{ background: "rgba(0,0,0,0.6)" }}
+          onClick={() => setModal(null)}>
           <div className="bg-white rounded-3xl shadow-2xl overflow-hidden w-full max-w-3xl max-h-[90vh] overflow-y-auto"
-               onClick={e => e.stopPropagation()}>
+            onClick={e => e.stopPropagation()}>
             <div className="flex flex-col md:flex-row" style={{ minHeight: 420 }}>
               {/* LEFT: product image on same clean bg as product photography */}
               <div className="md:w-[60%] flex flex-col items-center justify-center p-12 bg-[#f7f7f7]">
@@ -368,13 +371,13 @@ function Accessories() {
               {/* RIGHT: text details */}
               <div className="md:w-[40%] bg-white flex flex-col justify-center p-8">
                 <button onClick={() => setModal(null)}
-                        className="self-end text-gray-300 hover:text-gray-600 text-2xl leading-none mb-4 transition-colors">×</button>
+                  className="self-end text-gray-300 hover:text-gray-600 text-2xl leading-none mb-4 transition-colors">×</button>
                 <p className="text-xs font-bold text-[#ff6b35] uppercase tracking-widest mb-3">Installation Accessory</p>
                 <h3 className="text-2xl font-bold text-[#1e3a5f] mb-4">{modal.name}</h3>
                 <p className="text-gray-500 text-sm leading-relaxed mb-6">{modal.description}</p>
                 <a href="#contact"
-                   onClick={() => setModal(null)}
-                   className="inline-block bg-[#ff6b35] text-white font-semibold text-sm px-6 py-3 rounded-full text-center hover:bg-[#e55a28] transition-colors no-underline">
+                  onClick={() => setModal(null)}
+                  className="inline-block bg-[#ff6b35] text-white font-semibold text-sm px-6 py-3 rounded-full text-center hover:bg-[#e55a28] transition-colors no-underline">
                   Inquire about {modal.name}
                 </a>
               </div>
@@ -390,9 +393,9 @@ function Accessories() {
 function Services() {
   const items = [
     { icon: "🔧", title: "Professional Installation", desc: "Certified installation crews specializing in commercial kitchens and food facilities. Code-compliant execution with meticulous attention to detail and on-schedule project completion." },
-    { icon: "📦", title: "Material Supply",           desc: "Premium Class-C FRP panels in stock and ready to ship. Same-day delivery across the GTA with flexible order quantities tailored to your project needs." },
-    { icon: "🎨", title: "Custom Solutions",          desc: "Special order capabilities for unique project specifications. Custom colors, non-standard dimensions, and project-specific accessories to match your exact requirements." },
-    { icon: "📋", title: "Project Consultation",      desc: "Complimentary on-site assessments and material planning. Expert recommendations to meet health code standards and optimize your installation approach." },
+    { icon: "📦", title: "Material Supply", desc: "Premium Class-C FRP panels in stock and ready to ship. Same-day delivery across the GTA with flexible order quantities tailored to your project needs." },
+    { icon: "🎨", title: "Custom Solutions", desc: "Special order capabilities for unique project specifications. Custom colors, non-standard dimensions, and project-specific accessories to match your exact requirements." },
+    { icon: "📋", title: "Project Consultation", desc: "Complimentary on-site assessments and material planning. Expert recommendations to meet health code standards and optimize your installation approach." },
   ];
   return (
     <section id="services" className="py-20 px-5 bg-gray-50">
@@ -416,9 +419,9 @@ function Services() {
 /* ─────────────────────── WHY CHOOSE US ──────────────────────────── */
 function WhyChooseUs() {
   const features = [
-    { icon: "🏆", title: "Trusted Brand",      desc: "Established reputation for delivering excellence in commercial FRP installations across the Greater Toronto Area." },
-    { icon: "⚡", title: "Rapid Response",     desc: "Same-day delivery available for urgent projects. We understand contractor timelines and deliver accordingly." },
-    { icon: "🎯", title: "Expert Execution",   desc: "Certified installation teams with specialized commercial kitchen and food facility experience." },
+    { icon: "🏆", title: "Trusted Brand", desc: "Established reputation for delivering excellence in commercial FRP installations across the Greater Toronto Area." },
+    { icon: "⚡", title: "Rapid Response", desc: "Same-day delivery available for urgent projects. We understand contractor timelines and deliver accordingly." },
+    { icon: "🎯", title: "Expert Execution", desc: "Certified installation teams with specialized commercial kitchen and food facility experience." },
     { icon: "🤝", title: "Service Excellence", desc: "Dedicated support from consultation through completion. Your success is our priority on every project." },
   ];
   return (
@@ -453,7 +456,7 @@ function Footer() {
         </div>
         <div>
           <h3 className="text-[#1e3a5f] font-bold text-lg mb-4">Services</h3>
-          {["Professional Installation","Material Supply","Custom Solutions","Get a Quote"].map(s => (
+          {["Professional Installation", "Material Supply", "Custom Solutions", "Get a Quote"].map(s => (
             <a key={s} href="#services" className="block text-gray-500 hover:text-[#ff6b35] leading-loose text-sm transition-colors">{s}</a>
           ))}
         </div>
@@ -491,21 +494,23 @@ function Footer() {
 /* ─────────────────────── HEADER ──────────────────────────────────── */
 function Header() {
   return (
-    <header className="bg-white border-b border-gray-100 sticky top-0 z-50">
-      <div className="w-full flex items-center justify-between px-4 sm:px-6 py-2">
-        <Image
-          src="/corevance-logo-symbol.png"
-          alt="CoreVance – Commercial FRP Wall Panel Installation & Supply"
-          width={202} height={46} priority
-          className="object-contain sm:w-[278px] sm:h-[61px]"
-        />
-        <div className="flex items-center gap-2 sm:gap-3">
-          <span className="hidden sm:inline text-[24px] font-semibold text-[#1e3a5f] whitespace-nowrap uppercase">Call us now</span>
-          <a href="tel:4378493781" aria-label="Call Corevance at 437-849-3781" className="no-underline group">
-            <div className="flex items-center px-3 sm:px-5 py-2 sm:py-2.5 rounded-full transition-opacity hover:opacity-90" style={{ background: "#ff6b35" }}>
-              <span className="text-xs sm:text-sm font-bold text-white whitespace-nowrap">437-849-3781</span>
-            </div>
-          </a>
+    <header className="bg-white border-b border-gray-100 sticky top-0 z-50 px-6">
+      <div className="w-full container mx-auto">
+        <div className="flex items-center justify-between px-4 sm:px-6 py-4">
+          <Image
+            src="/corevance-logo-symbol.png"
+            alt="CoreVance – Commercial FRP Wall Panel Installation & Supply"
+            width={240} height={52} priority
+            className="object-contain sm:w-[278px] sm:h-[61px]"
+          />
+          <div className="flex items-center gap-2 sm:gap-3">
+            <span className="hidden sm:inline text-[24px] font-semibold text-[#1e3a5f] whitespace-nowrap uppercase">Call us now</span>
+            <a href="tel:4378493781" aria-label="Call Corevance at 437-849-3781" className="no-underline group">
+              <div className="flex items-center px-3 sm:px-5 py-2 sm:py-2.5 rounded-full transition-opacity hover:opacity-90" style={{ background: "#ff6b35" }}>
+                <span className="text-[24px] font-bold text-white whitespace-nowrap">437-849-3781</span>
+              </div>
+            </a>
+          </div>
         </div>
       </div>
     </header>

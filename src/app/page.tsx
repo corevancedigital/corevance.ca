@@ -2,59 +2,6 @@
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 
-/* ─────────────────────────── TICKER BAR ──────────────────────────── */
-function TickerBar() {
-  const core = [
-    { kind: "info", icon: "📞", text: "437-849-3781",            href: "tel:4378493781" },
-    { kind: "info", icon: "✉️", text: "corevancesales@gmail.com", href: "mailto:corevancesales@gmail.com" },
-    { kind: "cta",  icon: "📞", text: "Call or E-mail us to discuss your project", href: "tel:4378493781" },
-  ];
-  const items = [...core, ...core, ...core, ...core];
-
-  return (
-    <div className="bg-[#ff6b35] overflow-hidden" style={{ height: 42 }}>
-      <div className="flex items-center h-full animate-ticker">
-        {items.map((item, i) =>
-          item.kind === "cta" ? (
-            <a key={i} href={item.href}
-               className="inline-flex items-center gap-1.5 bg-yellow-300 text-gray-900 font-bold text-xs px-4 py-1.5 rounded-full mx-4 flex-shrink-0 hover:bg-yellow-200 transition-colors whitespace-nowrap">
-              {item.icon} {item.text}
-            </a>
-          ) : (
-            <a key={i} href={item.href}
-               className="inline-flex items-center gap-1.5 text-white font-semibold text-sm px-3 flex-shrink-0 hover:underline whitespace-nowrap">
-              {item.icon} {item.text}
-            </a>
-          )
-        )}
-      </div>
-    </div>
-  );
-}
-
-/* ─────────────────────────── NAVBAR ──────────────────────────────── */
-function Navbar() {
-  return (
-    <nav className="bg-white shadow-sm sticky top-0 z-50">
-      <div className="max-w-6xl mx-auto flex items-center justify-between px-6 h-28">
-        <Image src="/corevance-logo-symbol.png" alt="CoreVance – Commercial FRP Wall Panel Installation & Supply" width={440} height={96} priority className="object-contain" />
-        <ul className="hidden md:flex gap-8 list-none">
-          {[["#services","Services"],["#products","Products"]].map(([href,label]) => (
-            <li key={href}>
-              <a href={href} className="text-[#1e3a5f] font-semibold text-sm hover:text-[#ff6b35] transition-colors no-underline">
-                {label}
-              </a>
-            </li>
-          ))}
-        </ul>
-        <a href="#contact" className="hidden md:inline-block bg-[#ff6b35] text-white font-semibold text-sm px-5 py-2.5 rounded-full hover:bg-[#e55a28] transition-colors no-underline">
-          Get a Quote
-        </a>
-      </div>
-    </nav>
-  );
-}
-
 /* ─────────────────────────── HERO ────────────────────────────────── */
 const HERO_VIDEOS = [
   "https://videos.pexels.com/video-files/6474074/6474074-hd_1920_1080_25fps.mp4",
@@ -83,7 +30,7 @@ function Hero() {
   }, [videoIdx]);
 
   return (
-    <section className="relative flex items-center justify-center overflow-hidden" style={{ minHeight: "92vh" }}>
+    <section className="relative flex items-center justify-center overflow-hidden" style={{ minHeight: "100vh" }}>
       {/* CC0 wall installation videos — smooth crossfade rotation */}
       <video
         ref={videoRef}
@@ -96,21 +43,55 @@ function Hero() {
       {/* Overlay tint */}
       <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, rgba(13,27,42,0.55) 0%, rgba(30,58,95,0.45) 100%)" }} />
 
-      <div className="relative z-10 text-center px-6 max-w-4xl mx-auto">
-        <h1 className="text-5xl md:text-7xl font-bold text-white leading-[1.1] mb-10">
-          The Commercial Standard<br />
-          in FRP Wall Panel<br />
-          Installation &amp; Supply
-        </h1>
-        <div className="flex flex-wrap items-center justify-center gap-4">
-          <a href="#contact"
-             className="bg-white text-gray-900 font-semibold px-8 py-4 rounded-full text-base hover:bg-gray-100 transition-all no-underline">
-            Start your project today
-          </a>
-          <a href="https://calendly.com/PLACEHOLDER_URL"
-             className="bg-[#3b82f6] text-white font-semibold px-8 py-4 rounded-full text-base hover:bg-[#2563eb] transition-all no-underline">
-            Book your meeting to discuss your project needs
-          </a>
+      <div className="relative z-10 w-full pt-16 pb-12 flex flex-col lg:flex-row items-center gap-8 px-6">
+        {/* Left — headline + CTA buttons */}
+        <div className="flex-1 min-w-0 text-left">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-[1.1] mb-8">
+            The Commercial Standard<br />
+            in FRP Wall Panel<br />
+            Installation &amp; Supply
+          </h1>
+          <div className="flex flex-wrap items-center gap-4">
+            <a href="#products"
+               className="bg-white text-gray-900 font-semibold px-8 py-4 rounded-full text-base hover:bg-gray-100 transition-all no-underline">
+              Products
+            </a>
+            <a href="#contact"
+               className="bg-[#3b82f6] text-white font-semibold px-8 py-4 rounded-full text-base hover:bg-[#2563eb] transition-all no-underline">
+              Book Your Meeting Today
+            </a>
+          </div>
+        </div>
+
+        {/* Right — contact form */}
+        <div className="w-full lg:w-[420px] shrink-0" id="contact">
+          <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-8 w-full">
+            <h2 className="text-2xl font-bold text-[#1e3a5f] mb-1 text-center">Tell Us About Your Project</h2>
+            <p className="text-gray-500 text-sm mb-5 text-center">Get expert consultation and a detailed quote within 24 hours</p>
+            <form action="https://formspree.io/f/YOUR_FORM_ID" method="POST" className="flex flex-col gap-4">
+              {[
+                { id: "name",  label: "Name *",  type: "text"  },
+                { id: "phone", label: "Phone *", type: "tel"   },
+                { id: "email", label: "Email *", type: "email" },
+              ].map(({ id, label, type }) => (
+                <div key={id}>
+                  <label htmlFor={id} className="block mb-1.5 font-semibold text-[#1e3a5f] text-sm">{label}</label>
+                  <input id={id} name={id} type={type} required autoComplete={id}
+                    className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#ff6b35] transition-colors" />
+                </div>
+              ))}
+              <div>
+                <label htmlFor="project" className="block mb-1.5 font-semibold text-[#1e3a5f] text-sm">Tell us about your project *</label>
+                <textarea id="project" name="project" required rows={4}
+                  placeholder="Describe your project scope, timeline, square footage, and any specific requirements..."
+                  className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#ff6b35] transition-colors resize-y" />
+              </div>
+              <button type="submit"
+                className="w-full bg-[#ff6b35] text-white font-bold py-3.5 rounded-full text-base hover:bg-[#e55a28] hover:-translate-y-0.5 transition-all shadow-md">
+                Request Free Consultation
+              </button>
+            </form>
+          </div>
         </div>
       </div>
 
@@ -168,46 +149,6 @@ function FloatingProductPanel() {
   );
 }
 
-/* ─────────────────────── CONTACT FORM ───────────────────────────── */
-function ContactForm() {
-  return (
-    <section id="contact" className="py-20 px-5" style={{ background: "linear-gradient(135deg,#f8f9fa,#e9ecef)" }}>
-      <div className="max-w-6xl mx-auto">
-        <h2 className="text-center text-4xl font-bold text-[#1e3a5f] mb-3">Tell Us About Your Project</h2>
-        <p className="text-center text-gray-500 text-lg mb-10">Get expert consultation and a detailed quote within 24 hours</p>
-        <div className="max-w-2xl mx-auto bg-white rounded-2xl shadow-xl p-12">
-          <form action="https://formspree.io/f/YOUR_FORM_ID" method="POST" className="flex flex-col gap-6">
-            {[
-              { id: "name",  label: "Name *",  type: "text"  },
-              { id: "phone", label: "Phone *", type: "tel"   },
-              { id: "email", label: "Email *", type: "email" },
-            ].map(({ id, label, type }) => (
-              <div key={id}>
-                <label htmlFor={id} className="block mb-2 font-semibold text-[#1e3a5f] text-sm">{label}</label>
-                <input id={id} name={id} type={type} required
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-base focus:outline-none focus:border-[#ff6b35] transition-colors" />
-              </div>
-            ))}
-            <div>
-              <label htmlFor="project" className="block mb-2 font-semibold text-[#1e3a5f] text-sm">Tell us about your project *</label>
-              <textarea id="project" name="project" required rows={5}
-                placeholder="Describe your project scope, timeline, square footage, and any specific requirements..."
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-base focus:outline-none focus:border-[#ff6b35] transition-colors resize-y" />
-            </div>
-            <button type="submit"
-              className="w-full bg-[#ff6b35] text-white font-bold py-4 rounded-full text-lg hover:bg-[#e55a28] hover:-translate-y-0.5 transition-all shadow-md">
-              Request Free Consultation
-            </button>
-          </form>
-          <div className="text-center mt-8 pt-8 border-t border-gray-100">
-            <p className="text-gray-600 mb-3 font-semibold">Prefer to call directly?</p>
-            <a href="tel:4378493781" className="text-3xl font-bold text-[#ff6b35] no-underline">📞 437-849-3781</a>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
 
 /* ─────────────────────── PRODUCTS ───────────────────────────────── */
 function Products() {
@@ -547,16 +488,38 @@ function Footer() {
   );
 }
 
+/* ─────────────────────── HEADER ──────────────────────────────────── */
+function Header() {
+  return (
+    <header className="bg-white border-b border-gray-100 sticky top-0 z-50">
+      <div className="w-full flex items-center justify-between px-4 sm:px-6 py-2">
+        <Image
+          src="/corevance-logo-symbol.png"
+          alt="CoreVance – Commercial FRP Wall Panel Installation & Supply"
+          width={202} height={46} priority
+          className="object-contain sm:w-[278px] sm:h-[61px]"
+        />
+        <div className="flex items-center gap-2 sm:gap-3">
+          <span className="hidden sm:inline text-[24px] font-semibold text-[#1e3a5f] whitespace-nowrap uppercase">Call us now</span>
+          <a href="tel:4378493781" aria-label="Call Corevance at 437-849-3781" className="no-underline group">
+            <div className="flex items-center px-3 sm:px-5 py-2 sm:py-2.5 rounded-full transition-opacity hover:opacity-90" style={{ background: "#ff6b35" }}>
+              <span className="text-xs sm:text-sm font-bold text-white whitespace-nowrap">437-849-3781</span>
+            </div>
+          </a>
+        </div>
+      </div>
+    </header>
+  );
+}
+
 /* ─────────────────────── PAGE ────────────────────────────────────── */
 export default function Home() {
   return (
     <div className="min-h-screen flex flex-col">
-      <TickerBar />
-      <Navbar />
+      <Header />
       <FloatingProductPanel />
       <main>
         <Hero />
-        <ContactForm />
         <Products />
         <ColorsAndSizes />
         <Accessories />

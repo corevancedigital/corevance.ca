@@ -34,7 +34,7 @@ function Hero() {
       {/* CC0 wall installation videos — smooth crossfade rotation */}
       <video
         ref={videoRef}
-        autoPlay muted playsInline
+        autoPlay muted playsInline loop
         onEnded={goNext}
         className="absolute inset-0 w-full h-full object-cover"
         style={{ filter: "brightness(0.38)", opacity: fading ? 0 : 1, transition: "opacity 0.9s ease-in-out" }}

@@ -301,7 +301,7 @@ const ACCESSORIES: Acc[] = [
     specs: [{ label: "Material", value: "Nylon" }, { label: "Type", value: "Pop rivet" }, { label: "Feature", value: "Rust-free" }, { label: "Standard", value: "Food-safe" }],
   },
   {
-    id: "titebond", name: "Titebond Adhesive", img: null, emoji: "🪣",
+    id: "titebond", name: "Titebond Adhesive", img: '/adhesive.png', emoji: "🪣",
     description: "Professional-grade FRP panel adhesive formulated for permanent, moisture-resistant bonding to virtually any clean substrate. Specifically designed for commercial kitchen and food processing environments. Low VOC formula.",
     specs: [{ label: "Type", value: "Contact cement" }, { label: "Coverage", value: "~40 sq ft/gal" }, { label: "Feature", value: "Moisture resistant" }, { label: "VOC", value: "Low VOC" }],
   },

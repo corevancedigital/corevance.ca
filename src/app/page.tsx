@@ -271,32 +271,32 @@ type Acc = {
 
 const ACCESSORIES: Acc[] = [
   {
-    id: "divider-bar", name: "Divider Bar", img: "/acc_divider_bar.png", emoji: "⚊",
+    id: "divider-bar", name: "Divider Bar", img: "/divider_bar.png", emoji: "⚊",
     description: "Divider Bar creates a clean, professional joint between two FRP panels on the same wall plane. Allows for thermal expansion while sealing panel edges against moisture intrusion. Required for code-compliant installations in food processing facilities.",
     specs: [{ label: "Material", value: "PVC" }, { label: "Length", value: "8 ft" }, { label: "Application", value: "Panel joints" }, { label: "Finish", value: "White" }],
   },
   {
-    id: "inside-corner", name: "Inside Corner", img: "/acc_inside_corner.png", emoji: "📐",
+    id: "inside-corner", name: "Inside Corner", img: "/inside_corner.png", emoji: "📐",
     description: "Inside Corner molding creates a clean sanitary seal at 90° inside corners where two FRP panels meet. Eliminates hard-to-clean gaps and provides a professional, code-compliant corner finish. Essential for commercial kitchens and food processing facilities.",
     specs: [{ label: "Material", value: "PVC" }, { label: "Length", value: "8 ft" }, { label: "Angle", value: "90°" }, { label: "Application", value: "Inside corners" }],
   },
   {
-    id: "end-cap", name: "End Cap", img: "/acc_end_cap.png", emoji: "🔲",
+    id: "end-cap", name: "End Cap", img: "/end_cap.png", emoji: "🔲",
     description: "End Cap molding covers and protects exposed edges of FRP panels at terminations. Provides a professional finished appearance at wall edges, door frames, and panel ends. Moisture-resistant and bacteria-resistant.",
     specs: [{ label: "Material", value: "PVC" }, { label: "Length", value: "8 ft" }, { label: "Finish", value: "Painted" }, { label: "Application", value: "Panel edges" }],
   },
   {
-    id: "outside-corner", name: "Outside Corner", img: "/acc_outside_corner.png", emoji: "📏",
+    id: "outside-corner", name: "Outside Corner", img: "/outside_corner.png", emoji: "📏",
     description: "Outside Corner molding protects and finishes exterior 90° corners where FRP panels meet. Guards against chipping, impact damage, and bacterial buildup at exposed corners. Required for CFIA-accepted installations.",
     specs: [{ label: "Material", value: "PVC" }, { label: "Length", value: "8 ft" }, { label: "Angle", value: "90°" }, { label: "Standard", value: "CFIA" }],
   },
   {
-    id: "outside-corner-angle", name: "Outside Corner Angle", img: "/acc_outside_corner.png", emoji: "📐",
+    id: "outside-corner-angle", name: "Outside Corner Angle", img: "/outside_corner.png", emoji: "📐",
     description: "Outside Corner Angle provides protection for non-standard angled exterior corners. Ideal for unique wall configurations and custom installation requirements where standard 90° corners are insufficient.",
     specs: [{ label: "Material", value: "PVC" }, { label: "Length", value: "8 ft" }, { label: "Application", value: "Angled corners" }],
   },
   {
-    id: "nylon-rivets", name: "Nylon Rivets", img: null, emoji: "🔘",
+    id: "nylon-rivets", name: "Nylon Rivets", img: '/rivets.png', emoji: "🔘",
     description: "Corrosion-resistant nylon rivets for secure FRP panel attachment. Non-metal construction prevents rust contamination — essential for food-safe and healthcare environments. Approved for CFIA food facility installations.",
     specs: [{ label: "Material", value: "Nylon" }, { label: "Type", value: "Pop rivet" }, { label: "Feature", value: "Rust-free" }, { label: "Standard", value: "Food-safe" }],
   },

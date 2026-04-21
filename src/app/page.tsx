@@ -153,10 +153,10 @@ function FloatingProductPanel() {
 /* ─────────────────────── PRODUCTS ───────────────────────────────── */
 function Products() {
   const products = [
-    { title: "Class C – 8′ × 4′ Pebbled",  specs: [["Size","8′ × 4′ (96″ × 48″)"], ["Finish","Pebbled texture"], ["Thickness","2mm"], ["Class","C Fire Rating"]] },
-    { title: "Class C – 8′ × 4′ Smooth",   specs: [["Size","8′ × 4′ (96″ × 48″)"], ["Finish","Smooth surface"],  ["Thickness","2mm"], ["Class","C Fire Rating"]] },
-    { title: "Class C – 10′ × 4′ Pebbled", specs: [["Size","10′ × 4′ (120″ × 48″)"],["Finish","Pebbled texture"], ["Thickness","2mm"], ["Class","C Fire Rating"]] },
-    { title: "Class C – 10′ × 4′ Smooth",  specs: [["Size","10′ × 4′ (120″ × 48″)"],["Finish","Smooth surface"],  ["Thickness","2mm"], ["Class","C Fire Rating"]] },
+    { title: "Class C – 8′ × 4′ Pebbled",  finish: "pebbled", specs: [["Size","8′ × 4′ (96″ × 48″)"], ["Finish","Pebbled texture"], ["Thickness","2mm"], ["Class","C Fire Rating"]] },
+    { title: "Class C – 8′ × 4′ Smooth",   finish: "smooth",  specs: [["Size","8′ × 4′ (96″ × 48″)"], ["Finish","Smooth surface"],  ["Thickness","2mm"], ["Class","C Fire Rating"]] },
+    { title: "Class C – 10′ × 4′ Pebbled", finish: "pebbled", specs: [["Size","10′ × 4′ (120″ × 48″)"],["Finish","Pebbled texture"], ["Thickness","2mm"], ["Class","C Fire Rating"]] },
+    { title: "Class C – 10′ × 4′ Smooth",  finish: "smooth",  specs: [["Size","10′ × 4′ (120″ × 48″)"],["Finish","Smooth surface"],  ["Thickness","2mm"], ["Class","C Fire Rating"]] },
   ];
   return (
     <section id="products" className="py-20 px-5 bg-gray-50">
@@ -164,11 +164,27 @@ function Products() {
         <h2 className="text-center text-4xl font-bold text-[#1e3a5f] mb-3">FRP Wall Panel Products</h2>
         <p className="text-center text-gray-500 text-lg mb-12">High-performance materials engineered for demanding commercial applications</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-7">
-          {products.map(({ title, specs }) => (
+          {products.map(({ title, finish, specs }) => (
             <a key={title} href={`mailto:corevancesales@gmail.com?subject=Inquiry: ${title}`}
                className="bg-white rounded-2xl shadow-md hover:-translate-y-2 hover:shadow-xl transition-all overflow-hidden group no-underline">
-              <div className="h-48 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center text-5xl relative overflow-hidden">
-                📋
+              <div className="h-48 relative overflow-hidden rounded-t-2xl" style={{ borderTop: "4px solid #e5e7eb", borderRight: "4px solid #e5e7eb", borderLeft: "4px solid #e5e7eb" }}>
+                {finish === "pebbled" ? (
+                  <Image
+                    src="/acc_frp_pebbled.png"
+                    alt={title}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                  />
+                ) : (
+                  <Image
+                    src="/frp_smooth.jpg"
+                    alt={title}
+                    fill
+                    unoptimized
+                    className="object-cover"
+                  />
+                )}
                 <div className="absolute inset-x-0 bottom-0 bg-[#ff6b35]/90 text-white text-center py-3 font-semibold text-sm translate-y-full group-hover:translate-y-0 transition-transform">
                   Click to Inquire
                 </div>

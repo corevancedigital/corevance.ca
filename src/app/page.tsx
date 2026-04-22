@@ -30,7 +30,7 @@ function Hero() {
   }, [videoIdx]);
 
   return (
-    <section className="relative flex items-center justify-center overflow-hidden" >
+    <section className="relative flex items-center justify-center overflow-hidden" style={{ minHeight: "100svh" }}>
       {/* CC0 wall installation videos — smooth crossfade rotation */}
       <video
         ref={videoRef}
@@ -41,33 +41,33 @@ function Hero() {
         src={HERO_VIDEOS[0]}
       />
       {/* Overlay tint */}
-      <div className="absolute inset-0" style={{ background: "#fff", opacity: 0.005 }} />
+      <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, rgba(13,27,42,0.55) 0%, rgba(30,58,95,0.45) 100%)" }} />
 
-      <div className="relative z-10 w-full container py-12">
-        <div className="w-full grid grid-cols-5 place-items-center gap-8">
+      <div className="relative z-10 w-full px-4 sm:px-6 pt-10 pb-12">
+        <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-5 items-center gap-8 lg:gap-12">
           {/* Left — headline + CTA buttons */}
-          <div className="col-span-3 ext-left">
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-[1.1] mb-8">
+          <div className="lg:col-span-3 text-center lg:text-left">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-white leading-[1.1] mb-6 sm:mb-8">
               The Commercial Standard<br />
               in FRP Wall Panel<br />
               Installation &amp; Supply
             </h1>
-            <div className="flex flex-wrap items-center gap-4">
+            <div className="flex flex-wrap justify-center lg:justify-start items-center gap-3 sm:gap-4">
               <a href="#products"
-                className="bg-white text-gray-900 font-semibold px-8 py-4 rounded-full text-base hover:bg-gray-100 transition-all no-underline">
+                className="bg-white text-gray-900 font-semibold px-6 sm:px-8 py-3 sm:py-4 rounded-full text-sm sm:text-base hover:bg-gray-100 transition-all no-underline">
                 Products
               </a>
               <a href="#contact"
-                className="bg-[#3b82f6] text-white font-semibold px-8 py-4 rounded-full text-base hover:bg-[#2563eb] transition-all no-underline">
+                className="bg-[#3b82f6] text-white font-semibold px-6 sm:px-8 py-3 sm:py-4 rounded-full text-sm sm:text-base hover:bg-[#2563eb] transition-all no-underline">
                 Book Your Meeting Today
               </a>
             </div>
           </div>
 
           {/* Right — contact form */}
-          <div className="col-span-2 " id="contact">
-            <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-8 w-full">
-              <h2 className="text-2xl font-bold text-[#1e3a5f] mb-1 text-center">Tell Us About Your Project</h2>
+          <div className="lg:col-span-2 w-full" id="contact">
+            <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-6 sm:p-8 w-full">
+              <h2 className="text-xl sm:text-2xl font-bold text-[#1e3a5f] mb-1 text-center">Tell Us About Your Project</h2>
               <p className="text-gray-500 text-sm mb-5 text-center">Get expert consultation and a detailed quote within 24 hours</p>
               <form action="https://formspree.io/f/YOUR_FORM_ID" method="POST" className="flex flex-col gap-4">
                 {[
@@ -95,11 +95,9 @@ function Hero() {
             </div>
           </div>
         </div>
-
       </div>
 
-
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
         <span className="text-white/40 text-xs tracking-widest uppercase">Scroll</span>
         <div className="w-px h-8 bg-gradient-to-b from-white/30 to-transparent" />
       </div>
@@ -128,7 +126,7 @@ function FloatingProductPanel() {
   ];
 
   return (
-    <div className="fixed right-5 top-1/2 -translate-y-1/2 z-40 w-60 rounded-2xl shadow-2xl border border-gray-100 overflow-hidden"
+    <div className="hidden lg:block fixed right-5 top-1/2 -translate-y-1/2 z-40 w-60 rounded-2xl shadow-2xl border border-gray-100 overflow-hidden"
       style={{ background: "white", animation: "slideInRight 0.3s ease" }}>
       <div className="flex items-center justify-between px-4 py-3" style={{ background: "#1e3a5f" }}>
         <span className="text-white font-bold text-xs uppercase tracking-wide">FRP Wall Panel Products</span>
@@ -165,8 +163,8 @@ function Products() {
   return (
     <section id="products" className="py-20 px-5 bg-gray-50">
       <div className="max-w-6xl mx-auto">
-        <h2 className="text-center text-4xl font-bold text-[#1e3a5f] mb-3">FRP Wall Panel Products</h2>
-        <p className="text-center text-gray-500 text-lg mb-12">High-performance materials engineered for demanding commercial applications</p>
+        <h2 className="text-center text-2xl sm:text-3xl lg:text-4xl font-bold text-[#1e3a5f] mb-3">FRP Wall Panel Products</h2>
+        <p className="text-center text-gray-500 text-base sm:text-lg mb-12">High-performance materials engineered for demanding commercial applications</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-7">
           {products.map(({ title, finish, specs }) => (
             <a key={title} href="#contact"
@@ -236,8 +234,8 @@ function ColorsAndSizes() {
   return (
     <section className="py-20 px-5 bg-white">
       <div className="max-w-6xl mx-auto">
-        <h2 className="text-center text-4xl font-bold text-[#1e3a5f] mb-3">Custom Sizes and Colors Available</h2>
-        <p className="text-center text-gray-500 text-lg mb-8">In-stock options ready for immediate delivery · Special orders welcome</p>
+        <h2 className="text-center text-2xl sm:text-3xl lg:text-4xl font-bold text-[#1e3a5f] mb-3">Custom Sizes and Colors Available</h2>
+        <p className="text-center text-gray-500 text-base sm:text-lg mb-8">In-stock options ready for immediate delivery · Special orders welcome</p>
         <div className="flex justify-center mb-10">
           <div className="inline-flex bg-gray-100 rounded-full p-1 gap-1">
             {(["colors", "sizes"] as const).map(t => (
@@ -329,7 +327,7 @@ function Accessories() {
   return (
     <section className="py-20 px-5 bg-white">
       <div className="max-w-6xl mx-auto">
-        <h2 className="text-center text-5xl font-bold text-[#1e3a5f] mb-3">FRP Installation Accessories</h2>
+        <h2 className="text-center text-3xl sm:text-4xl lg:text-5xl font-bold text-[#1e3a5f] mb-3">FRP Installation Accessories</h2>
         <p className="text-center text-lg font-semibold text-[#ff6b35] mb-2">Complete Your Installation</p>
         <p className="text-center text-gray-500 text-base mb-12">Professional-grade accessories for every joint, corner, and edge</p>
 
@@ -416,8 +414,8 @@ function Services() {
   return (
     <section id="services" className="py-20 px-5 bg-gray-50">
       <div className="max-w-6xl mx-auto">
-        <h2 className="text-center text-4xl font-bold text-[#1e3a5f] mb-3">Our Services</h2>
-        <p className="text-center text-gray-500 text-lg mb-12">Comprehensive FRP solutions backed by decades of commercial installation expertise</p>
+        <h2 className="text-center text-2xl sm:text-3xl lg:text-4xl font-bold text-[#1e3a5f] mb-3">Our Services</h2>
+        <p className="text-center text-gray-500 text-base sm:text-lg mb-12">Comprehensive FRP solutions backed by decades of commercial installation expertise</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-7">
           {items.map(({ icon, title, desc }) => (
             <div key={title} className="border-2 border-gray-200 rounded-2xl p-10 text-center hover:border-[#ff6b35] hover:-translate-y-2 hover:shadow-xl transition-all bg-white">
@@ -443,8 +441,8 @@ function WhyChooseUs() {
   return (
     <section className="py-20 px-5" style={{ background: "linear-gradient(135deg,#0d1b2a,#1e3a5f)" }}>
       <div className="max-w-6xl mx-auto">
-        <h2 className="text-center text-4xl font-bold text-white mb-3">Why Choose Corevance</h2>
-        <p className="text-center text-white/70 text-lg mb-12">Built from the core, engineered to advance your commercial projects</p>
+        <h2 className="text-center text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-3">Why Choose Corevance</h2>
+        <p className="text-center text-white/70 text-base sm:text-lg mb-12">Built from the core, engineered to advance your commercial projects</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {features.map(({ icon, title, desc }) => (
             <div key={title} className="text-center p-9 rounded-2xl border-2 border-white/15 bg-white/8 hover:bg-white/12 hover:border-[#ff6b35] hover:-translate-y-1 transition-all">
@@ -465,7 +463,7 @@ function Footer() {
     <footer className="bg-white pt-16 pb-8 px-5 border-t-4 border-[#ff6b35]">
       <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-10">
         <div>
-          <Image src="/corevance-logo-symbol.png" alt="CoreVance – Commercial FRP Wall Panel Installation & Supply" width={330} height={72} className="object-contain mb-5" />
+          <Image src="/corevance-logo-symbol.png" alt="CoreVance – Commercial FRP Wall Panel Installation & Supply" width={330} height={72} className="object-contain mb-5 max-w-full w-[220px] sm:w-[280px] lg:w-[330px]" />
           <p className="text-gray-600 leading-relaxed text-sm" style={{ textAlign: "justify", hyphens: "auto" }}>
             We don&apos;t just install panels — we set the standard. Corevance delivers precision-engineered FRP solutions to commercial contractors and facility operators who refuse to compromise. From the first estimate to the final rivet, we bring craftsmanship, speed, and accountability to every project.
           </p>
@@ -510,23 +508,21 @@ function Footer() {
 /* ─────────────────────── HEADER ──────────────────────────────────── */
 function Header() {
   return (
-    <header className="bg-white border-b border-gray-100 sticky top-0 z-50 px-6">
-      <div className="w-full container mx-auto">
-        <div className="flex items-center justify-between px-4 sm:px-6 py-4">
-          <Image
-            src="/corevance-logo-symbol.png"
-            alt="CoreVance – Commercial FRP Wall Panel Installation & Supply"
-            width={240} height={52} priority
-            className="object-contain sm:w-[278px] sm:h-[61px]"
-          />
-          <div className="flex items-center gap-2 sm:gap-3">
-            <span className="hidden sm:inline text-[24px] font-semibold text-[#1e3a5f] whitespace-nowrap uppercase">Call us now</span>
-            <a href="tel:4378493781" aria-label="Call Corevance at 437-849-3781" className="no-underline group">
-              <div className="flex items-center px-3 sm:px-5 py-2 sm:py-2.5 rounded-full transition-opacity hover:opacity-90" style={{ background: "#ff6b35" }}>
-                <span className="text-[24px] font-bold text-white whitespace-nowrap">437-849-3781</span>
-              </div>
-            </a>
-          </div>
+    <header className="bg-white border-b border-gray-100 sticky top-0 z-50">
+      <div className="w-full max-w-6xl mx-auto flex items-center justify-between px-3 sm:px-6 py-2 sm:py-3">
+        <Image
+          src="/corevance-logo-symbol.png"
+          alt="CoreVance – Commercial FRP Wall Panel Installation & Supply"
+          width={278} height={61} priority
+          className="object-contain w-[150px] h-auto sm:w-[220px] lg:w-[278px]"
+        />
+        <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+          <span className="hidden sm:inline text-[24px] font-semibold text-[#1e3a5f] whitespace-nowrap uppercase">Call us now</span>
+          <a href="tel:4378493781" aria-label="Call Corevance at 437-849-3781" className="no-underline group">
+            <div className="flex items-center px-3 sm:px-5 py-1.5 sm:py-2.5 rounded-full transition-opacity hover:opacity-90" style={{ background: "#ff6b35" }}>
+              <span className="text-xs sm:text-[24px] font-bold text-white whitespace-nowrap">437-849-3781</span>
+            </div>
+          </a>
         </div>
       </div>
     </header>

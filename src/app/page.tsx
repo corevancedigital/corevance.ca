@@ -169,7 +169,7 @@ function Products() {
         <p className="text-center text-gray-500 text-lg mb-12">High-performance materials engineered for demanding commercial applications</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-7">
           {products.map(({ title, finish, specs }) => (
-            <a key={title} href={`mailto:corevancesales@gmail.com?subject=Inquiry: ${title}`}
+            <a key={title} href="#contact"
                className="bg-white rounded-2xl shadow-md hover:-translate-y-2 hover:shadow-xl transition-all overflow-hidden group no-underline">
               <div className="h-48 relative overflow-hidden rounded-t-2xl" style={{ borderTop: "4px solid #e5e7eb", borderRight: "4px solid #e5e7eb", borderLeft: "4px solid #e5e7eb" }}>
                 {finish === "pebbled" ? (

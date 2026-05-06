@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+        http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+
+  <!-- Homepage -->
+  <url>
+    <loc>https://www.corevance.ca/</loc>
+    <lastmod>2025-05-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <!-- Products section anchor -->
+  <url>
+    <loc>https://www.corevance.ca/#products</loc>
+    <lastmod>2025-05-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Services section anchor -->
+  <url>
+    <loc>https://www.corevance.ca/#services</loc>
+    <lastmod>2025-05-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Contact section anchor -->
+  <url>
+    <loc>https://www.corevance.ca/#contact</loc>
+    <lastmod>2025-05-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- ============================================================ -->
+  <!-- PLACEHOLDER PAGES — Create these to unlock full SEO ranking  -->
+  <!-- ============================================================ -->
+
+  <!-- Dedicated Products page (recommended to build) -->
+  <!-- <url>
+    <loc>https://www.corevance.ca/products</loc>
+    <lastmod>2025-05-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url> -->
+
+  <!-- Dedicated Services page (recommended to build) -->
+  <!-- <url>
+    <loc>https://www.corevance.ca/services</loc>
+    <lastmod>2025-05-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url> -->
+
+  <!-- Location pages (HIGH PRIORITY — build these for local SEO) -->
+  <!-- <url>
+    <loc>https://www.corevance.ca/frp-installation-toronto</loc>
+    <lastmod>2025-05-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://www.corevance.ca/frp-installation-mississauga</loc>
+    <lastmod>2025-05-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://www.corevance.ca/frp-installation-brampton</loc>
+    <lastmod>2025-05-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.corevance.ca/frp-installation-north-york</loc>
+    <lastmod>2025-05-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.corevance.ca/frp-installation-scarborough</loc>
+    <lastmod>2025-05-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url> -->
+
+  <!-- Blog index (build this for content marketing) -->
+  <!-- <url>
+    <loc>https://www.corevance.ca/blog</loc>
+    <lastmod>2025-05-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.75</priority>
+  </url> -->
+
+  <!-- Sample blog posts (add each when published) -->
+  <!-- <url>
+    <loc>https://www.corevance.ca/blog/frp-vs-tile-commercial-kitchen</loc>
+    <lastmod>2025-05-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.corevance.ca/blog/class-c-fire-rating-explained</loc>
+    <lastmod>2025-05-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.corevance.ca/blog/how-to-install-frp-wall-panels</loc>
+    <lastmod>2025-05-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url> -->
+
+  <!-- About page (build to establish trust signals) -->
+  <!-- <url>
+    <loc>https://www.corevance.ca/about</loc>
+    <lastmod>2025-05-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.65</priority>
+  </url> -->
+
+</urlset>

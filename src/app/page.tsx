@@ -11,13 +11,13 @@ function Hero() {
         autoPlay muted playsInline loop
         poster="/frp_smooth.jpg"
         className="absolute inset-0 w-full h-full object-cover"
-        style={{ filter: "brightness(0.38)" }}
+        style={{ filter: "brightness(0.55)" }}
       >
         <source src="/hero.webm" type="video/webm" />
         <source src="/hero.mp4" type="video/mp4" />
       </video>
       {/* Overlay tint */}
-      <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, rgba(13,27,42,0.55) 0%, rgba(30,58,95,0.45) 100%)" }} />
+      <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, rgba(13,27,42,0.35) 0%, rgba(30,58,95,0.28) 100%)" }} />
 
       <div className="relative z-10 w-full px-4 sm:px-6 pt-10 pb-12">
         <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-5 items-center gap-8 lg:gap-12">

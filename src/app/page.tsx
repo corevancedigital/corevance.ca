@@ -32,13 +32,14 @@ function Hero() {
   return (
     <section className="relative flex items-center justify-center overflow-hidden" style={{ minHeight: "100svh" }}>
       {/* CC0 wall installation videos — smooth crossfade rotation */}
+      {/* poster loads instantly from local server — becomes the LCP element instead of the external video */}
       <video
         ref={videoRef}
         autoPlay muted playsInline loop
         onEnded={goNext}
+        poster="/frp_smooth.jpg"
         className="absolute inset-0 w-full h-full object-cover"
         style={{ filter: "brightness(0.38)", opacity: fading ? 0 : 1, transition: "opacity 0.9s ease-in-out" }}
-        src={HERO_VIDEOS[0]}
       />
       {/* Overlay tint */}
       <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, rgba(13,27,42,0.55) 0%, rgba(30,58,95,0.45) 100%)" }} />

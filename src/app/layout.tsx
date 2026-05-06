@@ -116,6 +116,76 @@ const jsonLd = {
   ],
 };
 
+const servicesJsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": `${SITE_URL}/#organization`,
+      name: "Corevance",
+      url: SITE_URL,
+      logo: {
+        "@type": "ImageObject",
+        url: `${SITE_URL}/corevance-logo-symbol.png`,
+      },
+      contactPoint: {
+        "@type": "ContactPoint",
+        telephone: "+1-437-849-3781",
+        contactType: "customer service",
+        areaServed: "CA",
+        availableLanguage: "English",
+      },
+      sameAs: ["https://share.google/BeTDV46PAjKJ0mmCC"],
+    },
+    {
+      "@type": "Service",
+      "@id": `${SITE_URL}/#service-installation`,
+      name: "FRP Wall Panel Installation",
+      provider: { "@id": `${SITE_URL}/#organization` },
+      description: "Professional CFIA-accepted FRP fiberglass wall panel installation for commercial kitchens, food processing facilities, and industrial spaces across the Greater Toronto Area.",
+      areaServed: "Greater Toronto Area",
+      serviceType: "Commercial Wall Panel Installation",
+      hasOfferCatalog: {
+        "@type": "OfferCatalog",
+        name: "FRP Installation Services",
+      },
+    },
+    {
+      "@type": "Service",
+      "@id": `${SITE_URL}/#service-supply`,
+      name: "FRP Wall Panel Supply",
+      provider: { "@id": `${SITE_URL}/#organization` },
+      description: "Class C fire-rated FRP panels in stock with same-day delivery across the GTA. Available in 8′×4′ and 10′×4′ sizes with pebbled or smooth finishes.",
+      areaServed: "Greater Toronto Area",
+      serviceType: "Commercial Building Materials Supply",
+    },
+    {
+      "@type": "Service",
+      "@id": `${SITE_URL}/#service-custom`,
+      name: "Custom FRP Panel Solutions",
+      provider: { "@id": `${SITE_URL}/#organization` },
+      description: "Special order FRP panels in non-standard dimensions, custom colours, and unique specifications for commercial projects across Canada.",
+      areaServed: "Canada",
+      serviceType: "Custom Commercial Wall Panels",
+    },
+    {
+      "@type": "Service",
+      "@id": `${SITE_URL}/#service-consultation`,
+      name: "FRP Project Consultation & Quoting",
+      provider: { "@id": `${SITE_URL}/#organization` },
+      description: "Free on-site assessments, material planning, and health-code compliance guidance. Detailed quotes delivered within 24 hours.",
+      areaServed: "Greater Toronto Area",
+      serviceType: "Commercial Construction Consultation",
+      offers: {
+        "@type": "Offer",
+        price: "0",
+        priceCurrency: "CAD",
+        description: "Free consultation and quote",
+      },
+    },
+  ],
+};
+
 const faqJsonLd = {
   "@context": "https://schema.org",
   "@type": "FAQPage",
@@ -182,6 +252,10 @@ export default function RootLayout({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(servicesJsonLd) }}
         />
         <script
           type="application/ld+json"

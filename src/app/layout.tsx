@@ -111,7 +111,9 @@ const jsonLd = {
     { "@type": "OpeningHoursSpecification", dayOfWeek: ["Saturday"], opens: "09:00", closes: "14:00" },
   ],
   priceRange: "$$",
-  sameAs: [],
+  sameAs: [
+    "https://share.google/BeTDV46PAjKJ0mmCC",
+  ],
 };
 
 const faqJsonLd = {

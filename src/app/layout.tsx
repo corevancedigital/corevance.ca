@@ -78,6 +78,7 @@ const jsonLd = {
   name: "Corevance",
   url: SITE_URL,
   logo: `${SITE_URL}/corevance-logo-symbol.png`,
+  image: `${SITE_URL}/corevance-logo-full.png`,
   description:
     "Commercial FRP fiberglass wall panel installation and supply. CFIA-accepted, Class C rated panels for commercial kitchens, food facilities, and industrial spaces.",
   telephone: "+1-437-849-3781",
@@ -87,17 +88,85 @@ const jsonLd = {
     addressCountry: "CA",
     addressRegion: "ON",
   },
-  areaServed: {
-    "@type": "Country",
-    name: "Canada",
+  areaServed: [
+    { "@type": "City", name: "Toronto" },
+    { "@type": "City", name: "Mississauga" },
+    { "@type": "City", name: "Brampton" },
+    { "@type": "City", name: "North York" },
+    { "@type": "City", name: "Scarborough" },
+    { "@type": "AdministrativeArea", name: "Greater Toronto Area" },
+  ],
+  hasOfferCatalog: {
+    "@type": "OfferCatalog",
+    name: "FRP Wall Panel Products & Services",
+    itemListElement: [
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "FRP Wall Panel Installation" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Commercial Kitchen Wall Panel Supply" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Custom FRP Panel Solutions" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Project Consultation & Quotes" } },
+    ],
   },
-  serviceType: [
-    "FRP Wall Panel Installation",
-    "Fiberglass Reinforced Panel Supply",
-    "Commercial Kitchen Wall Panels",
+  openingHoursSpecification: [
+    { "@type": "OpeningHoursSpecification", dayOfWeek: ["Monday","Tuesday","Wednesday","Thursday","Friday"], opens: "08:00", closes: "18:00" },
+    { "@type": "OpeningHoursSpecification", dayOfWeek: ["Saturday"], opens: "09:00", closes: "14:00" },
   ],
   priceRange: "$$",
   sameAs: [],
+};
+
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "How much does FRP panel installation cost in Toronto?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "FRP panel installation in Toronto typically costs between $8 and $18 per square foot installed, depending on project scope, wall condition, and accessibility. Corevance provides free on-site consultations and detailed quotes within 24 hours. Call 437-849-3781 for a custom estimate.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Is FRP better than tile for commercial kitchens?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Yes. FRP panels outperform ceramic tile in commercial kitchens. FRP has no grout lines where bacteria accumulate, is seamless and easier to sanitize, installs faster at lower cost, resists moisture and impact, and is CFIA-accepted for food facilities. FRP panels meet health code standards without the ongoing maintenance burden of grouted tile.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "What are FRP wall panels used for?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "FRP (Fiberglass Reinforced Panels) are used in commercial kitchens, food processing facilities, restaurants, healthcare facilities, car washes, and industrial spaces. They provide a hygienic, moisture-resistant, and durable wall surface that meets CFIA, health code, and building code requirements—ideal anywhere hygiene and durability are critical.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "How long does commercial FRP installation take?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "A typical commercial FRP installation takes 1 to 3 days depending on square footage and wall condition. Corevance offers same-day material delivery across the GTA and experienced crews that minimize disruption to your operations.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Are FRP panels CFIA approved for food facilities in Canada?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Yes. Class C FRP panels installed with proper PVC moldings, nylon rivets, and food-safe adhesives are CFIA (Canadian Food Inspection Agency) accepted for food processing and food service facilities. Corevance installs complete FRP systems that meet all CFIA and provincial health code requirements.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "What FRP panel sizes does Corevance supply?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Corevance stocks FRP panels in 8′ × 4′ and 10′ × 4′ sizes in pebbled and smooth finishes, with 2mm thickness and Class C fire rating. Custom sizes up to 12′ × 5′ are available on special order. Available colours include Almond, Ivory, Beige, Light Gray, Silver, and Black.",
+      },
+    },
+  ],
 };
 
 export default function RootLayout({
@@ -111,6 +180,10 @@ export default function RootLayout({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
         />
       </head>
       <body className="min-h-full flex flex-col">{children}</body>

@@ -513,8 +513,9 @@ function FAQ() {
 /* ─────────────────────── FOOTER ─────────────────────────────────── */
 function Footer() {
   return (
-    <footer className="bg-white pt-16 pb-8 px-5 border-t-4 border-[#ff6b35]">
-      <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-10">
+    <footer className="bg-white pt-16 pb-8 border-t-4 border-[#ff6b35]">
+      <div className="max-w-6xl mx-auto px-10">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-10">
         <div>
           <Image src="/corevance-logo-symbol.png" alt="CoreVance – Commercial FRP Wall Panel Installation & Supply" width={330} height={72} className="object-contain mb-5 max-w-full w-[220px] sm:w-[280px] lg:w-[330px]" />
           <p className="text-gray-600 leading-relaxed text-sm" style={{ textAlign: "justify", hyphens: "auto" }}>
@@ -559,6 +560,7 @@ function Footer() {
       <div className="text-center border-t border-gray-200 pt-8 text-gray-400 text-sm">
         <p className="text-[#1e3a5f] font-semibold">© 2025 Corevance. All rights reserved.</p>
         <p className="mt-2 text-xs text-gray-400">Professional FRP wall panel installation and supply services</p>
+      </div>
       </div>
     </footer>
   );

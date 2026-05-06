@@ -1,46 +1,21 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 
 /* ─────────────────────────── HERO ────────────────────────────────── */
-const HERO_VIDEOS = [
-  "https://videos.pexels.com/video-files/6474074/6474074-hd_1920_1080_25fps.mp4",
-  // "https://videos.pexels.com/video-files/6474077/6474077-hd_1920_1080_25fps.mp4",
-  // "https://videos.pexels.com/video-files/6474078/6474078-hd_1920_1080_25fps.mp4",
-];
-
 function Hero() {
-  const [videoIdx, setVideoIdx] = useState(0);
-  const [fading, setFading] = useState(false);
-  const videoRef = useRef<HTMLVideoElement>(null);
-
-  const goNext = () => {
-    setFading(true);
-    setTimeout(() => {
-      setVideoIdx(i => (i + 1) % HERO_VIDEOS.length);
-      setFading(false);
-    }, 900);
-  };
-
-  useEffect(() => {
-    const el = videoRef.current;
-    if (!el) return;
-    el.src = HERO_VIDEOS[videoIdx];
-    el.play().catch(() => { });
-  }, [videoIdx]);
-
   return (
     <section className="relative flex items-center justify-center overflow-hidden" style={{ minHeight: "100svh" }}>
-      {/* CC0 wall installation videos — smooth crossfade rotation */}
-      {/* poster loads instantly from local server — becomes the LCP element instead of the external video */}
+      {/* Self-hosted WebM/MP4 — poster shows instantly as LCP element */}
       <video
-        ref={videoRef}
         autoPlay muted playsInline loop
-        onEnded={goNext}
         poster="/frp_smooth.jpg"
         className="absolute inset-0 w-full h-full object-cover"
-        style={{ filter: "brightness(0.38)", opacity: fading ? 0 : 1, transition: "opacity 0.9s ease-in-out" }}
-      />
+        style={{ filter: "brightness(0.38)" }}
+      >
+        <source src="/hero.webm" type="video/webm" />
+        <source src="/hero.mp4" type="video/mp4" />
+      </video>
       {/* Overlay tint */}
       <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, rgba(13,27,42,0.55) 0%, rgba(30,58,95,0.45) 100%)" }} />
 

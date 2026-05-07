@@ -1,27 +1,27 @@
-"use client";
-import { useState, useEffect } from "react";
 import Image from "next/image";
+import FloatingProductPanel from "./components/FloatingProductPanel";
+import ColorsAndSizes from "./components/ColorsAndSizes";
+import AccessoriesSection from "./components/AccessoriesSection";
+import FAQSection from "./components/FAQSection";
 
 /* ─────────────────────────── HERO ────────────────────────────────── */
 function Hero() {
   return (
     <section className="relative flex items-center justify-center overflow-hidden" style={{ minHeight: "100svh" }}>
-      {/* Self-hosted WebM/MP4 — poster shows instantly as LCP element */}
       <video
         autoPlay muted playsInline loop
         poster="/frp_smooth.jpg"
+        preload="none"
         className="absolute inset-0 w-full h-full object-cover"
         style={{ filter: "brightness(0.55)" }}
       >
         <source src="/hero.webm" type="video/webm" />
         <source src="/hero.mp4" type="video/mp4" />
       </video>
-      {/* Overlay tint */}
       <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, rgba(13,27,42,0.35) 0%, rgba(30,58,95,0.28) 100%)" }} />
 
       <div className="relative z-10 w-full px-4 sm:px-6 pt-10 pb-12">
         <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-5 items-center gap-8 lg:gap-12">
-          {/* Left — headline + CTA buttons */}
           <div className="lg:col-span-3 text-center lg:text-left">
             <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-white leading-[1.1] mb-6 sm:mb-8">
               The Commercial Standard<br />
@@ -40,7 +40,6 @@ function Hero() {
             </div>
           </div>
 
-          {/* Right — contact form */}
           <div className="lg:col-span-2 w-full" id="contact">
             <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-6 sm:p-8 w-full">
               <h2 className="text-xl sm:text-2xl font-bold text-[#1e3a5f] mb-1 text-center">Tell Us About Your Project</h2>
@@ -81,53 +80,6 @@ function Hero() {
   );
 }
 
-/* ──────────────── FLOATING PRODUCT PANEL ─────────────────────────── */
-function FloatingProductPanel() {
-  const [visible, setVisible] = useState(false);
-  const [dismissed, setDismissed] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => { if (!dismissed) setVisible(window.scrollY > 550); };
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
-  }, [dismissed]);
-
-  if (!visible || dismissed) return null;
-
-  const products = [
-    { name: "8′ × 4′ Pebbled", detail: "96″ × 48″ · Pebbled" },
-    { name: "8′ × 4′ Smooth", detail: "96″ × 48″ · Smooth" },
-    { name: "10′ × 4′ Pebbled", detail: "120″ × 48″ · Pebbled" },
-    { name: "10′ × 4′ Smooth", detail: "120″ × 48″ · Smooth" },
-  ];
-
-  return (
-    <div className="hidden lg:block fixed right-5 top-1/2 -translate-y-1/2 z-40 w-60 rounded-2xl shadow-2xl border border-gray-100 overflow-hidden"
-      style={{ background: "white", animation: "slideInRight 0.3s ease" }}>
-      <div className="flex items-center justify-between px-4 py-3" style={{ background: "#1e3a5f" }}>
-        <span className="text-white font-bold text-xs uppercase tracking-wide">FRP Wall Panel Products</span>
-        <button onClick={() => setDismissed(true)} className="text-white/60 hover:text-white text-base leading-none ml-2">×</button>
-      </div>
-      <div className="p-3">
-        {products.map(p => (
-          <a key={p.name} href="#products"
-            className="flex items-start gap-2 px-2.5 py-2.5 rounded-lg hover:bg-gray-50 transition-colors group no-underline">
-            <span className="text-[#ff6b35] text-xs mt-0.5 flex-shrink-0">▪</span>
-            <div>
-              <p className="font-semibold text-[#1e3a5f] text-xs group-hover:text-[#ff6b35] transition-colors">Class C – {p.name}</p>
-              <p className="text-gray-400 text-xs">{p.detail} · 2mm</p>
-            </div>
-          </a>
-        ))}
-        <a href="#products" className="block mt-2 pt-2 border-t border-gray-100 text-center text-xs font-semibold text-[#ff6b35] hover:underline py-1">
-          View all products →
-        </a>
-      </div>
-    </div>
-  );
-}
-
-
 /* ─────────────────────── PRODUCTS ───────────────────────────────── */
 function Products() {
   const products = [
@@ -159,8 +111,8 @@ function Products() {
                     src="/frp_smooth.jpg"
                     alt={title}
                     fill
-                    unoptimized
                     className="object-cover"
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                   />
                 )}
                 <div className="absolute inset-x-0 bottom-0 bg-[#ff6b35]/90 text-white text-center py-3 font-semibold text-sm translate-y-full group-hover:translate-y-0 transition-transform">
@@ -182,199 +134,6 @@ function Products() {
           ))}
         </div>
       </div>
-    </section>
-  );
-}
-
-/* ────────────────── CUSTOM SIZES & COLORS ───────────────────────── */
-function ColorsAndSizes() {
-  const [tab, setTab] = useState<"colors" | "sizes">("colors");
-
-  const colors = [
-    { name: "Almond", bg: "#f5f0e8" },
-    { name: "Ivory", bg: "#fffff0" },
-    { name: "Beige", bg: "#f5f5dc" },
-    { name: "Light Gray", bg: "#d3d3d3" },
-    { name: "Silver", bg: "#c0c0c0" },
-    { name: "Black", bg: "#1a1a1a" },
-  ];
-
-  const sizes = [
-    { dim: "8′ × 4′", inches: "96″ × 48″", tag: "Standard" },
-    { dim: "10′ × 4′", inches: "120″ × 48″", tag: "Standard" },
-    { dim: "12′ × 4′", inches: "144″ × 48″", tag: "Large" },
-    { dim: "10′ × 5′", inches: "120″ × 60″", tag: "Wide" },
-    { dim: "12′ × 5′", inches: "144″ × 60″", tag: "Extra Large" },
-  ];
-
-  return (
-    <section className="py-20 px-5 bg-white">
-      <div className="max-w-6xl mx-auto">
-        <h2 className="text-center text-2xl sm:text-3xl lg:text-4xl font-bold text-[#1e3a5f] mb-3">Custom Sizes and Colors Available</h2>
-        <p className="text-center text-gray-500 text-base sm:text-lg mb-8">In-stock options ready for immediate delivery · Special orders welcome</p>
-        <div className="flex justify-center mb-10">
-          <div className="inline-flex bg-gray-100 rounded-full p-1 gap-1">
-            {(["colors", "sizes"] as const).map(t => (
-              <button key={t} onClick={() => setTab(t)}
-                className={`px-8 py-2.5 rounded-full font-semibold text-sm transition-all capitalize ${tab === t ? "bg-white text-[#1e3a5f] shadow-sm" : "text-gray-400 hover:text-gray-600"}`}>
-                {t}
-              </button>
-            ))}
-          </div>
-        </div>
-        {tab === "colors" && (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-5 max-w-4xl mx-auto">
-            {colors.map(({ name, bg }) => (
-              <div key={name} className="text-center p-4 border-2 border-gray-200 rounded-xl hover:border-[#ff6b35] hover:scale-105 transition-all cursor-pointer">
-                <div className="w-full h-24 rounded-lg mb-3 border border-gray-300" style={{ background: bg }} />
-                <p className="font-semibold text-[#1e3a5f] text-sm">{name}</p>
-              </div>
-            ))}
-          </div>
-        )}
-        {tab === "sizes" && (
-          <div className="max-w-3xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {sizes.map(({ dim, inches, tag }) => (
-              <div key={dim} className="border-2 border-gray-200 rounded-xl p-6 hover:border-[#ff6b35] transition-all text-center">
-                <div className="text-3xl font-bold text-[#1e3a5f] mb-1">{dim}</div>
-                <div className="text-sm text-gray-500 mb-3">{inches}</div>
-                <span className="inline-block bg-[#ff6b35]/10 text-[#ff6b35] font-semibold text-xs px-3 py-1 rounded-full">{tag}</span>
-              </div>
-            ))}
-          </div>
-        )}
-        <p className="text-center mt-10 text-gray-500 text-sm">
-          Need a non-standard specification?{" "}
-          <a href="#contact" className="text-[#ff6b35] font-semibold hover:underline">Contact us</a>
-          {" "}for custom colors, dimensions, and special orders.
-        </p>
-      </div>
-    </section>
-  );
-}
-
-/* ─────────────────── ACCESSORIES — LIST + MODAL ─────────────────── */
-type Acc = {
-  id: string; name: string; img: string | null; emoji: string;
-  description: string; specs: { label: string; value: string }[];
-};
-
-const ACCESSORIES: Acc[] = [
-  {
-    id: "divider-bar", name: "Divider Bar", img: "/divider_bar.png", emoji: "⚊",
-    description: "Divider Bar creates a clean, professional joint between two FRP panels on the same wall plane. Allows for thermal expansion while sealing panel edges against moisture intrusion. Required for code-compliant installations in food processing facilities.",
-    specs: [{ label: "Material", value: "PVC" }, { label: "Length", value: "8 ft" }, { label: "Application", value: "Panel joints" }, { label: "Finish", value: "White" }],
-  },
-  {
-    id: "inside-corner", name: "Inside Corner", img: "/inside_corner.png", emoji: "📐",
-    description: "Inside Corner molding creates a clean sanitary seal at 90° inside corners where two FRP panels meet. Eliminates hard-to-clean gaps and provides a professional, code-compliant corner finish. Essential for commercial kitchens and food processing facilities.",
-    specs: [{ label: "Material", value: "PVC" }, { label: "Length", value: "8 ft" }, { label: "Angle", value: "90°" }, { label: "Application", value: "Inside corners" }],
-  },
-  {
-    id: "end-cap", name: "End Cap", img: "/end_cap.png", emoji: "🔲",
-    description: "End Cap molding covers and protects exposed edges of FRP panels at terminations. Provides a professional finished appearance at wall edges, door frames, and panel ends. Moisture-resistant and bacteria-resistant.",
-    specs: [{ label: "Material", value: "PVC" }, { label: "Length", value: "8 ft" }, { label: "Finish", value: "Painted" }, { label: "Application", value: "Panel edges" }],
-  },
-  {
-    id: "outside-corner", name: "Outside Corner", img: "/outside_corner.png", emoji: "📏",
-    description: "Outside Corner molding protects and finishes exterior 90° corners where FRP panels meet. Guards against chipping, impact damage, and bacterial buildup at exposed corners. Required for CFIA-accepted installations.",
-    specs: [{ label: "Material", value: "PVC" }, { label: "Length", value: "8 ft" }, { label: "Angle", value: "90°" }, { label: "Standard", value: "CFIA" }],
-  },
-  {
-    id: "outside-corner-angle", name: "Outside Corner Angle", img: "/outside_corner.png", emoji: "📐",
-    description: "Outside Corner Angle provides protection for non-standard angled exterior corners. Ideal for unique wall configurations and custom installation requirements where standard 90° corners are insufficient.",
-    specs: [{ label: "Material", value: "PVC" }, { label: "Length", value: "8 ft" }, { label: "Application", value: "Angled corners" }],
-  },
-  {
-    id: "nylon-rivets", name: "Nylon Rivets", img: '/rivets.png', emoji: "🔘",
-    description: "Corrosion-resistant nylon rivets for secure FRP panel attachment. Non-metal construction prevents rust contamination — essential for food-safe and healthcare environments. Approved for CFIA food facility installations.",
-    specs: [{ label: "Material", value: "Nylon" }, { label: "Type", value: "Pop rivet" }, { label: "Feature", value: "Rust-free" }, { label: "Standard", value: "Food-safe" }],
-  },
-  {
-    id: "titebond", name: "Titebond Adhesive", img: '/adhesive.png', emoji: "🪣",
-    description: "Professional-grade FRP panel adhesive formulated for permanent, moisture-resistant bonding to virtually any clean substrate. Specifically designed for commercial kitchen and food processing environments. Low VOC formula.",
-    specs: [{ label: "Type", value: "Contact cement" }, { label: "Coverage", value: "~40 sq ft/gal" }, { label: "Feature", value: "Moisture resistant" }, { label: "VOC", value: "Low VOC" }],
-  },
-];
-
-function Accessories() {
-  const [modal, setModal] = useState<Acc | null>(null);
-
-  return (
-    <section className="py-20 px-5 bg-white">
-      <div className="max-w-6xl mx-auto">
-        <h2 className="text-center text-3xl sm:text-4xl lg:text-5xl font-bold text-[#1e3a5f] mb-3">FRP Installation Accessories</h2>
-        <p className="text-center text-lg font-semibold text-[#ff6b35] mb-2">Complete Your Installation</p>
-        <p className="text-center text-gray-500 text-base mb-12">Professional-grade accessories for every joint, corner, and edge</p>
-
-        {/* Vertical list */}
-        <div className="max-w-3xl mx-auto flex flex-col gap-4">
-          {ACCESSORIES.map(acc => (
-            <div key={acc.id}
-              className="flex items-center gap-5 bg-gray-50 border-2 border-gray-200 rounded-2xl p-5 hover:border-[#ff6b35] hover:shadow-md transition-all group">
-              {/* Product thumbnail — white bg matches product photography */}
-              <div className="flex-shrink-0 w-16 h-16 rounded-xl bg-white border border-gray-200 flex items-center justify-center overflow-hidden">
-                {acc.img
-                  ? <Image src={acc.img} alt={acc.name} width={56} height={56} className="object-contain p-1" />
-                  : <span className="text-3xl">{acc.emoji}</span>
-                }
-              </div>
-              <div className="flex-1 min-w-0">
-                <h4 className="font-bold text-[#1e3a5f] text-lg group-hover:text-[#ff6b35] transition-colors">{acc.name}</h4>
-                <p className="text-gray-400 text-sm mt-0.5">{acc.specs[0].label}: {acc.specs[0].value} · {acc.specs[1]?.label}: {acc.specs[1]?.value}</p>
-              </div>
-              <button onClick={() => setModal(acc)}
-                aria-label={`Learn more about ${acc.name}`}
-                className="flex-shrink-0 w-10 h-10 rounded-full border-2 border-[#ff6b35] text-[#ff6b35] text-xl font-bold flex items-center justify-center hover:bg-[#ff6b35] hover:text-white transition-all">
-                +
-              </button>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Modal — image LEFT, details RIGHT */}
-      {modal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4"
-          style={{ background: "rgba(0,0,0,0.6)" }}
-          onClick={() => setModal(null)}>
-          <div className="bg-white rounded-3xl shadow-2xl overflow-hidden w-full max-w-3xl max-h-[90vh] overflow-y-auto"
-            onClick={e => e.stopPropagation()}>
-            <div className="flex flex-col md:flex-row" style={{ minHeight: 420 }}>
-              {/* LEFT: product image on same clean bg as product photography */}
-              <div className="md:w-[60%] flex flex-col items-center justify-center p-12 bg-[#f7f7f7]">
-                {modal.img
-                  ? <Image src={modal.img} alt={modal.name} width={300} height={300} className="object-contain mb-6" />
-                  : <div className="text-[90px] mb-6 leading-none">{modal.emoji}</div>
-                }
-                <h3 className="text-2xl font-bold text-[#1e3a5f] mb-6 text-center">{modal.name}</h3>
-                <div className="flex flex-wrap justify-center gap-3">
-                  {modal.specs.map(({ label, value }) => (
-                    <div key={label} className="bg-white rounded-xl px-4 py-3 text-center shadow-sm min-w-[80px]">
-                      <div className="text-[9px] font-bold text-[#ff6b35] uppercase tracking-widest border-b-2 border-[#ff6b35] pb-1 mb-1.5">{label}</div>
-                      <div className="text-sm font-bold text-[#1e3a5f]">{value}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* RIGHT: text details */}
-              <div className="md:w-[40%] bg-white flex flex-col justify-center p-8">
-                <button onClick={() => setModal(null)}
-                  className="self-end text-gray-300 hover:text-gray-600 text-2xl leading-none mb-4 transition-colors">×</button>
-                <p className="text-xs font-bold text-[#ff6b35] uppercase tracking-widest mb-3">Installation Accessory</p>
-                <h3 className="text-2xl font-bold text-[#1e3a5f] mb-4">{modal.name}</h3>
-                <p className="text-gray-500 text-sm leading-relaxed mb-6">{modal.description}</p>
-                <a href="#contact"
-                  onClick={() => setModal(null)}
-                  className="inline-block bg-[#ff6b35] text-white font-semibold text-sm px-6 py-3 rounded-full text-center hover:bg-[#e55a28] transition-colors no-underline">
-                  Inquire about {modal.name}
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </section>
   );
 }
@@ -428,83 +187,6 @@ function WhyChooseUs() {
             </div>
           ))}
         </div>
-      </div>
-    </section>
-  );
-}
-
-/* ─────────────────────── FAQ ─────────────────────────────────────── */
-const FAQS = [
-  {
-    q: "How much does FRP panel installation cost in Toronto?",
-    a: "FRP panel installation in Toronto typically costs between $8 and $18 per square foot installed, depending on project scope, wall condition, and accessibility. Corevance provides free on-site consultations and detailed quotes within 24 hours. Call 437-849-3781 for a custom estimate.",
-  },
-  {
-    q: "Is FRP better than tile for commercial kitchens?",
-    a: "Yes. FRP panels outperform ceramic tile in commercial kitchens. FRP has no grout lines where bacteria accumulate, is seamless and easier to sanitize, installs faster at lower cost, resists moisture and impact, and is CFIA-accepted for food facilities — without the ongoing maintenance burden of grouted tile.",
-  },
-  {
-    q: "What are FRP wall panels used for?",
-    a: "FRP (Fiberglass Reinforced Panels) are used in commercial kitchens, food processing facilities, restaurants, healthcare facilities, car washes, and industrial spaces. They provide a hygienic, moisture-resistant, and durable wall surface that meets CFIA, health code, and building code requirements.",
-  },
-  {
-    q: "How long does commercial FRP installation take?",
-    a: "A typical commercial FRP installation takes 1 to 3 days depending on square footage and wall condition. Corevance offers same-day material delivery across the GTA and experienced crews that minimize disruption to your operations.",
-  },
-  {
-    q: "Are FRP panels CFIA approved for food facilities in Canada?",
-    a: "Yes. Class C FRP panels installed with proper PVC moldings, nylon rivets, and food-safe adhesives are CFIA (Canadian Food Inspection Agency) accepted for food processing and food service facilities. Corevance installs complete FRP systems that meet all CFIA and provincial health code requirements.",
-  },
-  {
-    q: "What FRP panel sizes does Corevance supply?",
-    a: "Corevance stocks FRP panels in 8′ × 4′ and 10′ × 4′ sizes in pebbled and smooth finishes, 2mm thick with Class C fire rating. Custom sizes up to 12′ × 5′ are available on special order. Colours include Almond, Ivory, Beige, Light Gray, Silver, and Black.",
-  },
-];
-
-function FAQ() {
-  const [open, setOpen] = useState<number | null>(null);
-
-  return (
-    <section id="faq" className="py-20 px-5 bg-gray-50">
-      <div className="max-w-3xl mx-auto">
-        <h2 className="text-center text-2xl sm:text-3xl lg:text-4xl font-bold text-[#1e3a5f] mb-3">
-          Frequently Asked Questions
-        </h2>
-        <p className="text-center text-gray-500 text-base sm:text-lg mb-12">
-          Everything you need to know about FRP wall panel installation and supply
-        </p>
-        <div className="flex flex-col gap-3">
-          {FAQS.map(({ q, a }, i) => (
-            <div key={i} className="bg-white border-2 border-gray-200 rounded-2xl overflow-hidden hover:border-[#ff6b35] transition-colors">
-              <button
-                onClick={() => setOpen(open === i ? null : i)}
-                className="w-full flex items-center justify-between px-6 py-5 text-left gap-4"
-                aria-expanded={open === i}
-              >
-                <span className="font-semibold text-[#1e3a5f] text-sm sm:text-base">{q}</span>
-                <span
-                  className="flex-shrink-0 w-8 h-8 rounded-full border-2 border-[#ff6b35] text-[#ff6b35] flex items-center justify-center font-bold text-lg transition-transform"
-                  style={{ transform: open === i ? "rotate(45deg)" : "rotate(0deg)", transition: "transform 0.2s ease" }}
-                >
-                  +
-                </span>
-              </button>
-              {open === i && (
-                <div className="px-6 pb-6">
-                  <div className="h-px bg-gray-100 mb-4" />
-                  <p className="text-gray-600 text-sm leading-relaxed">{a}</p>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-        <p className="text-center mt-10 text-gray-500 text-sm">
-          Have more questions?{" "}
-          <a href="#contact" className="text-[#ff6b35] font-semibold hover:underline">
-            Contact our team
-          </a>{" "}
-          for a free consultation.
-        </p>
       </div>
     </section>
   );
@@ -600,10 +282,10 @@ export default function Home() {
         <Hero />
         <Products />
         <ColorsAndSizes />
-        <Accessories />
+        <AccessoriesSection />
         <Services />
         <WhyChooseUs />
-        <FAQ />
+        <FAQSection />
       </main>
       <Footer />
     </div>

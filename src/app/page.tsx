@@ -28,15 +28,21 @@ function Hero() {
               in FRP Wall Panel<br />
               Installation &amp; Supply
             </h1>
-            <div className="flex flex-wrap justify-center lg:justify-start items-center gap-3 sm:gap-4">
+            <div className="flex flex-col items-center lg:items-start gap-3 sm:gap-4">
               <a href="#products"
                 className="bg-white text-gray-900 font-semibold px-6 sm:px-8 py-3 sm:py-4 rounded-full text-sm sm:text-base hover:bg-gray-100 transition-all no-underline">
                 Products
               </a>
-              <a href="#contact"
-                className="bg-[#3b82f6] text-white font-semibold px-6 sm:px-8 py-3 sm:py-4 rounded-full text-sm sm:text-base hover:bg-[#2563eb] transition-all no-underline">
-                Book Your Meeting Today
-              </a>
+              <div className="flex flex-wrap justify-center lg:justify-start gap-3 sm:gap-4">
+                <a href="#contact"
+                  className="bg-[#3b82f6] text-white font-semibold px-6 sm:px-8 py-3 sm:py-4 rounded-full text-sm sm:text-base hover:bg-[#2563eb] transition-all no-underline">
+                  Book Your Meeting Today
+                </a>
+                <a href="/estimate"
+                  className="bg-[#ff6b35] text-white font-semibold px-6 sm:px-8 py-3 sm:py-4 rounded-full text-sm sm:text-base hover:bg-[#e55a28] hover:-translate-y-0.5 transition-all no-underline">
+                  Estimate Materials
+                </a>
+              </div>
             </div>
           </div>
 
@@ -115,8 +121,8 @@ function Products() {
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                   />
                 )}
-                <div className="absolute inset-x-0 bottom-0 bg-[#ff6b35]/90 text-white text-center py-3 font-semibold text-sm translate-y-full group-hover:translate-y-0 transition-transform">
-                  Click to Inquire
+                <div className="absolute inset-x-0 bottom-0 bg-[#ff6b35]/90 text-white text-center py-3 font-semibold text-sm translate-y-0 sm:translate-y-full sm:group-hover:translate-y-0 transition-transform">
+                  Inquire
                 </div>
               </div>
               <div className="p-6">
@@ -153,7 +159,7 @@ function Services() {
         <p className="text-center text-gray-500 text-base sm:text-lg mb-12">Comprehensive FRP solutions backed by decades of commercial installation expertise</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-7">
           {items.map(({ icon, title, desc }) => (
-            <div key={title} className="border-2 border-gray-200 rounded-2xl p-10 text-center hover:border-[#ff6b35] hover:-translate-y-2 hover:shadow-xl transition-all bg-white">
+            <div key={title} className="border-2 border-gray-200 rounded-2xl p-6 lg:p-10 text-center hover:border-[#ff6b35] hover:-translate-y-2 hover:shadow-xl transition-all bg-white">
               <div className="text-6xl mb-5">{icon}</div>
               <h3 className="text-xl font-bold text-[#1e3a5f] mb-3">{title}</h3>
               <p className="text-gray-500 text-sm leading-relaxed">{desc}</p>

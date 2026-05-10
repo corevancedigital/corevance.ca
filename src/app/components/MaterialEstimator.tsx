@@ -19,8 +19,6 @@ interface EstimatorState {
   walls: WallInput[];
   color: ColorOption;
   surface: SurfaceType;
-  panelSize: PanelSize;
-  panelSizeOverridden: boolean;
   outsideCorners: number;
   doorWindowArea: string;
   showAdvanced: boolean;
@@ -228,20 +226,17 @@ export default function MaterialEstimator() {
     walls: INITIAL_WALLS,
     color: COLORS[0],   // White by default
     surface: "smooth",
-    panelSize: "8x4",
-    panelSizeOverridden: false,
     outsideCorners: 0,
     doorWindowArea: "",
     showAdvanced: false,
   });
 
-  const { recommended, effectivePanelSize, maxActiveHeight, results } = useMemo(() => {
-    const recommended = recommendPanelSize(state.walls);
-    const effectivePanelSize: PanelSize = state.panelSizeOverridden ? state.panelSize : recommended;
+  const { effectivePanelSize, maxActiveHeight, results } = useMemo(() => {
+    const effectivePanelSize: PanelSize = recommendPanelSize(state.walls);
     const results = calculate({ ...state, panelSize: effectivePanelSize });
     const hs = state.walls.filter(w => w.active).map(w => parseFloat(w.height) || 0).filter(h => h > 0);
     const maxActiveHeight = hs.length ? Math.max(...hs) : 0;
-    return { recommended, effectivePanelSize, maxActiveHeight, results };
+    return { effectivePanelSize, maxActiveHeight, results };
   }, [state]);
 
   function updateWall(id: number, field: keyof WallInput, value: string | boolean | number) {
@@ -404,43 +399,23 @@ export default function MaterialEstimator() {
                 </div>
               </div>
 
-              {/* Panel size */}
+              {/* Panel size — auto-determined from wall height */}
               <div>
-                <h2 className="text-base font-bold text-[#1e3a5f] mb-1">Panel Size</h2>
-                {maxActiveHeight > 0 && !state.panelSizeOverridden && (
-                  <p className="text-xs text-[#ff6b35] font-medium mb-2">
-                    ✓ Auto-selected based on your {maxActiveHeight}ft wall height
-                  </p>
+                <h2 className="text-base font-bold text-[#1e3a5f] mb-2">Panel Size</h2>
+                {maxActiveHeight > 0 ? (
+                  <div className="flex items-center gap-3">
+                    <span className="bg-[#1e3a5f] text-white font-semibold px-4 py-2 rounded-full text-sm">
+                      {PANEL_SIZES[effectivePanelSize].label}
+                    </span>
+                    <span className="text-xs text-[#ff6b35] font-medium">
+                      ✓ Selected for your {maxActiveHeight}ft walls
+                    </span>
+                  </div>
+                ) : (
+                  <p className="text-sm text-gray-400">Enter wall height to determine panel size</p>
                 )}
-                {maxActiveHeight > 0 && state.panelSizeOverridden && (
-                  <p className="text-xs text-gray-400 mb-2">
-                    Manually selected ·{" "}
-                    <button
-                      onClick={() => setState(s => ({ ...s, panelSizeOverridden: false }))}
-                      className="text-[#ff6b35] hover:underline"
-                    >
-                      Reset to recommended ({PANEL_SIZES[recommended].label})
-                    </button>
-                  </p>
-                )}
-                {maxActiveHeight === 0 && <p className="text-xs text-gray-400 mb-2">Enter wall height to auto-select</p>}
-                <div className="flex flex-wrap gap-2">
-                  {(Object.keys(PANEL_SIZES) as PanelSize[]).map(size => (
-                    <button
-                      key={size}
-                      onClick={() => setState(s => ({ ...s, panelSize: size, panelSizeOverridden: true }))}
-                      className={pill(effectivePanelSize === size)}
-                    >
-                      {PANEL_SIZES[size].label}
-                      {size === recommended && maxActiveHeight > 0 && !state.panelSizeOverridden && (
-                        <span className="ml-1 text-[10px] opacity-80">★</span>
-                      )}
-                      {!PANEL_SIZES[size].stock && <span className="ml-1 text-[10px] opacity-60">custom</span>}
-                    </button>
-                  ))}
-                </div>
-                {!PANEL_SIZES[effectivePanelSize].stock && (
-                  <p className="text-xs text-gray-400 mt-2">Custom sizes on special order — contact us for lead time.</p>
+                {maxActiveHeight > 0 && !PANEL_SIZES[effectivePanelSize].stock && (
+                  <p className="text-xs text-gray-400 mt-2">Custom size — contact us for lead time and availability.</p>
                 )}
               </div>
 
@@ -553,9 +528,9 @@ export default function MaterialEstimator() {
                     {state.color.name} · {state.surface === "smooth" ? "Smooth" : "Pebbled"}
                   </p>
                   <p className="text-sm text-gray-500">
-                    {PANEL_SIZES[state.panelSize].label} panels · {PANEL_SIZES[state.panelSize].dims}
+                    {PANEL_SIZES[effectivePanelSize].label} panels · {PANEL_SIZES[effectivePanelSize].dims}
                   </p>
-                  {!PANEL_SIZES[state.panelSize].stock && (
+                  {!PANEL_SIZES[effectivePanelSize].stock && (
                     <p className="text-xs text-[#ff6b35] mt-0.5">Custom order — contact for availability</p>
                   )}
                 </div>

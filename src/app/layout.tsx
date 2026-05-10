@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 
 const inter = Inter({
@@ -254,6 +255,18 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} h-full antialiased`}>
       <head>
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-Y8ST80TMZR"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-Y8ST80TMZR');
+          `}
+        </Script>
         {/* Preload the hero video poster — it is the LCP element on desktop */}
         <link rel="preload" as="image" href="/frp_smooth.jpg" />
         <script

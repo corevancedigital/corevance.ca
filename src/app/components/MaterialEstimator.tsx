@@ -20,6 +20,7 @@ interface EstimatorState {
   color: ColorOption;
   surface: SurfaceType;
   panelSize: PanelSize;
+  panelSizeOverridden: boolean;
   outsideCorners: number;
   doorWindowArea: string;
   showAdvanced: boolean;
@@ -121,6 +122,19 @@ const INITIAL_WALLS: WallInput[] = [
   { id: 4, active: false, height: "", width: "", exposedEdges: 0 },
 ];
 
+// ── Panel size recommendation ──────────────────────────────────────────────────
+function recommendPanelSize(walls: WallInput[]): PanelSize {
+  const heights = walls
+    .filter(w => w.active)
+    .map(w => parseFloat(w.height) || 0)
+    .filter(h => h > 0);
+  if (heights.length === 0) return "8x4";
+  const maxH = Math.max(...heights);
+  if (maxH <= 8) return "8x4";
+  if (maxH <= 10) return "10x4";
+  return "12x4";
+}
+
 // ── Calculation ────────────────────────────────────────────────────────────────
 function calculate(state: EstimatorState): EstimatorResults {
   const EMPTY: EstimatorResults = {
@@ -215,12 +229,20 @@ export default function MaterialEstimator() {
     color: COLORS[0],   // White by default
     surface: "smooth",
     panelSize: "8x4",
+    panelSizeOverridden: false,
     outsideCorners: 0,
     doorWindowArea: "",
     showAdvanced: false,
   });
 
-  const results = useMemo(() => calculate(state), [state]);
+  const { recommended, effectivePanelSize, maxActiveHeight, results } = useMemo(() => {
+    const recommended = recommendPanelSize(state.walls);
+    const effectivePanelSize: PanelSize = state.panelSizeOverridden ? state.panelSize : recommended;
+    const results = calculate({ ...state, panelSize: effectivePanelSize });
+    const hs = state.walls.filter(w => w.active).map(w => parseFloat(w.height) || 0).filter(h => h > 0);
+    const maxActiveHeight = hs.length ? Math.max(...hs) : 0;
+    return { recommended, effectivePanelSize, maxActiveHeight, results };
+  }, [state]);
 
   function updateWall(id: number, field: keyof WallInput, value: string | boolean | number) {
     setState(s => ({ ...s, walls: s.walls.map(w => w.id === id ? { ...w, [field]: value } : w) }));
@@ -384,20 +406,40 @@ export default function MaterialEstimator() {
 
               {/* Panel size */}
               <div>
-                <h2 className="text-base font-bold text-[#1e3a5f] mb-3">Panel Size</h2>
+                <h2 className="text-base font-bold text-[#1e3a5f] mb-1">Panel Size</h2>
+                {maxActiveHeight > 0 && !state.panelSizeOverridden && (
+                  <p className="text-xs text-[#ff6b35] font-medium mb-2">
+                    ✓ Auto-selected based on your {maxActiveHeight}ft wall height
+                  </p>
+                )}
+                {maxActiveHeight > 0 && state.panelSizeOverridden && (
+                  <p className="text-xs text-gray-400 mb-2">
+                    Manually selected ·{" "}
+                    <button
+                      onClick={() => setState(s => ({ ...s, panelSizeOverridden: false }))}
+                      className="text-[#ff6b35] hover:underline"
+                    >
+                      Reset to recommended ({PANEL_SIZES[recommended].label})
+                    </button>
+                  </p>
+                )}
+                {maxActiveHeight === 0 && <p className="text-xs text-gray-400 mb-2">Enter wall height to auto-select</p>}
                 <div className="flex flex-wrap gap-2">
                   {(Object.keys(PANEL_SIZES) as PanelSize[]).map(size => (
                     <button
                       key={size}
-                      onClick={() => setState(s => ({ ...s, panelSize: size }))}
-                      className={pill(state.panelSize === size)}
+                      onClick={() => setState(s => ({ ...s, panelSize: size, panelSizeOverridden: true }))}
+                      className={pill(effectivePanelSize === size)}
                     >
                       {PANEL_SIZES[size].label}
+                      {size === recommended && maxActiveHeight > 0 && !state.panelSizeOverridden && (
+                        <span className="ml-1 text-[10px] opacity-80">★</span>
+                      )}
                       {!PANEL_SIZES[size].stock && <span className="ml-1 text-[10px] opacity-60">custom</span>}
                     </button>
                   ))}
                 </div>
-                {!PANEL_SIZES[state.panelSize].stock && (
+                {!PANEL_SIZES[effectivePanelSize].stock && (
                   <p className="text-xs text-gray-400 mt-2">Custom sizes on special order — contact us for lead time.</p>
                 )}
               </div>

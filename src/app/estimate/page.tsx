@@ -20,7 +20,7 @@ export default function EstimatePage() {
               alt="Corevance – Commercial FRP Wall Panel Installation & Supply"
               width={220}
               height={56}
-              className="h-9 sm:h-11 w-auto"
+              className="w-[150px] sm:w-[200px] h-auto"
               priority
             />
           </a>

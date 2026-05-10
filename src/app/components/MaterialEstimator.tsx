@@ -134,7 +134,7 @@ function recommendPanelSize(walls: WallInput[]): PanelSize {
 }
 
 // ── Calculation ────────────────────────────────────────────────────────────────
-function calculate(state: EstimatorState): EstimatorResults {
+function calculate(state: EstimatorState, panelSize: PanelSize): EstimatorResults {
   const EMPTY: EstimatorResults = {
     isValid: false, totalWallArea: 0, areaAfterDeductions: 0,
     panelsNeeded: 0, dividerBarsNeeded: 0, insideCornersNeeded: 0,
@@ -151,7 +151,7 @@ function calculate(state: EstimatorState): EstimatorResults {
 
   if (active.length === 0) return EMPTY;
 
-  const panelSqFt = PANEL_SIZES[state.panelSize].sqFt;
+  const panelSqFt = PANEL_SIZES[panelSize].sqFt;
   const totalWallArea = active.reduce((s, w) => s + w.h * w.w, 0);
   const deduction = Math.max(0, parseFloat(state.doorWindowArea) || 0);
   const areaAfterDeductions = Math.max(0, totalWallArea - deduction);
@@ -177,15 +177,15 @@ function calculate(state: EstimatorState): EstimatorResults {
   const rivetPacksNeeded = Math.max(1, Math.ceil((panelsNeeded * RIVETS_PER_PANEL) / RIVETS_PER_PACK));
   const adhesiveGallons = Math.max(1, Math.ceil(areaAfterDeductions / ADHESIVE_COVERAGE));
 
-  const panelHdKey = `panel_${state.panelSize}`;
+  const panelHdKey = `panel_${panelSize}`;
   const panelHd = HD[panelHdKey] ?? { min: 0, max: 0 };
 
   const lineItems: LineItem[] = [
-    { item: `FRP Panel (${PANEL_SIZES[state.panelSize].label})`,  qty: panelsNeeded,         unit: "panels", hdUnit: panelHd,             coreUnit: CORE_PANEL[`${state.panelSize}_${state.surface}`] ?? null },
-    { item: "Divider Bar (8ft)",                                   qty: dividerBarsNeeded,    unit: "pcs",    hdUnit: HD.divider_bar,      coreUnit: CORE_TRIM },
-    { item: "Inside Corner (8ft)",                                 qty: insideCornersNeeded,  unit: "pcs",    hdUnit: HD.inside_corner,    coreUnit: CORE_TRIM },
-    { item: "End Cap (8ft)",                                       qty: endCapsNeeded,        unit: "pcs",    hdUnit: HD.end_cap,          coreUnit: CORE_TRIM },
-    { item: "Outside Corner",                                      qty: outsideCornersNeeded, unit: "pcs",    hdUnit: HD.outside_corner,   coreUnit: ["10x4","12x4","10x5","12x5"].includes(state.panelSize) ? CORE_OUTSIDE_CORNER_LG : CORE_OUTSIDE_CORNER_STD },
+    { item: `FRP Panel (${PANEL_SIZES[panelSize].label})`,  qty: panelsNeeded,         unit: "panels", hdUnit: panelHd,             coreUnit: CORE_PANEL[`${panelSize}_${state.surface}`] ?? null },
+    { item: "Divider Bar (8ft)",                             qty: dividerBarsNeeded,    unit: "pcs",    hdUnit: HD.divider_bar,      coreUnit: CORE_TRIM },
+    { item: "Inside Corner (8ft)",                           qty: insideCornersNeeded,  unit: "pcs",    hdUnit: HD.inside_corner,    coreUnit: CORE_TRIM },
+    { item: "End Cap (8ft)",                                 qty: endCapsNeeded,        unit: "pcs",    hdUnit: HD.end_cap,          coreUnit: CORE_TRIM },
+    { item: "Outside Corner",                                qty: outsideCornersNeeded, unit: "pcs",    hdUnit: HD.outside_corner,   coreUnit: ["10x4","12x4","10x5","12x5"].includes(panelSize) ? CORE_OUTSIDE_CORNER_LG : CORE_OUTSIDE_CORNER_STD },
     { item: "Nylon Rivets (50-pk)",                                qty: rivetPacksNeeded,     unit: "packs",  hdUnit: HD.nylon_rivets,     coreUnit: CORE_RIVETS },
     { item: "Titebond Adhesive",                                   qty: adhesiveGallons,      unit: "gal",    hdUnit: HD.adhesive_gallon,  coreUnit: null },
   ];
@@ -197,13 +197,13 @@ function calculate(state: EstimatorState): EstimatorResults {
   const hdTotal = lineItems.reduce(sumHd, { min: 0, max: 0 });
 
   // Corevance total
-  const corePanelUnitPrice = CORE_PANEL[`${state.panelSize}_${state.surface}`] ?? null;
+  const corePanelUnitPrice = CORE_PANEL[`${panelSize}_${state.surface}`] ?? null;
   const isCustomSize = corePanelUnitPrice === null;
 
   let coreTotal: PriceRange | null = null;
   if (!isCustomSize && corePanelUnitPrice !== null) {
     const panelCost   = panelsNeeded         * corePanelUnitPrice;
-    const outsideCornerPrice = ["10x4","12x4","10x5","12x5"].includes(state.panelSize) ? CORE_OUTSIDE_CORNER_LG : CORE_OUTSIDE_CORNER_STD;
+    const outsideCornerPrice = ["10x4","12x4","10x5","12x5"].includes(panelSize) ? CORE_OUTSIDE_CORNER_LG : CORE_OUTSIDE_CORNER_STD;
     const trimCost    = (dividerBarsNeeded + insideCornersNeeded + endCapsNeeded) * CORE_TRIM
                       + outsideCornersNeeded * outsideCornerPrice;
     const rivetCost   = rivetPacksNeeded     * CORE_RIVETS;
@@ -233,7 +233,7 @@ export default function MaterialEstimator() {
 
   const { effectivePanelSize, maxActiveHeight, results } = useMemo(() => {
     const effectivePanelSize: PanelSize = recommendPanelSize(state.walls);
-    const results = calculate({ ...state, panelSize: effectivePanelSize });
+    const results = calculate(state, effectivePanelSize);
     const hs = state.walls.filter(w => w.active).map(w => parseFloat(w.height) || 0).filter(h => h > 0);
     const maxActiveHeight = hs.length ? Math.max(...hs) : 0;
     return { effectivePanelSize, maxActiveHeight, results };

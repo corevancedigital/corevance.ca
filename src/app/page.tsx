@@ -50,21 +50,26 @@ function Hero() {
             <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-6 sm:p-8 w-full">
               <h2 className="text-xl sm:text-2xl font-bold text-[#1e3a5f] mb-1 text-center">Tell Us About Your Project</h2>
               <p className="text-gray-500 text-sm mb-5 text-center">Get expert consultation and a detailed quote within 24 hours</p>
-              <form action="https://formspree.io/f/YOUR_FORM_ID" method="POST" className="flex flex-col gap-4">
+              <form
+                action="https://docs.google.com/forms/d/e/1FAIpQLScbbYsOGM3cK0Fgal-pd9xqLk4DQtl1NCOv3QkH-Nr1R-PF4w/formResponse"
+                method="POST"
+                target="_blank"
+                className="flex flex-col gap-4"
+              >
                 {[
-                  { id: "name", label: "Name *", type: "text" },
-                  { id: "phone", label: "Phone *", type: "tel" },
-                  { id: "email", label: "Email *", type: "email" },
-                ].map(({ id, label, type }) => (
+                  { id: "name",  label: "Name *",  type: "text",  entry: "entry.798262969"  },
+                  { id: "phone", label: "Phone *", type: "tel",   entry: "entry.2034387381" },
+                  { id: "email", label: "Email *", type: "email", entry: "entry.1732231777" },
+                ].map(({ id, label, type, entry }) => (
                   <div key={id}>
                     <label htmlFor={id} className="block mb-1.5 font-semibold text-[#1e3a5f] text-sm">{label}</label>
-                    <input id={id} name={id} type={type} required autoComplete={id}
+                    <input id={id} name={entry} type={type} required autoComplete={id}
                       className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#ff6b35] transition-colors" />
                   </div>
                 ))}
                 <div>
                   <label htmlFor="project" className="block mb-1.5 font-semibold text-[#1e3a5f] text-sm">Tell us about your project *</label>
-                  <textarea id="project" name="project" required rows={4}
+                  <textarea id="project" name="entry.902552580" required rows={4}
                     placeholder="Describe your project scope, timeline, square footage, and any specific requirements..."
                     className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#ff6b35] transition-colors resize-y" />
                 </div>

@@ -1,5 +1,6 @@
 "use client";
 import { useState, useMemo } from "react";
+import Image from "next/image";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 type SurfaceType = "smooth" | "pebbled";
@@ -28,6 +29,8 @@ interface PriceRange { min: number; max: number; }
 
 interface LineItem { item: string; qty: number; unit: string; hdUnit: PriceRange; coreUnit: number | null; }
 
+interface HdPanelInfo { price: number | null; available: boolean; note: string; }
+
 interface EstimatorResults {
   isValid: boolean;
   totalWallArea: number;
@@ -46,9 +49,10 @@ interface EstimatorResults {
   hdTotal: PriceRange;
   corePanelTotal: number | null;
   coreAccessoryTotal: number | null;
-  coreTotal: PriceRange | null;   // null when custom size
+  coreTotal: PriceRange | null;
   corePanelUnitPrice: number | null;
   isCustomSize: boolean;
+  hdPanelInfo: HdPanelInfo;
 }
 
 // ── Constants ──────────────────────────────────────────────────────────────────
@@ -79,30 +83,31 @@ const PANEL_WIDTH_FT = 4;
 const ACCESSORY_LENGTH_FT = 8;
 const DEFAULT_INSIDE_CORNERS = 4;
 
-// ⚠️ HD CANADA PRICES (CAD) — PLACEHOLDERS, verify before launch:
-//   Panels:      https://www.homedepot.ca/product/exceliner-fibreglass-reinforced-polyester-resin-wall-panel/1000154234
-//   Accessories: https://www.homedepot.ca/en/home/categories/building-materials/wall-panelling/frp-panels.html
-const HD: Record<string, PriceRange> = {
-  panel_8x4:        { min: 52,  max: 58  },
-  panel_10x4:       { min: 68,  max: 76  },
-  panel_12x4:       { min: 86,  max: 96  },
-  panel_10x5:       { min: 84,  max: 94  },
-  panel_12x5:       { min: 108, max: 120 },
-  divider_bar:      { min: 11,  max: 14  },
-  inside_corner:    { min: 10,  max: 13  },
-  end_cap:          { min: 8,   max: 11  },
-  outside_corner:   { min: 10,  max: 13  },
-  nylon_rivets:     { min: 8,   max: 11  },  // per pack
-  adhesive_gallon:  { min: 34,  max: 44  },
+// HD Canada panel availability — only 8'x4' pebbled is stocked at $95 (before tax)
+// Smooth surfaces and 10'x4' require consultation at Home Depot
+const HD_PANEL_INFO: Record<string, HdPanelInfo> = {
+  "8x4_pebbled":  { price: 95,   available: true,  note: "" },
+  "8x4_smooth":   { price: null, available: false, note: "Smooth surface not stocked at Home Depot — consultation required" },
+  "10x4_pebbled": { price: null, available: false, note: "10′ × 4′ panels require consultation at Home Depot" },
+  "10x4_smooth":  { price: null, available: false, note: "Not available at Home Depot" },
 };
 
-// Corevance exact prices (CAD) — always below HD market rate
-// Panels priced by size × surface — null = custom order, contact for pricing
+// HD Canada accessory prices (CAD, before tax) — homedepot.ca/search?q=frp
+const HD_ACC: Record<string, PriceRange> = {
+  divider_bar:    { min: 14, max: 17 },
+  inside_corner:  { min: 12, max: 16 },
+  end_cap:        { min: 10, max: 14 },
+  outside_corner: { min: 12, max: 16 },
+  nylon_rivets:   { min: 13, max: 17 },  // per pack
+  adhesive:       { min: 40, max: 55 },
+};
+
+// Corevance confirmed prices (CAD, before tax)
 const CORE_PANEL: Record<string, number | null> = {
-  "8x4_smooth":   46,   // HD: $52–58
-  "8x4_pebbled":  48,   // HD: $52–58
-  "10x4_smooth":  62,   // HD: $68–76
-  "10x4_pebbled": 65,   // HD: $68–76
+  "8x4_smooth":   85,
+  "8x4_pebbled":  90,
+  "10x4_smooth":  95,
+  "10x4_pebbled": 100,
   "12x4_smooth":  null,
   "12x4_pebbled": null,
   "10x5_smooth":  null,
@@ -111,12 +116,12 @@ const CORE_PANEL: Record<string, number | null> = {
   "12x5_pebbled": null,
 };
 
-// PVC trim · Rivets · Adhesive — all below HD market rate
-const CORE_TRIM = 5.99;               // HD: $8–14 per 8ft piece
-const CORE_OUTSIDE_CORNER_STD = 5.99; // HD: $10–13
-const CORE_OUTSIDE_CORNER_LG = 10.99; // HD: $10–13
-const CORE_RIVETS = 7.50;             // per pack of 50 · HD: $8–11
-const CORE_ADHESIVE_EST = 32;         // HD: $34–44
+// Corevance accessory prices (CAD, before tax)
+const CORE_TRIM = 8.00;               // Division Bar, End Cap Moulding, Inside Corner, Outside Corner
+const CORE_OUTSIDE_CORNER_STD = 8.00;
+const CORE_OUTSIDE_CORNER_LG = 17.00; // 10′ Large Outside Corner
+const CORE_RIVETS = 20.00;            // Nylon Rivets 3/4″ — pack of 50
+const CORE_ADHESIVE_EST = 45;         // market rate estimate
 
 const INITIAL_WALLS: WallInput[] = [
   { id: 1, active: true,  height: "", width: "", exposedEdges: 0 },
@@ -125,7 +130,7 @@ const INITIAL_WALLS: WallInput[] = [
   { id: 4, active: false, height: "", width: "", exposedEdges: 0 },
 ];
 
-// ── Panel size recommendation ──────────────────────────────────────────────────
+// ── Panel size recommendation — capped at 10'x4' (both in stock at Corevance) ──
 function recommendPanelSize(walls: WallInput[]): PanelSize {
   const heights = walls
     .filter(w => w.active)
@@ -134,8 +139,7 @@ function recommendPanelSize(walls: WallInput[]): PanelSize {
   if (heights.length === 0) return "8x4";
   const maxH = Math.max(...heights);
   if (maxH <= 8) return "8x4";
-  if (maxH <= 10) return "10x4";
-  return "12x4";
+  return "10x4"; // 10'x4' used for all taller walls — in stock at Corevance
 }
 
 // ── Calculation ────────────────────────────────────────────────────────────────
@@ -148,6 +152,7 @@ function calculate(state: EstimatorState, panelSize: PanelSize): EstimatorResult
     hdPanelTotal: { min: 0, max: 0 }, hdAccessoryTotal: { min: 0, max: 0 },
     hdTotal: { min: 0, max: 0 }, corePanelTotal: null, coreAccessoryTotal: null,
     coreTotal: null, corePanelUnitPrice: null, isCustomSize: false,
+    hdPanelInfo: { price: null, available: false, note: "" },
   };
 
   const active = state.walls
@@ -183,30 +188,37 @@ function calculate(state: EstimatorState, panelSize: PanelSize): EstimatorResult
   const rivetPacksNeeded = Math.max(1, Math.ceil((panelsNeeded * RIVETS_PER_PANEL) / RIVETS_PER_PACK));
   const adhesiveGallons = Math.max(1, Math.ceil(areaAfterDeductions / ADHESIVE_COVERAGE));
 
-  const panelHdKey = `panel_${panelSize}`;
-  const panelHd = HD[panelHdKey] ?? { min: 0, max: 0 };
+  const hdPanelInfo: HdPanelInfo = HD_PANEL_INFO[`${panelSize}_${state.surface}`]
+    ?? { price: null, available: false, note: "Not available at Home Depot" };
   const corePanelUnitPrice = CORE_PANEL[`${panelSize}_${state.surface}`] ?? null;
   const isCustomSize = corePanelUnitPrice === null;
-  const outsideCornerCorePrice = ["10x4","12x4","10x5","12x5"].includes(panelSize) ? CORE_OUTSIDE_CORNER_LG : CORE_OUTSIDE_CORNER_STD;
+  const outsideCornerCorePrice = panelSize === "10x4" ? CORE_OUTSIDE_CORNER_LG : CORE_OUTSIDE_CORNER_STD;
+
+  // HD panel line — use price if available, zero otherwise (shown as unavailable in UI)
+  const panelHdUnit: PriceRange = hdPanelInfo.available && hdPanelInfo.price !== null
+    ? { min: hdPanelInfo.price, max: hdPanelInfo.price }
+    : { min: 0, max: 0 };
 
   const panelItems: LineItem[] = [
-    { item: `FRP Panel (${PANEL_SIZES[panelSize].label})`, qty: panelsNeeded, unit: "panels", hdUnit: panelHd, coreUnit: corePanelUnitPrice },
+    { item: `FRP Panel (${PANEL_SIZES[panelSize].label})`, qty: panelsNeeded, unit: "panels", hdUnit: panelHdUnit, coreUnit: corePanelUnitPrice },
   ];
 
   const accessoryItems: LineItem[] = [
-    { item: "Divider Bar (8ft)",    qty: dividerBarsNeeded,    unit: "pcs",   hdUnit: HD.divider_bar,     coreUnit: CORE_TRIM },
-    { item: "Inside Corner (8ft)",  qty: insideCornersNeeded,  unit: "pcs",   hdUnit: HD.inside_corner,   coreUnit: CORE_TRIM },
-    { item: "End Cap (8ft)",        qty: endCapsNeeded,        unit: "pcs",   hdUnit: HD.end_cap,         coreUnit: CORE_TRIM },
-    { item: "Outside Corner",       qty: outsideCornersNeeded, unit: "pcs",   hdUnit: HD.outside_corner,  coreUnit: outsideCornerCorePrice },
-    { item: "Nylon Rivets (50-pk)", qty: rivetPacksNeeded,     unit: "packs", hdUnit: HD.nylon_rivets,    coreUnit: CORE_RIVETS },
-    { item: "Titebond Adhesive",    qty: adhesiveGallons,      unit: "gal",   hdUnit: HD.adhesive_gallon, coreUnit: CORE_ADHESIVE_EST },
+    { item: "FRP Division Bar (8ft)",   qty: dividerBarsNeeded,    unit: "pcs",   hdUnit: HD_ACC.divider_bar,    coreUnit: CORE_TRIM },
+    { item: "FRP Inside Corner (8ft)",  qty: insideCornersNeeded,  unit: "pcs",   hdUnit: HD_ACC.inside_corner,  coreUnit: CORE_TRIM },
+    { item: "FRP End Cap (8ft)",        qty: endCapsNeeded,        unit: "pcs",   hdUnit: HD_ACC.end_cap,        coreUnit: CORE_TRIM },
+    { item: "FRP Outside Corner",       qty: outsideCornersNeeded, unit: "pcs",   hdUnit: HD_ACC.outside_corner, coreUnit: outsideCornerCorePrice },
+    { item: "Nylon Rivets (50-pk)",     qty: rivetPacksNeeded,     unit: "packs", hdUnit: HD_ACC.nylon_rivets,   coreUnit: CORE_RIVETS },
+    { item: "Adhesive",                 qty: adhesiveGallons,      unit: "gal",   hdUnit: HD_ACC.adhesive,       coreUnit: CORE_ADHESIVE_EST },
   ];
 
   function sumHd(acc: PriceRange, item: LineItem): PriceRange {
     return { min: acc.min + item.qty * item.hdUnit.min, max: acc.max + item.qty * item.hdUnit.max };
   }
-  const hdPanelTotal = panelItems.reduce(sumHd, { min: 0, max: 0 });
   const hdAccessoryTotal = accessoryItems.reduce(sumHd, { min: 0, max: 0 });
+  const hdPanelTotal = hdPanelInfo.available && hdPanelInfo.price !== null
+    ? { min: panelsNeeded * hdPanelInfo.price, max: panelsNeeded * hdPanelInfo.price }
+    : { min: 0, max: 0 };
   const hdTotal = { min: hdPanelTotal.min + hdAccessoryTotal.min, max: hdPanelTotal.max + hdAccessoryTotal.max };
 
   let corePanelTotal: number | null = null;
@@ -230,7 +242,8 @@ function calculate(state: EstimatorState, panelSize: PanelSize): EstimatorResult
     dividerBarsNeeded, insideCornersNeeded, endCapsNeeded,
     outsideCornersNeeded, rivetPacksNeeded, adhesiveGallons,
     panelItems, accessoryItems, hdPanelTotal, hdAccessoryTotal,
-    hdTotal, corePanelTotal, coreAccessoryTotal, coreTotal, corePanelUnitPrice, isCustomSize,
+    hdTotal, corePanelTotal, coreAccessoryTotal, coreTotal,
+    corePanelUnitPrice, isCustomSize, hdPanelInfo,
   };
 }
 
@@ -508,53 +521,101 @@ export default function MaterialEstimator() {
 
               {/* Budget comparison */}
               <div>
-                <h2 className="text-lg font-bold text-[#1e3a5f] mb-3">Budget Estimate</h2>
+                <h2 className="text-lg font-bold text-[#1e3a5f] mb-3">Budget Comparison</h2>
 
-                {results.isCustomSize ? (
-                  /* Custom size — no HD/Corevance comparison */
-                  <div className="bg-[#1e3a5f] rounded-2xl p-6 shadow-md text-center">
-                    <p className="text-[#ff6b35] font-semibold text-sm uppercase tracking-wide mb-3">Custom Size Selected</p>
-                    <p className="text-white font-bold text-xl mb-2">Contact us for pricing</p>
-                    <p className="text-blue-300 text-sm mb-5">Custom panel sizes are quoted individually based on dimensions, quantity, and project scope.</p>
-                    <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                      <a href="/#contact"
-                        className="bg-[#ff6b35] text-white font-semibold px-6 py-3 rounded-full hover:bg-[#e55a28] transition-all text-center text-sm">
-                        Get Free Consultation
-                      </a>
-                      <a href="/#contact"
-                        className="border-2 border-white/40 text-white font-semibold px-6 py-3 rounded-full hover:bg-white/10 transition-all text-center text-sm">
-                        Book Your Meeting
-                      </a>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+                  {/* ── Home Depot card ── */}
+                  <div className="bg-white rounded-2xl border-2 border-gray-200 p-5 shadow-md flex flex-col">
+                    {/* HD logo / brand */}
+                    <div className="flex items-center gap-2 mb-4">
+                      <div className="flex items-center justify-center bg-[#F96302] rounded px-2 py-1">
+                        <span className="text-white font-black text-xs tracking-tight leading-none">The Home Depot<sup className="text-[8px]">®</sup></span>
+                      </div>
                     </div>
+
+                    {results.hdPanelInfo.available ? (
+                      <>
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="text-2xl font-bold text-gray-800">{fmt(results.hdTotal.min)}</span>
+                          {results.hdTotal.max !== results.hdTotal.min && (
+                            <span className="text-sm text-gray-400">– {fmt(results.hdTotal.max)}</span>
+                          )}
+                        </div>
+                        <p className="text-xs text-gray-400 mb-3">Accessories estimated · Panels at ${results.hdPanelInfo.price}/panel</p>
+                        <div className="flex items-center gap-1.5 mt-auto">
+                          <span className="w-2 h-2 rounded-full bg-yellow-400 flex-shrink-0" />
+                          <span className="text-xs text-gray-500">Pebbled surface only — smooth not stocked</span>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div className="bg-red-50 border border-red-200 rounded-xl p-3 mb-3">
+                          <p className="text-red-600 font-bold text-sm mb-0.5">Not Available</p>
+                          <p className="text-red-500 text-xs">{results.hdPanelInfo.note}</p>
+                        </div>
+                        <p className="text-xs text-gray-400 mb-3">Accessories estimated at ${results.hdAccessoryTotal.min}–${results.hdAccessoryTotal.max}</p>
+                        <div className="flex items-center gap-1.5 mt-auto">
+                          <span className="w-2 h-2 rounded-full bg-red-400 flex-shrink-0" />
+                          <span className="text-xs text-gray-500">Panel total unavailable — consultation required</span>
+                        </div>
+                      </>
+                    )}
                   </div>
-                ) : (
-                  /* Stock size — side-by-side comparison */
-                  <>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div className="bg-white rounded-2xl border-2 border-gray-200 p-5 shadow-md">
-                        <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">Home Depot</p>
-                        <p className="text-2xl font-bold text-gray-800">{fmt(results.hdTotal.min)}</p>
-                        <p className="text-sm text-gray-400 mb-1">to {fmt(results.hdTotal.max)}</p>
-                        <p className="text-xs text-gray-400">Estimated market rate (CAD)</p>
-                      </div>
-                      <div className="bg-[#1e3a5f] rounded-2xl p-5 shadow-md">
-                        <p className="text-xs font-semibold text-[#ff6b35] uppercase tracking-wide mb-3">Corevance Inc.</p>
-                        {results.coreTotal && (
-                          <>
-                            <p className="text-2xl font-bold text-white">{fmt(results.coreTotal.min)}</p>
-                            <p className="text-sm text-blue-300 mb-1">
-                              ${results.corePanelUnitPrice}/panel × {results.panelsNeeded}
-                            </p>
-                          </>
-                        )}
-                        <p className="text-xs text-blue-400">Adhesive at market rate · Contact for full quote</p>
-                      </div>
+
+                  {/* ── Corevance card ── */}
+                  <div className="bg-[#1e3a5f] rounded-2xl p-5 shadow-md flex flex-col relative overflow-hidden">
+                    {/* Best value ribbon */}
+                    <div className="absolute top-3 right-3 bg-[#ff6b35] text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide">
+                      Best Value
                     </div>
-                    <p className="text-xs text-gray-400 mt-2 text-center">
-                      HD prices are market estimates. Final Corevance pricing confirmed on your quote.
-                    </p>
-                  </>
-                )}
+                    {/* Corevance logo */}
+                    <div className="mb-4">
+                      <Image
+                        src="/corevance-logo-symbol.png"
+                        alt="Corevance"
+                        width={120}
+                        height={30}
+                        className="h-7 w-auto object-contain brightness-0 invert"
+                      />
+                    </div>
+
+                    {results.coreTotal ? (
+                      <>
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="text-2xl font-bold text-white">{fmt(results.coreTotal.min)}</span>
+                        </div>
+                        <p className="text-xs text-blue-300 mb-3">
+                          ${results.corePanelUnitPrice}/panel × {results.panelsNeeded} + accessories
+                        </p>
+                        <div className="flex flex-col gap-1.5 mt-auto">
+                          <div className="flex items-center gap-1.5">
+                            <span className="w-2 h-2 rounded-full bg-green-400 flex-shrink-0" />
+                            <span className="text-xs text-blue-200">In stock — ships same day</span>
+                          </div>
+                          <div className="flex items-center gap-1.5">
+                            <span className="w-2 h-2 rounded-full bg-green-400 flex-shrink-0" />
+                            <span className="text-xs text-blue-200">Smooth &amp; pebbled available</span>
+                          </div>
+                          <div className="flex items-center gap-1.5">
+                            <span className="w-2 h-2 rounded-full bg-green-400 flex-shrink-0" />
+                            <span className="text-xs text-blue-200">Transparent pricing — no consultation needed</span>
+                          </div>
+                        </div>
+                      </>
+                    ) : (
+                      <p className="text-blue-300 text-sm">Contact us for a full project quote.</p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Before-tax disclaimer + HD note */}
+                <div className="mt-3 space-y-1">
+                  <p className="text-xs text-gray-400 text-center">* All prices shown before applicable taxes (HST/GST).</p>
+                  {results.hdPanelInfo.available && (
+                    <p className="text-xs text-gray-400 text-center">HD panel price confirmed at ${results.hdPanelInfo.price} · Accessory prices are market estimates from homedepot.ca.</p>
+                  )}
+                </div>
               </div>
 
               {/* Finish preview */}

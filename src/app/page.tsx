@@ -271,7 +271,7 @@ function Header() {
           className="object-contain w-[150px] h-auto sm:w-[220px] lg:w-[278px]"
         />
         <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
-          <span className="hidden sm:inline text-[24px] font-semibold text-[#1e3a5f] whitespace-nowrap uppercase">Call us now</span>
+          <span className="text-xs sm:text-[24px] font-semibold text-[#1e3a5f] whitespace-nowrap uppercase">Call us now</span>
           <a href="tel:4378493781" aria-label="Call Corevance at 437-849-3781" className="no-underline group">
             <div className="flex items-center px-3 sm:px-5 py-1.5 sm:py-2.5 rounded-full transition-opacity hover:opacity-90" style={{ background: "#ff6b35" }}>
               <span className="text-xs sm:text-[24px] font-bold text-white whitespace-nowrap">437-849-3781</span>

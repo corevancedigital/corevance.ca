@@ -77,13 +77,13 @@ const COLORS: ColorOption[] = [
 
 const WASTE_FACTOR = 1.1;
 const ADHESIVE_COVERAGE = 40;  // sq ft per gallon
-const RIVETS_PER_PANEL = 50;
-const RIVETS_PER_PACK = 50;    // Corevance sells packs of 50
+const RIVETS_PER_PANEL = 8;    // ~8 rivets per panel (perimeter fastening)
+const RIVETS_PER_PACK = 50;    // 1 pack = 50 rivets (Corevance)
 const PANEL_WIDTH_FT = 4;
 const ACCESSORY_LENGTH_FT = 8;
 const DEFAULT_INSIDE_CORNERS = 4;
 
-// HD Canada panel availability — only 8'x4' pebbled is stocked at $95 (before tax)
+// HD Canada panel availability — only 8'x4' pebbled confirmed at $95 (before tax)
 // Smooth surfaces and 10'x4' require consultation at Home Depot
 const HD_PANEL_INFO: Record<string, HdPanelInfo> = {
   "8x4_pebbled":  { price: 95,   available: true,  note: "" },
@@ -92,13 +92,13 @@ const HD_PANEL_INFO: Record<string, HdPanelInfo> = {
   "10x4_smooth":  { price: null, available: false, note: "Not available at Home Depot" },
 };
 
-// HD Canada accessory prices (CAD, before tax) — homedepot.ca/search?q=frp
+// HD Canada accessory prices (CAD, before tax) — $10/piece confirmed
 const HD_ACC: Record<string, PriceRange> = {
-  divider_bar:    { min: 14, max: 17 },
-  inside_corner:  { min: 12, max: 16 },
-  end_cap:        { min: 10, max: 14 },
-  outside_corner: { min: 12, max: 16 },
-  nylon_rivets:   { min: 13, max: 17 },  // per pack
+  divider_bar:    { min: 10, max: 10 },
+  inside_corner:  { min: 10, max: 10 },
+  end_cap:        { min: 10, max: 10 },
+  outside_corner: { min: 10, max: 10 },
+  nylon_rivets:   { min: 10, max: 10 },  // per pack
   adhesive:       { min: 40, max: 55 },
 };
 
@@ -542,7 +542,7 @@ export default function MaterialEstimator() {
                             <span className="text-sm text-gray-400">– {fmt(results.hdTotal.max)}</span>
                           )}
                         </div>
-                        <p className="text-xs text-gray-400 mb-3">Accessories estimated · Panels at ${results.hdPanelInfo.price}/panel</p>
+                        <p className="text-xs text-gray-400 mb-3">Panels at ${results.hdPanelInfo.price}/panel · Accessories at $10/piece</p>
                         <div className="flex items-center gap-1.5 mt-auto">
                           <span className="w-2 h-2 rounded-full bg-yellow-400 flex-shrink-0" />
                           <span className="text-xs text-gray-500">Pebbled surface only — smooth not stocked</span>
@@ -585,21 +585,25 @@ export default function MaterialEstimator() {
                         <div className="flex items-center gap-2 mb-1">
                           <span className="text-2xl font-bold text-white">{fmt(results.coreTotal.min)}</span>
                         </div>
-                        <p className="text-xs text-blue-300 mb-3">
-                          ${results.corePanelUnitPrice}/panel × {results.panelsNeeded} + accessories
+                        <p className="text-xs text-blue-300 mb-1">
+                          ${results.corePanelUnitPrice}/panel × {results.panelsNeeded} + accessories · retail rate
                         </p>
+                        <div className="bg-[#ff6b35]/20 border border-[#ff6b35]/40 rounded-lg px-3 py-2 mb-3">
+                          <p className="text-xs text-[#ff9966] font-semibold">Bulk &amp; B2B pricing available</p>
+                          <p className="text-[11px] text-blue-300">Volume discounts applied on larger orders — contact us for a custom quote.</p>
+                        </div>
                         <div className="flex flex-col gap-1.5 mt-auto">
                           <div className="flex items-center gap-1.5">
                             <span className="w-2 h-2 rounded-full bg-green-400 flex-shrink-0" />
-                            <span className="text-xs text-blue-200">In stock — ships same day</span>
-                          </div>
-                          <div className="flex items-center gap-1.5">
-                            <span className="w-2 h-2 rounded-full bg-green-400 flex-shrink-0" />
-                            <span className="text-xs text-blue-200">Smooth &amp; pebbled available</span>
+                            <span className="text-xs text-blue-200">In stock — smooth &amp; pebbled available</span>
                           </div>
                           <div className="flex items-center gap-1.5">
                             <span className="w-2 h-2 rounded-full bg-green-400 flex-shrink-0" />
                             <span className="text-xs text-blue-200">Transparent pricing — no consultation needed</span>
+                          </div>
+                          <div className="flex items-center gap-1.5">
+                            <span className="w-2 h-2 rounded-full bg-green-400 flex-shrink-0" />
+                            <span className="text-xs text-blue-200">Dedicated commercial supply for B2B orders</span>
                           </div>
                         </div>
                       </>
@@ -609,11 +613,12 @@ export default function MaterialEstimator() {
                   </div>
                 </div>
 
-                {/* Before-tax disclaimer + HD note */}
-                <div className="mt-3 space-y-1">
-                  <p className="text-xs text-gray-400 text-center">* All prices shown before applicable taxes (HST/GST).</p>
+                {/* Disclaimers */}
+                <div className="mt-3 space-y-1 text-center">
+                  <p className="text-xs text-gray-400">* All prices shown before applicable taxes (HST/GST).</p>
+                  <p className="text-xs text-gray-400">† Delivery to project site or business address is additional — contact us for delivery rates.</p>
                   {results.hdPanelInfo.available && (
-                    <p className="text-xs text-gray-400 text-center">HD panel price confirmed at ${results.hdPanelInfo.price} · Accessory prices are market estimates from homedepot.ca.</p>
+                    <p className="text-xs text-gray-400">HD panel price confirmed at ${results.hdPanelInfo.price} · HD accessory price confirmed at $10/piece.</p>
                   )}
                 </div>
               </div>

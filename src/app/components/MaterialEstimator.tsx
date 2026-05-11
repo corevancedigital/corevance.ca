@@ -439,7 +439,7 @@ export default function MaterialEstimator() {
                     </span>
                   </div>
                 ) : (
-                  <p className="text-sm text-gray-400">Enter wall height to determine panel size</p>
+                  <p className="text-sm text-gray-400">Enter wall height and width to determine panel size</p>
                 )}
                 {maxActiveHeight > 0 && !PANEL_SIZES[effectivePanelSize].stock && (
                   <p className="text-xs text-gray-400 mt-2">Custom size — contact us for lead time and availability.</p>

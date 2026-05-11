@@ -566,7 +566,7 @@ export default function MaterialEstimator() {
                       highlight: false,
                     },
                     {
-                      feature: "Pricing Transparency",
+                      feature: "Pricing",
                       hd: { win: false, label: "Consultation needed", sub: "for most sizes" },
                       core: { win: true, label: "Instant estimate", sub: "no back-and-forth" },
                       highlight: false,
@@ -576,7 +576,7 @@ export default function MaterialEstimator() {
                   return (
                     <div className="rounded-2xl overflow-hidden border-2 border-gray-200 shadow-md">
                       {/* Header row — Corevance LEFT, HD RIGHT */}
-                      <div className="grid grid-cols-3">
+                      <div className="grid grid-cols-[1fr_80px_1fr]">
                         {/* Corevance header — white bg, natural logo */}
                         <div className="bg-white p-3 flex items-center justify-center border-r border-gray-200 relative">
                           <Image
@@ -605,7 +605,7 @@ export default function MaterialEstimator() {
 
                       {/* Comparison rows — Corevance LEFT, Feature CENTER, HD RIGHT */}
                       {comparisonRows.map((row, i) => (
-                        <div key={i} className={`grid grid-cols-3 border-t border-gray-100 ${row.highlight ? "bg-gray-50" : ""}`}>
+                        <div key={i} className={`grid grid-cols-[1fr_80px_1fr] border-t border-gray-100 ${row.highlight ? "bg-gray-50" : ""}`}>
                           {/* Corevance cell */}
                           <div className={`p-3 sm:p-4 border-r border-gray-100 ${row.highlight ? "bg-green-50" : "bg-[#f0f7ff]"}`}>
                             <div className="flex items-start gap-1.5">

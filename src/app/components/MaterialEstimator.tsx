@@ -576,7 +576,7 @@ export default function MaterialEstimator() {
                   return (
                     <div className="rounded-2xl overflow-hidden border-2 border-gray-200 shadow-md">
                       {/* Header row — Corevance LEFT, HD RIGHT */}
-                      <div className="grid grid-cols-[1fr_auto_1fr]">
+                      <div className="grid grid-cols-3">
                         {/* Corevance header — white bg, natural logo */}
                         <div className="bg-white p-3 flex items-center justify-center border-r border-gray-200 relative">
                           <Image
@@ -605,7 +605,7 @@ export default function MaterialEstimator() {
 
                       {/* Comparison rows — Corevance LEFT, Feature CENTER, HD RIGHT */}
                       {comparisonRows.map((row, i) => (
-                        <div key={i} className={`grid grid-cols-[1fr_auto_1fr] border-t border-gray-100 ${row.highlight ? "bg-gray-50" : ""}`}>
+                        <div key={i} className={`grid grid-cols-3 border-t border-gray-100 ${row.highlight ? "bg-gray-50" : ""}`}>
                           {/* Corevance cell */}
                           <div className={`p-3 sm:p-4 border-r border-gray-100 ${row.highlight ? "bg-green-50" : "bg-[#f0f7ff]"}`}>
                             <div className="flex items-start gap-1.5">
@@ -623,7 +623,7 @@ export default function MaterialEstimator() {
 
                           {/* Feature label */}
                           <div className="px-2 sm:px-3 flex items-center justify-center bg-gray-50 border-r border-gray-100">
-                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wide text-center leading-tight" style={{ minWidth: 64 }}>
+                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wide text-center leading-tight w-full">
                               {row.feature}
                             </p>
                           </div>

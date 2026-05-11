@@ -575,64 +575,66 @@ export default function MaterialEstimator() {
 
                   return (
                     <div className="rounded-2xl overflow-hidden border-2 border-gray-200 shadow-md">
-                      {/* Header row */}
+                      {/* Header row — Corevance LEFT, HD RIGHT */}
                       <div className="grid grid-cols-[1fr_auto_1fr]">
-                        <div className="bg-white p-3 flex items-center justify-center border-r border-gray-200">
+                        {/* Corevance header — white bg, natural logo */}
+                        <div className="bg-white p-3 flex items-center justify-center border-r border-gray-200 relative">
+                          <Image
+                            src="/corevance-logo-symbol.png"
+                            alt="Corevance"
+                            width={110}
+                            height={28}
+                            className="h-6 w-auto object-contain"
+                          />
+                          <span className="absolute top-1.5 left-2 bg-[#ff6b35] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full uppercase tracking-wide">
+                            Best Value
+                          </span>
+                        </div>
+                        <div className="bg-gray-50 px-4 flex items-center justify-center border-r border-gray-200">
+                          <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">vs</span>
+                        </div>
+                        {/* HD header */}
+                        <div className="bg-white p-3 flex items-center justify-center">
                           <div className="bg-[#F96302] rounded px-2.5 py-1.5">
                             <span className="text-white font-black text-[11px] tracking-tight leading-none">
                               The Home Depot<sup className="text-[8px]">®</sup>
                             </span>
                           </div>
                         </div>
-                        <div className="bg-gray-50 px-4 flex items-center justify-center border-r border-gray-200">
-                          <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">vs</span>
-                        </div>
-                        <div className="bg-[#1e3a5f] p-3 flex items-center justify-center relative">
-                          <Image
-                            src="/corevance-logo-symbol.png"
-                            alt="Corevance"
-                            width={110}
-                            height={28}
-                            className="h-6 w-auto object-contain brightness-0 invert"
-                          />
-                          <span className="absolute top-1.5 right-2 bg-[#ff6b35] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full uppercase tracking-wide">
-                            Best Value
-                          </span>
-                        </div>
                       </div>
 
-                      {/* Comparison rows */}
+                      {/* Comparison rows — Corevance LEFT, Feature CENTER, HD RIGHT */}
                       {comparisonRows.map((row, i) => (
                         <div key={i} className={`grid grid-cols-[1fr_auto_1fr] border-t border-gray-100 ${row.highlight ? "bg-gray-50" : ""}`}>
-                          {/* HD cell */}
-                          <div className={`p-3 sm:p-4 border-r border-gray-100 ${row.hd.win ? "bg-green-50" : ""}`}>
+                          {/* Corevance cell */}
+                          <div className={`p-3 sm:p-4 border-r border-gray-100 ${row.highlight ? "bg-green-50" : "bg-[#f0f7ff]"}`}>
                             <div className="flex items-start gap-1.5">
-                              <span className="text-red-400 font-bold text-base leading-none mt-0.5 flex-shrink-0">✕</span>
+                              <span className="text-green-500 font-bold text-base leading-none mt-0.5 flex-shrink-0">✓</span>
                               <div>
-                                <p className={`text-sm font-semibold ${row.highlight ? "text-gray-800" : "text-gray-600"}`}>{row.hd.label}</p>
-                                {row.hd.sub && <p className="text-[11px] text-gray-400 mt-0.5">{row.hd.sub}</p>}
+                                <p className={`text-sm font-bold text-[#1e3a5f]`}>{row.core.label}</p>
+                                {row.core.sub && (
+                                  <p className={`text-[11px] mt-0.5 ${row.highlight && savings > 0 ? "text-green-600 font-semibold" : "text-gray-500"}`}>
+                                    {row.core.sub}
+                                  </p>
+                                )}
                               </div>
                             </div>
                           </div>
 
                           {/* Feature label */}
                           <div className="px-2 sm:px-3 flex items-center justify-center bg-gray-50 border-r border-gray-100">
-                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wide text-center leading-tight" style={{ writingMode: "horizontal-tb", minWidth: 64 }}>
+                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wide text-center leading-tight" style={{ minWidth: 64 }}>
                               {row.feature}
                             </p>
                           </div>
 
-                          {/* Corevance cell */}
-                          <div className={`p-3 sm:p-4 ${row.highlight ? "bg-green-50" : "bg-[#f0f7ff]"}`}>
+                          {/* HD cell */}
+                          <div className="p-3 sm:p-4 bg-white">
                             <div className="flex items-start gap-1.5">
-                              <span className="text-green-500 font-bold text-base leading-none mt-0.5 flex-shrink-0">✓</span>
+                              <span className="text-red-400 font-bold text-base leading-none mt-0.5 flex-shrink-0">✕</span>
                               <div>
-                                <p className={`text-sm font-bold text-[#1e3a5f] ${row.highlight ? "text-base" : ""}`}>{row.core.label}</p>
-                                {row.core.sub && (
-                                  <p className={`text-[11px] mt-0.5 ${row.highlight && savings > 0 ? "text-green-600 font-semibold" : "text-gray-500"}`}>
-                                    {row.core.sub}
-                                  </p>
-                                )}
+                                <p className={`text-sm font-semibold text-gray-600`}>{row.hd.label}</p>
+                                {row.hd.sub && <p className="text-[11px] text-gray-400 mt-0.5">{row.hd.sub}</p>}
                               </div>
                             </div>
                           </div>

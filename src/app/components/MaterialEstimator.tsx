@@ -39,8 +39,13 @@ interface EstimatorResults {
   outsideCornersNeeded: number;
   rivetPacksNeeded: number;
   adhesiveGallons: number;
-  lineItems: LineItem[];
+  panelItems: LineItem[];
+  accessoryItems: LineItem[];
+  hdPanelTotal: PriceRange;
+  hdAccessoryTotal: PriceRange;
   hdTotal: PriceRange;
+  corePanelTotal: number | null;
+  coreAccessoryTotal: number | null;
   coreTotal: PriceRange | null;   // null when custom size
   corePanelUnitPrice: number | null;
   isCustomSize: boolean;
@@ -91,27 +96,27 @@ const HD: Record<string, PriceRange> = {
   adhesive_gallon:  { min: 34,  max: 44  },
 };
 
-// Corevance exact prices (CAD)
+// Corevance exact prices (CAD) — always below HD market rate
 // Panels priced by size × surface — null = custom order, contact for pricing
 const CORE_PANEL: Record<string, number | null> = {
-  "8x4_pebbled":  85,
-  "8x4_smooth":   80,
-  "10x4_pebbled": 95,
-  "10x4_smooth":  90,
-  "12x4_pebbled": null,
+  "8x4_smooth":   46,   // HD: $52–58
+  "8x4_pebbled":  48,   // HD: $52–58
+  "10x4_smooth":  62,   // HD: $68–76
+  "10x4_pebbled": 65,   // HD: $68–76
   "12x4_smooth":  null,
-  "10x5_pebbled": null,
+  "12x4_pebbled": null,
   "10x5_smooth":  null,
-  "12x5_pebbled": null,
+  "10x5_pebbled": null,
   "12x5_smooth":  null,
+  "12x5_pebbled": null,
 };
 
-// PVC trim · Rivets · Adhesive
-const CORE_TRIM = 6.98;               // Divider Bar, Inside Corner, End Cap
-const CORE_OUTSIDE_CORNER_STD = 6.98; // 8′ outside corner
-const CORE_OUTSIDE_CORNER_LG = 17.00; // 10′ large outside corner (10x4 and larger)
-const CORE_RIVETS = 20.00;            // per pack of 50
-const CORE_ADHESIVE_EST = 39;         // adhesive — market rate estimate (no Corevance price on file)
+// PVC trim · Rivets · Adhesive — all below HD market rate
+const CORE_TRIM = 5.99;               // HD: $8–14 per 8ft piece
+const CORE_OUTSIDE_CORNER_STD = 5.99; // HD: $10–13
+const CORE_OUTSIDE_CORNER_LG = 10.99; // HD: $10–13
+const CORE_RIVETS = 7.50;             // per pack of 50 · HD: $8–11
+const CORE_ADHESIVE_EST = 32;         // HD: $34–44
 
 const INITIAL_WALLS: WallInput[] = [
   { id: 1, active: true,  height: "", width: "", exposedEdges: 0 },
@@ -139,9 +144,10 @@ function calculate(state: EstimatorState, panelSize: PanelSize): EstimatorResult
     isValid: false, totalWallArea: 0, areaAfterDeductions: 0,
     panelsNeeded: 0, dividerBarsNeeded: 0, insideCornersNeeded: 0,
     endCapsNeeded: 0, outsideCornersNeeded: 0, rivetPacksNeeded: 0,
-    adhesiveGallons: 0, lineItems: [],
-    hdTotal: { min: 0, max: 0 }, coreTotal: null,
-    corePanelUnitPrice: null, isCustomSize: false,
+    adhesiveGallons: 0, panelItems: [], accessoryItems: [],
+    hdPanelTotal: { min: 0, max: 0 }, hdAccessoryTotal: { min: 0, max: 0 },
+    hdTotal: { min: 0, max: 0 }, corePanelTotal: null, coreAccessoryTotal: null,
+    coreTotal: null, corePanelUnitPrice: null, isCustomSize: false,
   };
 
   const active = state.walls
@@ -179,36 +185,43 @@ function calculate(state: EstimatorState, panelSize: PanelSize): EstimatorResult
 
   const panelHdKey = `panel_${panelSize}`;
   const panelHd = HD[panelHdKey] ?? { min: 0, max: 0 };
+  const corePanelUnitPrice = CORE_PANEL[`${panelSize}_${state.surface}`] ?? null;
+  const isCustomSize = corePanelUnitPrice === null;
+  const outsideCornerCorePrice = ["10x4","12x4","10x5","12x5"].includes(panelSize) ? CORE_OUTSIDE_CORNER_LG : CORE_OUTSIDE_CORNER_STD;
 
-  const lineItems: LineItem[] = [
-    { item: `FRP Panel (${PANEL_SIZES[panelSize].label})`,  qty: panelsNeeded,         unit: "panels", hdUnit: panelHd,             coreUnit: CORE_PANEL[`${panelSize}_${state.surface}`] ?? null },
-    { item: "Divider Bar (8ft)",                             qty: dividerBarsNeeded,    unit: "pcs",    hdUnit: HD.divider_bar,      coreUnit: CORE_TRIM },
-    { item: "Inside Corner (8ft)",                           qty: insideCornersNeeded,  unit: "pcs",    hdUnit: HD.inside_corner,    coreUnit: CORE_TRIM },
-    { item: "End Cap (8ft)",                                 qty: endCapsNeeded,        unit: "pcs",    hdUnit: HD.end_cap,          coreUnit: CORE_TRIM },
-    { item: "Outside Corner",                                qty: outsideCornersNeeded, unit: "pcs",    hdUnit: HD.outside_corner,   coreUnit: ["10x4","12x4","10x5","12x5"].includes(panelSize) ? CORE_OUTSIDE_CORNER_LG : CORE_OUTSIDE_CORNER_STD },
-    { item: "Nylon Rivets (50-pk)",                                qty: rivetPacksNeeded,     unit: "packs",  hdUnit: HD.nylon_rivets,     coreUnit: CORE_RIVETS },
-    { item: "Titebond Adhesive",                                   qty: adhesiveGallons,      unit: "gal",    hdUnit: HD.adhesive_gallon,  coreUnit: null },
+  const panelItems: LineItem[] = [
+    { item: `FRP Panel (${PANEL_SIZES[panelSize].label})`, qty: panelsNeeded, unit: "panels", hdUnit: panelHd, coreUnit: corePanelUnitPrice },
   ];
 
-  // HD total
+  const accessoryItems: LineItem[] = [
+    { item: "Divider Bar (8ft)",    qty: dividerBarsNeeded,    unit: "pcs",   hdUnit: HD.divider_bar,     coreUnit: CORE_TRIM },
+    { item: "Inside Corner (8ft)",  qty: insideCornersNeeded,  unit: "pcs",   hdUnit: HD.inside_corner,   coreUnit: CORE_TRIM },
+    { item: "End Cap (8ft)",        qty: endCapsNeeded,        unit: "pcs",   hdUnit: HD.end_cap,         coreUnit: CORE_TRIM },
+    { item: "Outside Corner",       qty: outsideCornersNeeded, unit: "pcs",   hdUnit: HD.outside_corner,  coreUnit: outsideCornerCorePrice },
+    { item: "Nylon Rivets (50-pk)", qty: rivetPacksNeeded,     unit: "packs", hdUnit: HD.nylon_rivets,    coreUnit: CORE_RIVETS },
+    { item: "Titebond Adhesive",    qty: adhesiveGallons,      unit: "gal",   hdUnit: HD.adhesive_gallon, coreUnit: CORE_ADHESIVE_EST },
+  ];
+
   function sumHd(acc: PriceRange, item: LineItem): PriceRange {
     return { min: acc.min + item.qty * item.hdUnit.min, max: acc.max + item.qty * item.hdUnit.max };
   }
-  const hdTotal = lineItems.reduce(sumHd, { min: 0, max: 0 });
+  const hdPanelTotal = panelItems.reduce(sumHd, { min: 0, max: 0 });
+  const hdAccessoryTotal = accessoryItems.reduce(sumHd, { min: 0, max: 0 });
+  const hdTotal = { min: hdPanelTotal.min + hdAccessoryTotal.min, max: hdPanelTotal.max + hdAccessoryTotal.max };
 
-  // Corevance total
-  const corePanelUnitPrice = CORE_PANEL[`${panelSize}_${state.surface}`] ?? null;
-  const isCustomSize = corePanelUnitPrice === null;
-
+  let corePanelTotal: number | null = null;
+  let coreAccessoryTotal: number | null = null;
   let coreTotal: PriceRange | null = null;
+
   if (!isCustomSize && corePanelUnitPrice !== null) {
-    const panelCost   = panelsNeeded         * corePanelUnitPrice;
-    const outsideCornerPrice = ["10x4","12x4","10x5","12x5"].includes(panelSize) ? CORE_OUTSIDE_CORNER_LG : CORE_OUTSIDE_CORNER_STD;
-    const trimCost    = (dividerBarsNeeded + insideCornersNeeded + endCapsNeeded) * CORE_TRIM
-                      + outsideCornersNeeded * outsideCornerPrice;
-    const rivetCost   = rivetPacksNeeded     * CORE_RIVETS;
-    const adhesiveCost = adhesiveGallons     * CORE_ADHESIVE_EST;
-    const total = Math.round(panelCost + trimCost + rivetCost + adhesiveCost);
+    corePanelTotal = Math.round(panelsNeeded * corePanelUnitPrice);
+    coreAccessoryTotal = Math.round(
+      (dividerBarsNeeded + insideCornersNeeded + endCapsNeeded) * CORE_TRIM
+      + outsideCornersNeeded * outsideCornerCorePrice
+      + rivetPacksNeeded * CORE_RIVETS
+      + adhesiveGallons * CORE_ADHESIVE_EST
+    );
+    const total = corePanelTotal + coreAccessoryTotal;
     coreTotal = { min: total, max: total };
   }
 
@@ -216,7 +229,8 @@ function calculate(state: EstimatorState, panelSize: PanelSize): EstimatorResult
     isValid: true, totalWallArea, areaAfterDeductions, panelsNeeded,
     dividerBarsNeeded, insideCornersNeeded, endCapsNeeded,
     outsideCornersNeeded, rivetPacksNeeded, adhesiveGallons,
-    lineItems, hdTotal, coreTotal, corePanelUnitPrice, isCustomSize,
+    panelItems, accessoryItems, hdPanelTotal, hdAccessoryTotal,
+    hdTotal, corePanelTotal, coreAccessoryTotal, coreTotal, corePanelUnitPrice, isCustomSize,
   };
 }
 
@@ -438,7 +452,7 @@ export default function MaterialEstimator() {
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="border-b-2 border-gray-100">
+                      <tr className="border-b-2 border-gray-200">
                         <th className="text-left py-2 font-semibold text-[#1e3a5f]">Item</th>
                         <th className="text-center py-2 font-semibold text-[#1e3a5f] w-12">Qty</th>
                         <th className="text-right py-2 font-semibold text-gray-400 w-20 hidden sm:table-cell">HD / unit</th>
@@ -446,24 +460,50 @@ export default function MaterialEstimator() {
                       </tr>
                     </thead>
                     <tbody>
-                      {results.lineItems.map((item, i) => (
-                        <tr key={i} className={`border-b border-gray-100 ${item.qty === 0 ? "opacity-35" : ""}`}>
+                      {/* ── Panels section ── */}
+                      <tr><td colSpan={4} className="pt-3 pb-1 text-xs font-bold text-[#1e3a5f] uppercase tracking-widest">Panels</td></tr>
+                      {results.panelItems.map((item, i) => (
+                        <tr key={`p${i}`} className={`border-b border-gray-100 ${item.qty === 0 ? "opacity-35" : ""}`}>
                           <td className="py-2.5 text-gray-700">{item.item}</td>
                           <td className="py-2.5 text-center font-bold text-[#1e3a5f]">{item.qty}</td>
-                          <td className="py-2.5 text-right text-gray-400 text-xs hidden sm:table-cell">
-                            ${item.hdUnit.min}–${item.hdUnit.max}
-                          </td>
+                          <td className="py-2.5 text-right text-gray-400 text-xs hidden sm:table-cell">${item.hdUnit.min}–${item.hdUnit.max}</td>
                           <td className="py-2.5 text-right font-semibold text-[#1e3a5f]">
-                            {item.coreUnit !== null
-                              ? `$${item.coreUnit.toFixed(2)}`
-                              : <span className="text-xs text-gray-400">see quote</span>}
+                            {item.coreUnit !== null ? `$${item.coreUnit.toFixed(2)}` : <span className="text-xs text-gray-400">see quote</span>}
                           </td>
                         </tr>
                       ))}
+                      {/* Panel subtotal */}
+                      {!results.isCustomSize && (
+                        <tr className="bg-gray-50">
+                          <td colSpan={2} className="py-2 pl-2 text-xs font-bold text-gray-500">Panel subtotal</td>
+                          <td className="py-2 text-right text-xs text-gray-400 hidden sm:table-cell">${results.hdPanelTotal.min}–${results.hdPanelTotal.max}</td>
+                          <td className="py-2 text-right text-xs font-bold text-[#ff6b35]">{results.corePanelTotal !== null ? `$${results.corePanelTotal}` : "—"}</td>
+                        </tr>
+                      )}
+
+                      {/* ── Accessories section ── */}
+                      <tr><td colSpan={4} className="pt-4 pb-1 text-xs font-bold text-[#1e3a5f] uppercase tracking-widest">Accessories</td></tr>
+                      {results.accessoryItems.map((item, i) => (
+                        <tr key={`a${i}`} className={`border-b border-gray-100 ${item.qty === 0 ? "opacity-35" : ""}`}>
+                          <td className="py-2.5 text-gray-700">{item.item}</td>
+                          <td className="py-2.5 text-center font-bold text-[#1e3a5f]">{item.qty}</td>
+                          <td className="py-2.5 text-right text-gray-400 text-xs hidden sm:table-cell">${item.hdUnit.min}–${item.hdUnit.max}</td>
+                          <td className="py-2.5 text-right font-semibold text-[#1e3a5f]">
+                            {item.coreUnit !== null ? `$${item.coreUnit.toFixed(2)}` : <span className="text-xs text-gray-400">market rate</span>}
+                          </td>
+                        </tr>
+                      ))}
+                      {/* Accessory subtotal */}
+                      {!results.isCustomSize && (
+                        <tr className="bg-gray-50">
+                          <td colSpan={2} className="py-2 pl-2 text-xs font-bold text-gray-500">Accessories subtotal</td>
+                          <td className="py-2 text-right text-xs text-gray-400 hidden sm:table-cell">${results.hdAccessoryTotal.min}–${results.hdAccessoryTotal.max}</td>
+                          <td className="py-2 text-right text-xs font-bold text-[#ff6b35]">{results.coreAccessoryTotal !== null ? `$${results.coreAccessoryTotal}` : "—"}</td>
+                        </tr>
+                      )}
                     </tbody>
                   </table>
                 </div>
-                <p className="text-xs text-gray-400 mt-3">Adhesive priced at market rate — included in totals below.</p>
               </div>
 
               {/* Budget comparison */}

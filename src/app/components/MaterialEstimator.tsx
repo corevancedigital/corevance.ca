@@ -523,103 +523,129 @@ export default function MaterialEstimator() {
               <div>
                 <h2 className="text-lg font-bold text-[#1e3a5f] mb-3">Budget Comparison</h2>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {(() => {
+                  const savings = results.coreTotal && results.hdPanelInfo.available
+                    ? Math.max(0, results.hdTotal.max - results.coreTotal.min)
+                    : 0;
 
-                  {/* ── Home Depot card ── */}
-                  <div className="bg-white rounded-2xl border-2 border-gray-200 p-5 shadow-md flex flex-col">
-                    {/* HD logo / brand */}
-                    <div className="flex items-center gap-2 mb-4">
-                      <div className="flex items-center justify-center bg-[#F96302] rounded px-2 py-1">
-                        <span className="text-white font-black text-xs tracking-tight leading-none">The Home Depot<sup className="text-[8px]">®</sup></span>
+                  const comparisonRows = [
+                    {
+                      feature: "Project Total",
+                      hd: results.hdPanelInfo.available
+                        ? { win: false, label: `${fmt(results.hdTotal.max)} – ${fmt(results.hdTotal.min)}`, sub: "retail, before tax" }
+                        : { win: false, label: "Consultation Required", sub: results.hdPanelInfo.note },
+                      core: results.coreTotal
+                        ? { win: true, label: fmt(results.coreTotal.min), sub: savings > 0 ? `Save up to ${fmt(savings)}` : "best available price" }
+                        : { win: true, label: "Contact for quote", sub: "" },
+                      highlight: true,
+                    },
+                    {
+                      feature: "Panel Price / unit",
+                      hd: results.hdPanelInfo.available
+                        ? { win: false, label: `$${results.hdPanelInfo.price}`, sub: "pebbled only" }
+                        : { win: false, label: "Not stocked", sub: "consultation required" },
+                      core: { win: true, label: `$${results.corePanelUnitPrice}`, sub: "smooth & pebbled" },
+                      highlight: false,
+                    },
+                    {
+                      feature: "Surface Options",
+                      hd: { win: false, label: "Pebbled only", sub: "smooth not available" },
+                      core: { win: true, label: "Smooth & Pebbled", sub: "both in stock" },
+                      highlight: false,
+                    },
+                    {
+                      feature: "Delivery",
+                      hd: { win: false, label: "Not available", sub: "in-store pickup only" },
+                      core: { win: true, label: "Anywhere in Canada", sub: "to site or business" },
+                      highlight: false,
+                    },
+                    {
+                      feature: "Bulk / B2B Pricing",
+                      hd: { win: false, label: "Retail only", sub: "no volume discounts" },
+                      core: { win: true, label: "Volume discounts", sub: "contact for custom quote" },
+                      highlight: false,
+                    },
+                    {
+                      feature: "Pricing Transparency",
+                      hd: { win: false, label: "Consultation needed", sub: "for most sizes" },
+                      core: { win: true, label: "Instant estimate", sub: "no back-and-forth" },
+                      highlight: false,
+                    },
+                  ];
+
+                  return (
+                    <div className="rounded-2xl overflow-hidden border-2 border-gray-200 shadow-md">
+                      {/* Header row */}
+                      <div className="grid grid-cols-[1fr_auto_1fr]">
+                        <div className="bg-white p-3 flex items-center justify-center border-r border-gray-200">
+                          <div className="bg-[#F96302] rounded px-2.5 py-1.5">
+                            <span className="text-white font-black text-[11px] tracking-tight leading-none">
+                              The Home Depot<sup className="text-[8px]">®</sup>
+                            </span>
+                          </div>
+                        </div>
+                        <div className="bg-gray-50 px-4 flex items-center justify-center border-r border-gray-200">
+                          <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">vs</span>
+                        </div>
+                        <div className="bg-[#1e3a5f] p-3 flex items-center justify-center relative">
+                          <Image
+                            src="/corevance-logo-symbol.png"
+                            alt="Corevance"
+                            width={110}
+                            height={28}
+                            className="h-6 w-auto object-contain brightness-0 invert"
+                          />
+                          <span className="absolute top-1.5 right-2 bg-[#ff6b35] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full uppercase tracking-wide">
+                            Best Value
+                          </span>
+                        </div>
                       </div>
-                    </div>
 
-                    {results.hdPanelInfo.available ? (
-                      <>
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className="text-2xl font-bold text-gray-800">{fmt(results.hdTotal.min)}</span>
-                          {results.hdTotal.max !== results.hdTotal.min && (
-                            <span className="text-sm text-gray-400">– {fmt(results.hdTotal.max)}</span>
-                          )}
-                        </div>
-                        <p className="text-xs text-gray-400 mb-3">Panels at ${results.hdPanelInfo.price}/panel · Accessories at $10/piece</p>
-                        <div className="flex items-center gap-1.5 mt-auto">
-                          <span className="w-2 h-2 rounded-full bg-yellow-400 flex-shrink-0" />
-                          <span className="text-xs text-gray-500">Pebbled surface only — smooth not stocked</span>
-                        </div>
-                      </>
-                    ) : (
-                      <>
-                        <div className="bg-red-50 border border-red-200 rounded-xl p-3 mb-3">
-                          <p className="text-red-600 font-bold text-sm mb-0.5">Not Available</p>
-                          <p className="text-red-500 text-xs">{results.hdPanelInfo.note}</p>
-                        </div>
-                        <p className="text-xs text-gray-400 mb-3">Accessories estimated at ${results.hdAccessoryTotal.min}–${results.hdAccessoryTotal.max}</p>
-                        <div className="flex items-center gap-1.5 mt-auto">
-                          <span className="w-2 h-2 rounded-full bg-red-400 flex-shrink-0" />
-                          <span className="text-xs text-gray-500">Panel total unavailable — consultation required</span>
-                        </div>
-                      </>
-                    )}
-                  </div>
-
-                  {/* ── Corevance card ── */}
-                  <div className="bg-[#1e3a5f] rounded-2xl p-5 shadow-md flex flex-col relative overflow-hidden">
-                    {/* Best value ribbon */}
-                    <div className="absolute top-3 right-3 bg-[#ff6b35] text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide">
-                      Best Value
-                    </div>
-                    {/* Corevance logo */}
-                    <div className="mb-4">
-                      <Image
-                        src="/corevance-logo-symbol.png"
-                        alt="Corevance"
-                        width={120}
-                        height={30}
-                        className="h-7 w-auto object-contain brightness-0 invert"
-                      />
-                    </div>
-
-                    {results.coreTotal ? (
-                      <>
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className="text-2xl font-bold text-white">{fmt(results.coreTotal.min)}</span>
-                        </div>
-                        <p className="text-xs text-blue-300 mb-1">
-                          ${results.corePanelUnitPrice}/panel × {results.panelsNeeded} + accessories · retail rate
-                        </p>
-                        <div className="bg-[#ff6b35]/20 border border-[#ff6b35]/40 rounded-lg px-3 py-2 mb-3">
-                          <p className="text-xs text-[#ff9966] font-semibold">Bulk &amp; B2B pricing available</p>
-                          <p className="text-[11px] text-blue-300">Volume discounts applied on larger orders — contact us for a custom quote.</p>
-                        </div>
-                        <div className="flex flex-col gap-1.5 mt-auto">
-                          <div className="flex items-center gap-1.5">
-                            <span className="w-2 h-2 rounded-full bg-green-400 flex-shrink-0" />
-                            <span className="text-xs text-blue-200">In stock — smooth &amp; pebbled available</span>
+                      {/* Comparison rows */}
+                      {comparisonRows.map((row, i) => (
+                        <div key={i} className={`grid grid-cols-[1fr_auto_1fr] border-t border-gray-100 ${row.highlight ? "bg-gray-50" : ""}`}>
+                          {/* HD cell */}
+                          <div className={`p-3 sm:p-4 border-r border-gray-100 ${row.hd.win ? "bg-green-50" : ""}`}>
+                            <div className="flex items-start gap-1.5">
+                              <span className="text-red-400 font-bold text-base leading-none mt-0.5 flex-shrink-0">✕</span>
+                              <div>
+                                <p className={`text-sm font-semibold ${row.highlight ? "text-gray-800" : "text-gray-600"}`}>{row.hd.label}</p>
+                                {row.hd.sub && <p className="text-[11px] text-gray-400 mt-0.5">{row.hd.sub}</p>}
+                              </div>
+                            </div>
                           </div>
-                          <div className="flex items-center gap-1.5">
-                            <span className="w-2 h-2 rounded-full bg-green-400 flex-shrink-0" />
-                            <span className="text-xs text-blue-200">Transparent pricing — no consultation needed</span>
+
+                          {/* Feature label */}
+                          <div className="px-2 sm:px-3 flex items-center justify-center bg-gray-50 border-r border-gray-100">
+                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wide text-center leading-tight" style={{ writingMode: "horizontal-tb", minWidth: 64 }}>
+                              {row.feature}
+                            </p>
                           </div>
-                          <div className="flex items-center gap-1.5">
-                            <span className="w-2 h-2 rounded-full bg-green-400 flex-shrink-0" />
-                            <span className="text-xs text-blue-200">Dedicated commercial supply for B2B orders</span>
+
+                          {/* Corevance cell */}
+                          <div className={`p-3 sm:p-4 ${row.highlight ? "bg-green-50" : "bg-[#f0f7ff]"}`}>
+                            <div className="flex items-start gap-1.5">
+                              <span className="text-green-500 font-bold text-base leading-none mt-0.5 flex-shrink-0">✓</span>
+                              <div>
+                                <p className={`text-sm font-bold text-[#1e3a5f] ${row.highlight ? "text-base" : ""}`}>{row.core.label}</p>
+                                {row.core.sub && (
+                                  <p className={`text-[11px] mt-0.5 ${row.highlight && savings > 0 ? "text-green-600 font-semibold" : "text-gray-500"}`}>
+                                    {row.core.sub}
+                                  </p>
+                                )}
+                              </div>
+                            </div>
                           </div>
                         </div>
-                      </>
-                    ) : (
-                      <p className="text-blue-300 text-sm">Contact us for a full project quote.</p>
-                    )}
-                  </div>
-                </div>
+                      ))}
+                    </div>
+                  );
+                })()}
 
                 {/* Disclaimers */}
                 <div className="mt-3 space-y-1 text-center">
-                  <p className="text-xs text-gray-400">* All prices shown before applicable taxes (HST/GST).</p>
-                  <p className="text-xs text-gray-400">† Delivery to project site or business address is additional — contact us for delivery rates.</p>
-                  {results.hdPanelInfo.available && (
-                    <p className="text-xs text-gray-400">HD panel price confirmed at ${results.hdPanelInfo.price} · HD accessory price confirmed at $10/piece.</p>
-                  )}
+                  <p className="text-xs text-gray-400">* All prices before applicable taxes (HST/GST). Retail rates shown — bulk discounts available from Corevance.</p>
+                  <p className="text-xs text-gray-400">† Delivery to project site or business anywhere in Canada — contact us for rates.</p>
                 </div>
               </div>
 

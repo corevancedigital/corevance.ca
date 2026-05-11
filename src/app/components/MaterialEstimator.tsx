@@ -320,14 +320,14 @@ export default function MaterialEstimator() {
                       type="number" placeholder="Height (ft)"
                       value={wall.height} disabled={!wall.active} min="0" step="0.5"
                       onChange={e => updateWall(wall.id, "height", e.target.value)}
-                      className="w-full px-2 py-2 border-2 border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#ff6b35] transition-colors disabled:bg-gray-50 disabled:cursor-not-allowed"
+                      className="w-full px-2 py-2 border-2 border-gray-200 rounded-lg text-sm text-black placeholder:text-black focus:outline-none focus:border-[#ff6b35] transition-colors disabled:bg-gray-50 disabled:cursor-not-allowed"
                     />
                     <span className="text-gray-400 text-sm text-center px-0.5">×</span>
                     <input
                       type="number" placeholder="Width (ft)"
                       value={wall.width} disabled={!wall.active} min="0" step="0.5"
                       onChange={e => updateWall(wall.id, "width", e.target.value)}
-                      className="w-full px-2 py-2 border-2 border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#ff6b35] transition-colors disabled:bg-gray-50 disabled:cursor-not-allowed"
+                      className="w-full px-2 py-2 border-2 border-gray-200 rounded-lg text-sm text-black placeholder:text-black focus:outline-none focus:border-[#ff6b35] transition-colors disabled:bg-gray-50 disabled:cursor-not-allowed"
                     />
                   </div>
                 </div>

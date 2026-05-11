@@ -12,30 +12,24 @@ export default function EstimatePage() {
     <div className="min-h-screen bg-gray-50">
 
       {/* Header — matches main site */}
-      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-sm shadow-sm">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 flex items-center justify-between h-16 sm:h-20">
+      <header className="bg-white border-b border-gray-100 sticky top-0 z-50">
+        <div className="w-full max-w-6xl mx-auto flex items-center justify-between px-3 sm:px-6 py-2 sm:py-3">
           <a href="/" aria-label="Corevance home">
             <Image
-              src="/corevance-logo-full.png"
-              alt="Corevance – Commercial FRP Wall Panel Installation & Supply"
-              width={220}
-              height={56}
-              className="w-[150px] sm:w-[200px] h-auto"
+              src="/corevance-logo-symbol.png"
+              alt="Corevance – Commercial FRP Wall Panel Installation &amp; Supply"
+              width={278}
+              height={61}
               priority
+              className="object-contain w-[150px] h-auto sm:w-[220px] lg:w-[278px]"
             />
           </a>
-          <div className="flex items-center gap-3 sm:gap-4">
-            <a
-              href="/"
-              className="text-sm text-gray-500 hover:text-[#1e3a5f] font-medium transition-colors hidden sm:block"
-            >
-              ← Back to Home
-            </a>
-            <a
-              href="tel:4378493781"
-              className="bg-[#ff6b35] text-white font-semibold px-4 sm:px-5 py-2 sm:py-2.5 rounded-full text-sm hover:bg-[#e55a28] hover:-translate-y-0.5 transition-all"
-            >
-              437-849-3781
+          <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+            <span className="hidden sm:inline text-[24px] font-semibold text-[#1e3a5f] whitespace-nowrap uppercase">Call us now</span>
+            <a href="tel:4378493781" aria-label="Call Corevance at 437-849-3781" className="no-underline group">
+              <div className="flex items-center px-3 sm:px-5 py-1.5 sm:py-2.5 rounded-full transition-opacity hover:opacity-90" style={{ background: "#ff6b35" }}>
+                <span className="text-xs sm:text-[24px] font-bold text-white whitespace-nowrap">437-849-3781</span>
+              </div>
             </a>
           </div>
         </div>

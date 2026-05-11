@@ -11,13 +11,13 @@ export default function EstimatePage() {
   return (
     <div className="min-h-screen bg-gray-50">
 
-      {/* Header — matches main site */}
+      {/* Header — identical to homepage */}
       <header className="bg-white border-b border-gray-100 sticky top-0 z-50">
         <div className="w-full max-w-6xl mx-auto flex items-center justify-between px-3 sm:px-6 py-2 sm:py-3">
           <a href="/" aria-label="Corevance home">
             <Image
               src="/corevance-logo-symbol.png"
-              alt="Corevance – Commercial FRP Wall Panel Installation &amp; Supply"
+              alt="Corevance – Commercial FRP Wall Panel Installation & Supply"
               width={278}
               height={61}
               priority

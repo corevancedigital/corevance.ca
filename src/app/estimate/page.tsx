@@ -3,8 +3,32 @@ import Image from "next/image";
 import MaterialEstimator from "../components/MaterialEstimator";
 
 export const metadata: Metadata = {
-  title: "Material & Budget Estimator",
-  description: "Instantly estimate how many FRP wall panels and accessories you need for your project, with a side-by-side price comparison between Corevance and Home Depot.",
+  title: "FRP Panel Material & Budget Estimator",
+  description: "Instantly estimate FRP wall panels, accessories, and material cost for your commercial project. Compare Corevance pricing vs. retail. Free — no signup required.",
+  alternates: { canonical: "https://corevance.ca/estimate" },
+  keywords: [
+    "FRP panel calculator",
+    "FRP material estimator",
+    "FRP cost calculator Canada",
+    "how many FRP panels do I need",
+    "FRP panel budget tool",
+    "commercial FRP estimate GTA",
+  ],
+  openGraph: {
+    title: "FRP Panel Estimator — Corevance",
+    description: "Free FRP material estimator for commercial kitchen and facility projects. Get quantities for panels, divider bars, corners, and adhesive instantly.",
+    url: "https://corevance.ca/estimate",
+    type: "website",
+    siteName: "Corevance",
+    images: [{ url: "/corevance-logo-full.png", width: 1200, height: 630, alt: "Corevance FRP Panel Estimator" }],
+    locale: "en_CA",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "FRP Panel Estimator — Corevance",
+    description: "Free FRP material estimator for commercial kitchen and facility projects.",
+    images: ["/corevance-logo-full.png"],
+  },
 };
 
 export default function EstimatePage() {

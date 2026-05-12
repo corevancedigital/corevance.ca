@@ -129,16 +129,32 @@ const servicesJsonLd = {
       "@type": "Organization",
       "@id": `${SITE_URL}/#organization`,
       name: "Corevance",
+      alternateName: "Corevance FRP",
+      description: "Commercial FRP fiberglass wall panel installation and supply company based in the Greater Toronto Area, Ontario, Canada. CFIA-accepted, Class C rated panels for commercial kitchens, food facilities, and industrial spaces.",
       url: SITE_URL,
       logo: {
         "@type": "ImageObject",
         url: `${SITE_URL}/corevance-logo-symbol.png`,
       },
+      address: {
+        "@type": "PostalAddress",
+        addressRegion: "ON",
+        addressCountry: "CA",
+        addressLocality: "Greater Toronto Area",
+      },
+      areaServed: [
+        { "@type": "City", name: "Toronto", containedInPlace: { "@type": "State", name: "Ontario" } },
+        { "@type": "City", name: "Mississauga", containedInPlace: { "@type": "State", name: "Ontario" } },
+        { "@type": "City", name: "Brampton", containedInPlace: { "@type": "State", name: "Ontario" } },
+        { "@type": "City", name: "North York", containedInPlace: { "@type": "State", name: "Ontario" } },
+        { "@type": "City", name: "Scarborough", containedInPlace: { "@type": "State", name: "Ontario" } },
+      ],
       contactPoint: {
         "@type": "ContactPoint",
         telephone: "+1-437-849-3781",
+        email: "corevancesales@gmail.com",
         contactType: "customer service",
-        areaServed: "CA",
+        areaServed: "CA-ON",
         availableLanguage: "English",
       },
       sameAs: ["https://share.google/BeTDV46PAjKJ0mmCC"],
@@ -255,6 +271,12 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} h-full antialiased`}>
       <head>
+        {/* Geographic entity signals — help Google/AI engines locate this business in Ontario, Canada */}
+        <meta name="geo.region" content="CA-ON" />
+        <meta name="geo.placename" content="Greater Toronto Area" />
+        <meta name="geo.position" content="43.6532;-79.3832" />
+        <meta name="ICBM" content="43.6532, -79.3832" />
+        <meta name="author" content="Corevance — Commercial FRP Contractor, Ontario, Canada" />
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-Y8ST80TMZR"
           strategy="afterInteractive"

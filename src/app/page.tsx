@@ -7,7 +7,7 @@ import FAQSection from "./components/FAQSection";
 /* ─────────────────────────── HERO ────────────────────────────────── */
 function Hero() {
   return (
-    <section className="relative flex items-center justify-center overflow-hidden" style={{ minHeight: "100svh" }}>
+    <section id="contact" className="relative flex items-center justify-center overflow-hidden" style={{ minHeight: "100svh" }}>
       <video
         autoPlay muted playsInline loop
         poster="/frp_smooth.jpg"
@@ -46,7 +46,7 @@ function Hero() {
             </div>
           </div>
 
-          <div className="lg:col-span-2 w-full" id="contact">
+          <div className="lg:col-span-2 w-full">
             <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-6 sm:p-8 w-full">
               <h2 className="text-xl sm:text-2xl font-bold text-[#1e3a5f] mb-1 text-center">Tell Us About Your Project</h2>
               <p className="text-gray-500 text-sm mb-5 text-center">Get expert consultation and a detailed quote within 24 hours</p>
@@ -171,6 +171,15 @@ function Services() {
             </div>
           ))}
         </div>
+        <div className="mt-12 rounded-2xl bg-[#1e3a5f] px-8 py-7 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div>
+            <p className="text-white font-bold text-lg mb-1">Are You a Contractor?</p>
+            <p className="text-white/70 text-sm">Drywall, GC, or renovation contractor? Get trade pricing, bulk discounts, and same-day GTA delivery.</p>
+          </div>
+          <a href="/contractors" className="shrink-0 bg-[#ff6b35] text-white font-bold px-7 py-3 rounded-full text-sm hover:bg-[#e55a28] transition-all no-underline whitespace-nowrap">
+            Open a Contractor Account
+          </a>
+        </div>
       </div>
     </section>
   );
@@ -217,9 +226,11 @@ function Footer() {
         </div>
         <div>
           <h3 className="text-[#1e3a5f] font-bold text-lg mb-4">Services</h3>
-          {["Professional Installation", "Material Supply", "Custom Solutions", "Get a Quote"].map(s => (
-            <a key={s} href="#services" className="block text-gray-500 hover:text-[#ff6b35] leading-loose text-sm transition-colors">{s}</a>
-          ))}
+          <a href="/services" className="block text-gray-500 hover:text-[#ff6b35] leading-loose text-sm transition-colors">Professional Installation</a>
+          <a href="/products" className="block text-gray-500 hover:text-[#ff6b35] leading-loose text-sm transition-colors">Material Supply</a>
+          <a href="/services#custom" className="block text-gray-500 hover:text-[#ff6b35] leading-loose text-sm transition-colors">Custom Solutions</a>
+          <a href="/contractors" className="block text-gray-500 hover:text-[#ff6b35] leading-loose text-sm transition-colors">Contractor Accounts</a>
+          <a href="/#contact" className="block text-gray-500 hover:text-[#ff6b35] leading-loose text-sm transition-colors">Get a Quote</a>
         </div>
         <div>
           <h3 className="text-[#1e3a5f] font-bold text-lg mb-4">Contact Us</h3>
@@ -272,7 +283,11 @@ function Header() {
         />
         <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
           <span className="text-xs sm:text-[24px] font-semibold text-[#1e3a5f] whitespace-nowrap uppercase">Call us now</span>
-          <a href="tel:4378493781" aria-label="Call Corevance at 437-849-3781" className="no-underline group">
+          <a
+            href="tel:4378493781"
+            aria-label="Call Corevance at 437-849-3781"
+            className="no-underline group"
+          >
             <div className="flex items-center px-3 sm:px-5 py-1.5 sm:py-2.5 rounded-full transition-opacity hover:opacity-90" style={{ background: "#ff6b35" }}>
               <span className="text-xs sm:text-[24px] font-bold text-white whitespace-nowrap">437-849-3781</span>
             </div>

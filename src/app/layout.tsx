@@ -118,6 +118,11 @@ const jsonLd = {
     { "@type": "OpeningHoursSpecification", dayOfWeek: ["Monday","Tuesday","Wednesday","Thursday","Friday"], opens: "08:00", closes: "18:00" },
     { "@type": "OpeningHoursSpecification", dayOfWeek: ["Saturday"], opens: "09:00", closes: "14:00" },
   ],
+  geo: {
+    "@type": "GeoCoordinates",
+    latitude: 43.6532,
+    longitude: -79.3832,
+  },
   priceRange: "$$",
   sameAs: [
     "https://share.google/BeTDV46PAjKJ0mmCC",

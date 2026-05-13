@@ -235,8 +235,8 @@ function ServiceAreas() {
     { name: "Brampton",    href: "/frp-installation-brampton" },
     { name: "Scarborough", href: "/frp-installation-scarborough" },
     { name: "North York",  href: "/frp-installation-north-york" },
-    { name: "Vaughan",     href: "/frp-panels-vaughan" },
-    { name: "Etobicoke",   href: "/frp-panels-etobicoke" },
+    { name: "Vaughan",     href: "/frp-installation-vaughan" },
+    { name: "Etobicoke",   href: "/frp-installation-etobicoke" },
   ];
   return (
     <section className="py-14 px-5 bg-gray-50 border-t border-gray-100">
@@ -320,7 +320,7 @@ function Footer() {
       <div className="max-w-6xl mx-auto px-10">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-10">
         <div>
-          <Image src="/corevance-logo-symbol.png" alt="CoreVance – Commercial FRP Wall Panel Installation & Supply" width={330} height={72} className="object-contain mb-5 max-w-full w-[220px] sm:w-[280px] lg:w-[330px]" />
+          <Image src="/corevance-logo-symbol.png" alt="Corevance — FRP Wall Panel Supplier Toronto" width={330} height={72} className="object-contain mb-5 max-w-full w-[220px] sm:w-[280px] lg:w-[330px]" />
           <p className="text-gray-600 leading-relaxed text-sm" style={{ textAlign: "justify", hyphens: "auto" }}>
             We don&apos;t just install panels — we set the standard. Corevance delivers precision-engineered FRP solutions to commercial contractors and facility operators who refuse to compromise. From the first estimate to the final rivet, we bring craftsmanship, speed, and accountability to every project.
           </p>
@@ -377,7 +377,7 @@ function Header() {
       <div className="w-full max-w-6xl mx-auto flex items-center justify-between px-3 sm:px-6 py-2 sm:py-3">
         <Image
           src="/corevance-logo-symbol.png"
-          alt="CoreVance – Commercial FRP Wall Panel Installation & Supply"
+          alt="Corevance — FRP Wall Panel Supplier Toronto"
           width={278} height={61} priority
           className="object-contain w-[150px] h-auto sm:w-[220px] lg:w-[278px]"
         />

@@ -41,7 +41,7 @@ export default function EstimatePage() {
           <a href="/" aria-label="Corevance home">
             <Image
               src="/corevance-logo-symbol.png"
-              alt="Corevance – Commercial FRP Wall Panel Installation & Supply"
+              alt="Corevance — FRP Wall Panel Supplier Toronto"
               width={278}
               height={61}
               priority

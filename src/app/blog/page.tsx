@@ -42,7 +42,7 @@ export default function BlogPage() {
       <header className="bg-white border-b border-gray-100 sticky top-0 z-50">
         <div className="w-full max-w-6xl mx-auto flex items-center justify-between px-3 sm:px-6 py-2 sm:py-3">
           <Link href="/" aria-label="Corevance home">
-            <Image src="/corevance-logo-symbol.png" alt="Corevance" width={278} height={61} priority className="object-contain w-[150px] h-auto sm:w-[220px] lg:w-[278px]" />
+            <Image src="/corevance-logo-symbol.png" alt="Corevance — FRP Wall Panel Supplier Toronto" width={278} height={61} priority className="object-contain w-[150px] h-auto sm:w-[220px] lg:w-[278px]" />
           </Link>
           <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
             <span className="hidden sm:block text-sm font-semibold text-[#1e3a5f] uppercase">Call us now</span>

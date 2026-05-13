@@ -581,7 +581,7 @@ export default function MaterialEstimator() {
                         <div className="bg-white p-3 flex items-center justify-center border-r border-gray-200 relative">
                           <Image
                             src="/corevance-logo-symbol.png"
-                            alt="Corevance"
+                            alt="Corevance — FRP Wall Panel Supplier Toronto"
                             width={110}
                             height={28}
                             className="h-6 w-auto object-contain"

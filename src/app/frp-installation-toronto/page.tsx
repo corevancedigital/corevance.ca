@@ -77,7 +77,7 @@ export default function TorontoPage() {
       <header className="bg-white border-b border-gray-100 sticky top-0 z-50">
         <div className="w-full max-w-6xl mx-auto flex items-center justify-between px-3 sm:px-6 py-2 sm:py-3">
           <Link href="/" aria-label="Corevance home">
-            <Image src="/corevance-logo-symbol.png" alt="Corevance" width={278} height={61} priority className="object-contain w-[150px] h-auto sm:w-[220px] lg:w-[278px]" />
+            <Image src="/corevance-logo-symbol.png" alt="Corevance — FRP Wall Panel Supplier Toronto" width={278} height={61} priority className="object-contain w-[150px] h-auto sm:w-[220px] lg:w-[278px]" />
           </Link>
           <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
             <span className="hidden sm:block text-sm font-semibold text-[#1e3a5f] uppercase">Call us now</span>
@@ -96,7 +96,8 @@ export default function TorontoPage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a href="/#contact" className="bg-[#ff6b35] text-white font-bold px-8 py-4 rounded-full hover:bg-[#e55a28] transition-all no-underline">Get a Free Toronto Quote</a>
-              <a href="tel:4378493781" className="border-2 border-white text-white font-bold px-8 py-4 rounded-full hover:bg-white hover:text-[#1e3a5f] transition-all no-underline">Call 437-849-3781</a>
+              <Link href="/estimate" className="border-2 border-white text-white font-bold px-8 py-4 rounded-full hover:bg-white hover:text-[#1e3a5f] transition-all no-underline">Estimate Your Materials →</Link>
+              <a href="tel:4378493781" className="border-2 border-white/50 text-white/80 font-bold px-8 py-4 rounded-full hover:bg-white hover:text-[#1e3a5f] transition-all no-underline">Call 437-849-3781</a>
             </div>
           </div>
         </section>

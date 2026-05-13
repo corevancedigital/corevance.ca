@@ -17,7 +17,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE}/frp-installation-brampton`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
     { url: `${BASE}/frp-installation-north-york`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
     { url: `${BASE}/frp-installation-scarborough`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
-    { url: `${BASE}/frp-panels-vaughan`,           lastModified: now, changeFrequency: "monthly", priority: 0.8 },
-    { url: `${BASE}/frp-panels-etobicoke`,         lastModified: now, changeFrequency: "monthly", priority: 0.8 },
+    { url: `${BASE}/frp-installation-vaughan`,      lastModified: now, changeFrequency: "monthly", priority: 0.8 },
+    { url: `${BASE}/frp-installation-etobicoke`,   lastModified: now, changeFrequency: "monthly", priority: 0.8 },
   ];
 }

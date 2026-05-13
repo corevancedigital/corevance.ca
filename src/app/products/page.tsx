@@ -250,8 +250,6 @@ export default function ProductsPage() {
           {" · "}
           <Link href="/services" className="hover:text-[#ff6b35] transition-colors">Services</Link>
           {" · "}
-          <Link href="/contractors" className="hover:text-[#ff6b35] transition-colors">Contractors</Link>
-          {" · "}
           <Link href="/estimate" className="hover:text-[#ff6b35] transition-colors">Estimate</Link>
         </p>
       </footer>

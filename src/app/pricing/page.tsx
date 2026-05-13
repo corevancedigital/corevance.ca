@@ -144,19 +144,6 @@ export default function PricingPage() {
           </div>
         </section>
 
-        {/* Contractor pricing */}
-        <section className="py-16 px-5 bg-gray-50">
-          <div className="max-w-4xl mx-auto">
-            <div className="bg-[#1e3a5f] rounded-2xl p-8 flex flex-col sm:flex-row gap-6 items-center">
-              <div className="flex-1">
-                <h2 className="text-xl font-bold text-white mb-2">Contractor Pricing Available</h2>
-                <p className="text-white/70 text-sm leading-relaxed">Drywall contractors, GCs, and renovation firms qualify for 15% off retail, with an additional 5% on orders of 20+ panels. Open a trade account in 1 business day.</p>
-              </div>
-              <Link href="/contractors" className="shrink-0 bg-[#ff6b35] text-white font-bold px-7 py-3 rounded-full hover:bg-[#e55a28] transition-all no-underline whitespace-nowrap text-sm">Open Contractor Account</Link>
-            </div>
-          </div>
-        </section>
-
         {/* FAQ */}
         <section className="py-16 px-5 bg-white">
           <div className="max-w-3xl mx-auto">
@@ -196,7 +183,6 @@ export default function PricingPage() {
           {" · "}<Link href="/" className="hover:text-[#ff6b35] transition-colors">Home</Link>
           {" · "}<Link href="/services" className="hover:text-[#ff6b35] transition-colors">Services</Link>
           {" · "}<Link href="/products" className="hover:text-[#ff6b35] transition-colors">Products</Link>
-          {" · "}<Link href="/contractors" className="hover:text-[#ff6b35] transition-colors">Contractors</Link>
         </p>
       </footer>
     </div>

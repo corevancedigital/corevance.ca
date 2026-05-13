@@ -281,15 +281,6 @@ function Services() {
             </div>
           ))}
         </div>
-        <div className="mt-12 rounded-2xl bg-[#1e3a5f] px-8 py-7 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div>
-            <p className="text-white font-bold text-lg mb-1">Are You a Contractor?</p>
-            <p className="text-white/70 text-sm">Drywall, GC, or renovation contractor? Get trade pricing, bulk discounts, and same-day GTA delivery.</p>
-          </div>
-          <a href="/contractors" className="shrink-0 bg-[#ff6b35] text-white font-bold px-7 py-3 rounded-full text-sm hover:bg-[#e55a28] transition-all no-underline whitespace-nowrap">
-            Open a Contractor Account
-          </a>
-        </div>
       </div>
     </section>
   );
@@ -339,7 +330,6 @@ function Footer() {
           <a href="/services" className="block text-gray-500 hover:text-[#ff6b35] leading-loose text-sm transition-colors">Professional Installation</a>
           <a href="/products" className="block text-gray-500 hover:text-[#ff6b35] leading-loose text-sm transition-colors">Material Supply</a>
           <a href="/services#custom" className="block text-gray-500 hover:text-[#ff6b35] leading-loose text-sm transition-colors">Custom Solutions</a>
-          <a href="/contractors" className="block text-gray-500 hover:text-[#ff6b35] leading-loose text-sm transition-colors">Contractor Accounts</a>
           <a href="/#contact" className="block text-gray-500 hover:text-[#ff6b35] leading-loose text-sm transition-colors">Get a Quote</a>
         </div>
         <div>

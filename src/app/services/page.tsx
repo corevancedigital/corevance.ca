@@ -179,7 +179,6 @@ export default function ServicesPage() {
               </ul>
               <div className="flex gap-3 flex-wrap">
                 <Link href="/products" className="inline-block bg-[#1e3a5f] text-white font-bold px-7 py-3 rounded-full hover:bg-[#16304f] transition-all no-underline text-sm">View Products</Link>
-                <Link href="/contractors" className="inline-block border-2 border-[#1e3a5f] text-[#1e3a5f] font-bold px-7 py-3 rounded-full hover:bg-[#1e3a5f] hover:text-white transition-all no-underline text-sm">Contractor Pricing</Link>
               </div>
             </div>
           </div>
@@ -286,8 +285,6 @@ export default function ServicesPage() {
           <Link href="/" className="hover:text-[#ff6b35] transition-colors">Home</Link>
           {" · "}
           <Link href="/products" className="hover:text-[#ff6b35] transition-colors">Products</Link>
-          {" · "}
-          <Link href="/contractors" className="hover:text-[#ff6b35] transition-colors">Contractors</Link>
         </p>
       </footer>
     </div>

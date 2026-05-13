@@ -226,8 +226,6 @@ export default function AboutPage() {
           <Link href="/services" className="hover:text-[#ff6b35] transition-colors">Services</Link>
           {" · "}
           <Link href="/products" className="hover:text-[#ff6b35] transition-colors">Products</Link>
-          {" · "}
-          <Link href="/contractors" className="hover:text-[#ff6b35] transition-colors">Contractors</Link>
         </p>
       </footer>
     </div>

@@ -20,7 +20,7 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Corevance | Commercial FRP Wall Panel Installation & Supply",
+    default: "FRP Wall Panels Toronto | Commercial Contractor Supply | Corevance",
     template: "%s | Corevance",
   },
   description:
@@ -100,6 +100,8 @@ const jsonLd = {
     { "@type": "City", name: "Brampton" },
     { "@type": "City", name: "North York" },
     { "@type": "City", name: "Scarborough" },
+    { "@type": "City", name: "Vaughan" },
+    { "@type": "City", name: "Etobicoke" },
     { "@type": "AdministrativeArea", name: "Greater Toronto Area" },
   ],
   hasOfferCatalog: {
@@ -148,6 +150,8 @@ const servicesJsonLd = {
         { "@type": "City", name: "Brampton", containedInPlace: { "@type": "State", name: "Ontario" } },
         { "@type": "City", name: "North York", containedInPlace: { "@type": "State", name: "Ontario" } },
         { "@type": "City", name: "Scarborough", containedInPlace: { "@type": "State", name: "Ontario" } },
+        { "@type": "City", name: "Vaughan", containedInPlace: { "@type": "State", name: "Ontario" } },
+        { "@type": "City", name: "Etobicoke", containedInPlace: { "@type": "State", name: "Ontario" } },
       ],
       contactPoint: {
         "@type": "ContactPoint",
@@ -271,6 +275,9 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} h-full antialiased`}>
       <head>
+        {/* Preconnect to external origins used by GA4 / GTM */}
+        <link rel="preconnect" href="https://www.googletagmanager.com" />
+        <link rel="preconnect" href="https://www.google-analytics.com" />
         {/* Geographic entity signals — help Google/AI engines locate this business in Ontario, Canada */}
         <meta name="geo.region" content="CA-ON" />
         <meta name="geo.placename" content="Greater Toronto Area" />

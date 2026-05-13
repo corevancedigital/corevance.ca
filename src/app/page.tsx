@@ -24,9 +24,9 @@ function Hero() {
         <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-5 items-center gap-8 lg:gap-12">
           <div className="lg:col-span-3 text-center lg:text-left">
             <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-white leading-[1.1] mb-6 sm:mb-8">
-              The Commercial Standard<br />
-              in FRP Wall Panel<br />
-              Installation &amp; Supply
+              FRP Wall Panels for<br />
+              GTA Commercial<br />
+              Contractors
             </h1>
             <div className="flex flex-col items-center lg:items-start gap-3 sm:gap-4">
               <a href="#products"
@@ -94,10 +94,10 @@ function Hero() {
 /* ─────────────────────── PRODUCTS ───────────────────────────────── */
 function Products() {
   const products = [
-    { title: "Class C – 8′ × 4′ Pebbled",  finish: "pebbled", specs: [["Size","8′ × 4′ (96″ × 48″)"], ["Finish","Pebbled texture"], ["Thickness","2mm"], ["Class","C Fire Rating"]] },
-    { title: "Class C – 8′ × 4′ Smooth",   finish: "smooth",  specs: [["Size","8′ × 4′ (96″ × 48″)"], ["Finish","Smooth surface"],  ["Thickness","2mm"], ["Class","C Fire Rating"]] },
-    { title: "Class C – 10′ × 4′ Pebbled", finish: "pebbled", specs: [["Size","10′ × 4′ (120″ × 48″)"],["Finish","Pebbled texture"], ["Thickness","2mm"], ["Class","C Fire Rating"]] },
-    { title: "Class C – 10′ × 4′ Smooth",  finish: "smooth",  specs: [["Size","10′ × 4′ (120″ × 48″)"],["Finish","Smooth surface"],  ["Thickness","2mm"], ["Class","C Fire Rating"]] },
+    { title: "Class C – 8′ × 4′ Pebbled",  finish: "pebbled", alt: "Pebbled FRP wall panel for commercial kitchens — Corevance GTA",                              specs: [["Size","8′ × 4′ (96″ × 48″)"], ["Finish","Pebbled texture"], ["Thickness","2mm"], ["Class","C Fire Rating"]] },
+    { title: "Class C – 8′ × 4′ Smooth",   finish: "smooth",  alt: "Smooth FRP wall panel for food processing facilities — Corevance GTA",                         specs: [["Size","8′ × 4′ (96″ × 48″)"], ["Finish","Smooth surface"],  ["Thickness","2mm"], ["Class","C Fire Rating"]] },
+    { title: "Class C – 10′ × 4′ Pebbled", finish: "pebbled", alt: "Large format pebbled FRP wall panel for warehouses and industrial spaces — Corevance GTA",      specs: [["Size","10′ × 4′ (120″ × 48″)"],["Finish","Pebbled texture"], ["Thickness","2mm"], ["Class","C Fire Rating"]] },
+    { title: "Class C – 10′ × 4′ Smooth",  finish: "smooth",  alt: "Large format smooth FRP wall panel for hospital and medical clinic walls — Corevance GTA",      specs: [["Size","10′ × 4′ (120″ × 48″)"],["Finish","Smooth surface"],  ["Thickness","2mm"], ["Class","C Fire Rating"]] },
   ];
   return (
     <section id="products" className="py-20 px-5 bg-gray-50">
@@ -105,14 +105,14 @@ function Products() {
         <h2 className="text-center text-2xl sm:text-3xl lg:text-4xl font-bold text-[#1e3a5f] mb-3">FRP Wall Panel Products</h2>
         <p className="text-center text-gray-500 text-base sm:text-lg mb-12">High-performance materials engineered for demanding commercial applications</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-7">
-          {products.map(({ title, finish, specs }) => (
+          {products.map(({ title, finish, alt, specs }) => (
             <a key={title} href="#contact"
                className="bg-white rounded-2xl shadow-md hover:-translate-y-2 hover:shadow-xl transition-all overflow-hidden group no-underline">
               <div className="h-48 relative overflow-hidden rounded-t-2xl" style={{ borderTop: "4px solid #e5e7eb", borderRight: "4px solid #e5e7eb", borderLeft: "4px solid #e5e7eb" }}>
                 {finish === "pebbled" ? (
                   <Image
                     src="/acc_frp_pebbled.png"
-                    alt={title}
+                    alt={alt}
                     fill
                     className="object-cover"
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
@@ -120,7 +120,7 @@ function Products() {
                 ) : (
                   <Image
                     src="/frp_smooth.jpg"
-                    alt={title}
+                    alt={alt}
                     fill
                     className="object-cover"
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
@@ -141,6 +141,116 @@ function Products() {
                   ))}
                 </ul>
               </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ─────────────────────── VERTICALS ──────────────────────────────── */
+function Verticals() {
+  return (
+    <section className="py-20 px-5 bg-white">
+      <div className="max-w-6xl mx-auto">
+        <p className="text-center text-[#ff6b35] font-semibold uppercase tracking-widest text-sm mb-3">Industries We Serve</p>
+        <h2 className="text-center text-2xl sm:text-3xl lg:text-4xl font-bold text-[#1e3a5f] mb-4">FRP Wall Panels for Every Commercial Application</h2>
+        <p className="text-center text-gray-500 text-base sm:text-lg mb-14 max-w-3xl mx-auto">
+          Corevance supplies and installs fiberglass reinforced plastic panels GTA contractors trust across the most demanding commercial environments. CFIA-accepted systems. Class C fire-rated. Same-day delivery.
+        </p>
+
+        <div className="space-y-10">
+
+          {/* Commercial Kitchens */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center rounded-2xl border border-gray-100 bg-gray-50 p-8">
+            <div>
+              <h2 className="text-xl sm:text-2xl font-bold text-[#1e3a5f] mb-3">Commercial Kitchen FRP Panels</h2>
+              <p className="text-gray-600 leading-relaxed text-sm">
+                Commercial kitchen FRP panels from Corevance are the top choice for Toronto restaurant owners, institutional food service operators, and GTA contractors working on kitchen renovations. Unlike ceramic tile, FRP wall panels have no grout lines — eliminating the bacterial harborage points that fail CFIA and Toronto Public Health inspections. Our Class C, 2mm panels withstand grease, steam, and daily chemical sanitation without warping or delaminating. Each installation includes PVC divider bars, inside and outside corner trim, nylon rivets, and Titebond FRP adhesive for a complete, code-compliant system. Most commercial kitchen FRP installations in the GTA complete in one to two days, minimizing restaurant downtime.
+              </p>
+            </div>
+            <div className="bg-white rounded-xl p-6 border border-gray-100">
+              <p className="text-xs font-bold text-[#ff6b35] uppercase tracking-wide mb-3">Why FRP over tile in kitchens</p>
+              <ul className="space-y-2">
+                {["No grout lines — no bacterial harborage", "CFIA-accepted for food preparation areas", "Resists grease, steam, and caustic cleaners", "Seamless PVC corner trim system", "Installs in 1–2 days; no curing time"].map(pt => (
+                  <li key={pt} className="flex items-start gap-2 text-sm text-gray-700">
+                    <span className="text-[#ff6b35] font-bold mt-0.5">✓</span>{pt}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          {/* Hospitals & Medical */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center rounded-2xl border border-gray-100 bg-gray-50 p-8">
+            <div className="order-2 lg:order-1 bg-white rounded-xl p-6 border border-gray-100">
+              <p className="text-xs font-bold text-[#ff6b35] uppercase tracking-wide mb-3">Why FRP in healthcare facilities</p>
+              <ul className="space-y-2">
+                {["Non-porous — resists mould and pathogen growth", "Smooth finish cleans with hospital-grade disinfectants", "Nylon rivets eliminate metal corrosion risk", "Impact-resistant for high-traffic corridors", "Available in light neutrals matching clinical aesthetics"].map(pt => (
+                  <li key={pt} className="flex items-start gap-2 text-sm text-gray-700">
+                    <span className="text-[#ff6b35] font-bold mt-0.5">✓</span>{pt}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="order-1 lg:order-2">
+              <h2 className="text-xl sm:text-2xl font-bold text-[#1e3a5f] mb-3">Hospital &amp; Medical Clinic Wall Panels</h2>
+              <p className="text-gray-600 leading-relaxed text-sm">
+                Hospitals, medical clinics, long-term care facilities, and veterinary practices across Ontario choose FRP wall panels for their infection-control properties and durability. Corevance installs smooth-finish FRP panels in procedure rooms, corridors, utility areas, and kitchen facilities — anywhere hygiene and impact resistance are non-negotiable. Our smooth Class C panels accept all standard hospital-grade disinfectants and resist moisture intrusion that drives mould in drywall. Corrosion-free nylon rivets and PVC molding systems mean no metal components to degrade in high-humidity clinical environments. We serve GTA healthcare contractors and facility managers with same-day delivery on in-stock panel sizes.
+              </p>
+            </div>
+          </div>
+
+          {/* Warehouses & Industrial */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center rounded-2xl border border-gray-100 bg-gray-50 p-8">
+            <div>
+              <h2 className="text-xl sm:text-2xl font-bold text-[#1e3a5f] mb-3">Warehouse &amp; Industrial FRP Solutions</h2>
+              <p className="text-gray-600 leading-relaxed text-sm">
+                Warehouses, food distribution centres, cold storage facilities, and manufacturing plants throughout the GTA rely on Corevance FRP wall panels for durable, low-maintenance wall surfaces. Our 10′ × 4′ Class C panels cover large industrial wall areas efficiently, reducing panel count and installation time. Pebbled-texture FRP panels are ideal for loading docks and utility areas where surface durability is critical; smooth panels suit clean rooms and food-grade production zones. Corevance fiberglass reinforced plastic panels Ontario contractors specify are engineered for long service life with minimal upkeep — no painting, no grouting, no rust. Bulk contractor pricing available for large-format industrial projects.
+              </p>
+            </div>
+            <div className="bg-white rounded-xl p-6 border border-gray-100">
+              <p className="text-xs font-bold text-[#ff6b35] uppercase tracking-wide mb-3">Industrial FRP advantages</p>
+              <ul className="space-y-2">
+                {["10′ × 4′ panels reduce seams on tall walls", "Impact and abrasion resistant surface", "No painting or refinishing required", "Class C fire-rated for building code compliance", "Bulk contractor pricing on large orders"].map(pt => (
+                  <li key={pt} className="flex items-start gap-2 text-sm text-gray-700">
+                    <span className="text-[#ff6b35] font-bold mt-0.5">✓</span>{pt}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ─────────────────────── SERVICE AREAS ──────────────────────────── */
+function ServiceAreas() {
+  const cities = [
+    { name: "Mississauga", href: "/frp-installation-mississauga" },
+    { name: "Brampton",    href: "/frp-installation-brampton" },
+    { name: "Scarborough", href: "/frp-installation-scarborough" },
+    { name: "North York",  href: "/frp-installation-north-york" },
+    { name: "Vaughan",     href: "/frp-panels-vaughan" },
+    { name: "Etobicoke",   href: "/frp-panels-etobicoke" },
+  ];
+  return (
+    <section className="py-14 px-5 bg-gray-50 border-t border-gray-100">
+      <div className="max-w-6xl mx-auto text-center">
+        <p className="text-xs font-bold text-[#ff6b35] uppercase tracking-widest mb-3">GTA Service Coverage</p>
+        <h2 className="text-xl font-bold text-[#1e3a5f] mb-2">Serving Commercial Contractors Across the GTA</h2>
+        <p className="text-gray-500 text-sm mb-8">Same-day delivery and installation. Free on-site quotes within 24 hours.</p>
+        <div className="flex flex-wrap justify-center gap-3">
+          <a href="/frp-installation-toronto" className="bg-white border-2 border-[#ff6b35] text-[#1e3a5f] font-bold px-6 py-2.5 rounded-full text-sm hover:bg-[#ff6b35] hover:text-white transition-all no-underline">
+            FRP Installation Toronto →
+          </a>
+          {cities.map(({ name, href }) => (
+            <a key={name} href={href} className="bg-white border border-gray-200 text-[#1e3a5f] font-semibold px-5 py-2.5 rounded-full text-sm hover:border-[#ff6b35] hover:text-[#ff6b35] transition-all no-underline">
+              Serving {name} contractors →
             </a>
           ))}
         </div>
@@ -309,6 +419,8 @@ export default function Home() {
         <Products />
         <ColorsAndSizes />
         <AccessoriesSection />
+        <Verticals />
+        <ServiceAreas />
         <Services />
         <WhyChooseUs />
         <FAQSection />

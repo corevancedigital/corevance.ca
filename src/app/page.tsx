@@ -300,6 +300,7 @@ function Footer() {
           <a href="/services" className="block text-gray-500 hover:text-[#ff6b35] leading-loose text-sm transition-colors">Professional Installation</a>
           <a href="/products" className="block text-gray-500 hover:text-[#ff6b35] leading-loose text-sm transition-colors">Material Supply</a>
           <a href="/services#custom" className="block text-gray-500 hover:text-[#ff6b35] leading-loose text-sm transition-colors">Custom Solutions</a>
+          <a href="/areas-we-serve" className="block text-gray-500 hover:text-[#ff6b35] leading-loose text-sm transition-colors">Areas We Serve</a>
           <a href="/#contact" className="block text-gray-500 hover:text-[#ff6b35] leading-loose text-sm transition-colors">Get a Quote</a>
         </div>
         <div>

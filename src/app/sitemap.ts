@@ -13,6 +13,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE}/pricing`, lastModified: now, changeFrequency: "monthly", priority: 0.85 },
     { url: `${BASE}/about`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
     { url: `${BASE}/blog`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
+    { url: `${BASE}/areas-we-serve`, lastModified: now, changeFrequency: "monthly", priority: 0.9 },
   ];
   const cities: MetadataRoute.Sitemap = CITY_SLUGS.map((slug) => ({
     url: `${BASE}/${slug}`,

@@ -43,6 +43,10 @@ function Hero() {
                   className="bg-[#ff6b35] text-white font-semibold px-6 sm:px-8 py-3 sm:py-4 rounded-full text-sm sm:text-base hover:bg-[#e55a28] hover:-translate-y-0.5 transition-all no-underline">
                   Estimate Materials
                 </a>
+                <a href="/areas-we-serve"
+                  className="border-2 border-white/60 text-white font-semibold px-6 sm:px-8 py-3 sm:py-4 rounded-full text-sm sm:text-base hover:bg-white hover:text-[#1e3a5f] hover:-translate-y-0.5 transition-all no-underline">
+                  Areas We Serve
+                </a>
               </div>
             </div>
           </div>
@@ -300,6 +304,7 @@ function Footer() {
           <a href="/services" className="block text-gray-500 hover:text-[#ff6b35] leading-loose text-sm transition-colors">Professional Installation</a>
           <a href="/products" className="block text-gray-500 hover:text-[#ff6b35] leading-loose text-sm transition-colors">Material Supply</a>
           <a href="/services#custom" className="block text-gray-500 hover:text-[#ff6b35] leading-loose text-sm transition-colors">Custom Solutions</a>
+          <a href="/areas-we-serve" className="block text-gray-500 hover:text-[#ff6b35] leading-loose text-sm transition-colors">Areas We Serve</a>
           <a href="/#contact" className="block text-gray-500 hover:text-[#ff6b35] leading-loose text-sm transition-colors">Get a Quote</a>
         </div>
         <div>

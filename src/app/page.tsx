@@ -43,6 +43,10 @@ function Hero() {
                   className="bg-[#ff6b35] text-white font-semibold px-6 sm:px-8 py-3 sm:py-4 rounded-full text-sm sm:text-base hover:bg-[#e55a28] hover:-translate-y-0.5 transition-all no-underline">
                   Estimate Materials
                 </a>
+                <a href="/areas-we-serve"
+                  className="border-2 border-white/60 text-white font-semibold px-6 sm:px-8 py-3 sm:py-4 rounded-full text-sm sm:text-base hover:bg-white hover:text-[#1e3a5f] hover:-translate-y-0.5 transition-all no-underline">
+                  Areas We Serve
+                </a>
               </div>
             </div>
           </div>

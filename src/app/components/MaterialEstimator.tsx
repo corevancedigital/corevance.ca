@@ -1,6 +1,8 @@
 "use client";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useActionState } from "react";
 import Image from "next/image";
+import { submitQuote } from "../actions/submit-quote";
+import { INITIAL_QUOTE_STATE } from "../actions/submit-quote-types";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 type SurfaceType = "smooth" | "pebbled";
@@ -11,7 +13,6 @@ interface WallInput {
   active: boolean;
   height: string;
   width: string;
-  exposedEdges: number;
 }
 
 interface ColorOption { name: string; hex: string; }
@@ -20,27 +21,30 @@ interface EstimatorState {
   walls: WallInput[];
   color: ColorOption;
   surface: SurfaceType;
-  outsideCorners: number;
-  doorWindowArea: string;
-  showAdvanced: boolean;
+  insideCorners: string;
+  outsideCorners: string;
+  additionalEndCaps: string;
 }
 
 interface PriceRange { min: number; max: number; }
 
-interface LineItem { item: string; qty: number; unit: string; hdUnit: PriceRange; coreUnit: number | null; }
+interface LineItem { item: string; qty: number; unit: string; hdUnit: PriceRange; coreUnit: number | null; note?: string; }
 
 interface HdPanelInfo { price: number | null; available: boolean; note: string; }
 
 interface EstimatorResults {
   isValid: boolean;
   totalWallArea: number;
-  areaAfterDeductions: number;
+  totalWallWidth: number;
+  panelsForWalls: number;
+  atticStockPanels: number;
   panelsNeeded: number;
   dividerBarsNeeded: number;
   insideCornersNeeded: number;
   endCapsNeeded: number;
   outsideCornersNeeded: number;
   rivetPacksNeeded: number;
+  adhesivePails: number;
   adhesiveGallons: number;
   panelItems: LineItem[];
   accessoryItems: LineItem[];
@@ -53,18 +57,18 @@ interface EstimatorResults {
   corePanelUnitPrice: number | null;
   isCustomSize: boolean;
   hdPanelInfo: HdPanelInfo;
+  installedTotal: PriceRange;
 }
 
 // ── Constants ──────────────────────────────────────────────────────────────────
-const PANEL_SIZES: Record<PanelSize, { label: string; sqFt: number; dims: string; stock: boolean }> = {
-  "8x4":  { label: "8′ × 4′",  sqFt: 32, dims: "96″ × 48″",  stock: true  },
-  "10x4": { label: "10′ × 4′", sqFt: 40, dims: "120″ × 48″", stock: true  },
-  "12x4": { label: "12′ × 4′", sqFt: 48, dims: "144″ × 48″", stock: false },
-  "10x5": { label: "10′ × 5′", sqFt: 50, dims: "120″ × 60″", stock: false },
-  "12x5": { label: "12′ × 5′", sqFt: 60, dims: "144″ × 60″", stock: false },
+const PANEL_SIZES: Record<PanelSize, { label: string; sqFt: number; dims: string; widthFt: number; heightFt: number; stock: boolean }> = {
+  "8x4":  { label: "8′ × 4′",  sqFt: 32, dims: "96″ × 48″",  widthFt: 4, heightFt: 8,  stock: true  },
+  "10x4": { label: "10′ × 4′", sqFt: 40, dims: "120″ × 48″", widthFt: 4, heightFt: 10, stock: true  },
+  "12x4": { label: "12′ × 4′", sqFt: 48, dims: "144″ × 48″", widthFt: 4, heightFt: 12, stock: false },
+  "10x5": { label: "10′ × 5′", sqFt: 50, dims: "120″ × 60″", widthFt: 5, heightFt: 10, stock: false },
+  "12x5": { label: "12′ × 5′", sqFt: 60, dims: "144″ × 60″", widthFt: 5, heightFt: 12, stock: false },
 };
 
-// White is first and selected by default
 const COLORS: ColorOption[] = [
   { name: "White",      hex: "#ffffff" },
   { name: "Almond",     hex: "#f5f0e8" },
@@ -75,16 +79,30 @@ const COLORS: ColorOption[] = [
   { name: "Black",      hex: "#1a1a1a" },
 ];
 
-const WASTE_FACTOR = 1.1;
-const ADHESIVE_COVERAGE = 40;  // sq ft per gallon
-const RIVETS_PER_PANEL = 8;    // ~8 rivets per panel (perimeter fastening)
-const RIVETS_PER_PACK = 50;    // 1 pack = 50 rivets (Corevance)
-const PANEL_WIDTH_FT = 4;
+// 15% waste factor on top of per-wall ceiling math — covers cuts at fittings,
+// minor on-site damage, and offcuts that cannot be cross-utilised across walls.
+const WASTE_FACTOR = 1.15;
+// Adhesive is sold in 4-gallon pails. Field average is 1 pail per 6 × 8′ × 4′
+// panels (192 sq ft of panel face) with full-coverage notched-trowel. For larger
+// panel sizes the per-panel count scales down proportionally — see ADHESIVE_PAIL_SQFT.
+const ADHESIVE_PAIL_GAL = 4;
+const ADHESIVE_PAIL_SQFT = 192; // 6 panels × 32 sq ft (8′ × 4′ baseline)
+// Always include one extra panel for repair stock + dye-lot matching.
+const ATTIC_STOCK_PANELS = 1;
+// Rivets — 8 per panel (perimeter fastening), sold in 50-packs.
+const RIVETS_PER_PANEL = 8;
+const RIVETS_PER_PACK = 50;
+// Trim mouldings ship in 8-ft sticks.
 const ACCESSORY_LENGTH_FT = 8;
-const DEFAULT_INSIDE_CORNERS = 4;
+const MAX_WALLS = 8;
+// Installed-cost range (per sq ft of wall) — Corevance install incl. materials.
+const INSTALL_RATE_MIN = 8;
+const INSTALL_RATE_MAX = 18;
+// Panel size cutoff — recommend 10×4 only at heights ≥ 9.5 ft. Anything shorter
+// stays on 8×4 (the universal stock panel).
+const PANEL_10x4_HEIGHT_THRESHOLD = 9.5;
 
 // HD Canada panel availability — only 8'x4' pebbled confirmed at $95 (before tax)
-// Smooth surfaces and 10'x4' require consultation at Home Depot
 const HD_PANEL_INFO: Record<string, HdPanelInfo> = {
   "8x4_pebbled":  { price: 95,   available: true,  note: "" },
   "8x4_smooth":   { price: null, available: false, note: "Smooth surface not stocked at Home Depot — consultation required" },
@@ -92,17 +110,15 @@ const HD_PANEL_INFO: Record<string, HdPanelInfo> = {
   "10x4_smooth":  { price: null, available: false, note: "Not available at Home Depot" },
 };
 
-// HD Canada accessory prices (CAD, before tax) — $10/piece confirmed
 const HD_ACC: Record<string, PriceRange> = {
   divider_bar:    { min: 10, max: 10 },
   inside_corner:  { min: 10, max: 10 },
   end_cap:        { min: 10, max: 10 },
   outside_corner: { min: 10, max: 10 },
-  nylon_rivets:   { min: 10, max: 10 },  // per pack
+  nylon_rivets:   { min: 10, max: 10 },
   adhesive:       { min: 40, max: 55 },
 };
 
-// Corevance confirmed prices (CAD, before tax)
 const CORE_PANEL: Record<string, number | null> = {
   "8x4_smooth":   85,
   "8x4_pebbled":  90,
@@ -116,21 +132,21 @@ const CORE_PANEL: Record<string, number | null> = {
   "12x5_pebbled": null,
 };
 
-// Corevance accessory prices (CAD, before tax)
-const CORE_TRIM = 8.00;               // Division Bar, End Cap Moulding, Inside Corner, Outside Corner
+const CORE_TRIM = 8.00;
 const CORE_OUTSIDE_CORNER_STD = 8.00;
-const CORE_OUTSIDE_CORNER_LG = 17.00; // 10′ Large Outside Corner
-const CORE_RIVETS = 20.00;            // Nylon Rivets 3/4″ — pack of 50
-const CORE_ADHESIVE_EST = 45;         // market rate estimate
+const CORE_OUTSIDE_CORNER_LG = 17.00;
+const CORE_RIVETS = 20.00;
+const CORE_ADHESIVE_EST = 45;
 
-const INITIAL_WALLS: WallInput[] = [
-  { id: 1, active: true,  height: "", width: "", exposedEdges: 0 },
-  { id: 2, active: true,  height: "", width: "", exposedEdges: 0 },
-  { id: 3, active: false, height: "", width: "", exposedEdges: 0 },
-  { id: 4, active: false, height: "", width: "", exposedEdges: 0 },
-];
+const INITIAL_WALLS: WallInput[] = Array.from({ length: MAX_WALLS }, (_, i) => ({
+  id: i + 1,
+  active: i < 2,
+  height: "",
+  width: "",
+}));
 
-// ── Panel size recommendation — capped at 10'x4' (both in stock at Corevance) ──
+// ── Panel size recommendation ──────────────────────────────────────────────────
+// Default: 8×4. Only recommend 10×4 if any wall is 9.5 ft or taller.
 function recommendPanelSize(walls: WallInput[]): PanelSize {
   const heights = walls
     .filter(w => w.active)
@@ -138,55 +154,80 @@ function recommendPanelSize(walls: WallInput[]): PanelSize {
     .filter(h => h > 0);
   if (heights.length === 0) return "8x4";
   const maxH = Math.max(...heights);
-  if (maxH <= 8) return "8x4";
-  return "10x4"; // 10'x4' used for all taller walls — in stock at Corevance
+  return maxH >= PANEL_10x4_HEIGHT_THRESHOLD ? "10x4" : "8x4";
+}
+
+// ── Per-wall panel calculation ────────────────────────────────────────────────
+function panelsForWall(wallW: number, wallH: number, panelSize: PanelSize): { panels: number; bays: number; rows: number } {
+  if (wallW <= 0 || wallH <= 0) return { panels: 0, bays: 0, rows: 0 };
+  const p = PANEL_SIZES[panelSize];
+  const bays = Math.ceil(wallW / p.widthFt);
+  const rows = Math.ceil(wallH / p.heightFt);
+  return { panels: bays * rows, bays, rows };
 }
 
 // ── Calculation ────────────────────────────────────────────────────────────────
 function calculate(state: EstimatorState, panelSize: PanelSize): EstimatorResults {
   const EMPTY: EstimatorResults = {
-    isValid: false, totalWallArea: 0, areaAfterDeductions: 0,
-    panelsNeeded: 0, dividerBarsNeeded: 0, insideCornersNeeded: 0,
+    isValid: false, totalWallArea: 0, totalWallWidth: 0,
+    panelsForWalls: 0, atticStockPanels: 0, panelsNeeded: 0,
+    dividerBarsNeeded: 0, insideCornersNeeded: 0,
     endCapsNeeded: 0, outsideCornersNeeded: 0, rivetPacksNeeded: 0,
-    adhesiveGallons: 0, panelItems: [], accessoryItems: [],
+    adhesivePails: 0, adhesiveGallons: 0,
+    panelItems: [], accessoryItems: [],
     hdPanelTotal: { min: 0, max: 0 }, hdAccessoryTotal: { min: 0, max: 0 },
     hdTotal: { min: 0, max: 0 }, corePanelTotal: null, coreAccessoryTotal: null,
     coreTotal: null, corePanelUnitPrice: null, isCustomSize: false,
     hdPanelInfo: { price: null, available: false, note: "" },
+    installedTotal: { min: 0, max: 0 },
   };
 
   const active = state.walls
     .filter(w => w.active)
-    .map(w => ({ h: parseFloat(w.height) || 0, w: parseFloat(w.width) || 0, exposedEdges: w.exposedEdges }))
+    .map(w => ({ h: parseFloat(w.height) || 0, w: parseFloat(w.width) || 0 }))
     .filter(w => w.h > 0 && w.w > 0);
 
   if (active.length === 0) return EMPTY;
 
-  const panelSqFt = PANEL_SIZES[panelSize].sqFt;
   const totalWallArea = active.reduce((s, w) => s + w.h * w.w, 0);
-  const deduction = Math.max(0, parseFloat(state.doorWindowArea) || 0);
-  const areaAfterDeductions = Math.max(0, totalWallArea - deduction);
-  const panelsNeeded = Math.ceil(areaAfterDeductions * WASTE_FACTOR / panelSqFt);
+  const totalWallWidth = active.reduce((s, w) => s + w.w, 0);
+  const maxHeight = active.reduce((m, w) => Math.max(m, w.h), 0);
+  const heightFactor = Math.max(1, Math.ceil(maxHeight / ACCESSORY_LENGTH_FT));
 
-  // Divider bars: joints between panels along wall width
-  let dividerLinearFt = 0;
-  for (const w of active) {
-    dividerLinearFt += Math.max(0, Math.ceil(w.w / PANEL_WIDTH_FT) - 1) * w.h;
-  }
-  const dividerBarsNeeded = Math.max(0, Math.ceil(dividerLinearFt / ACCESSORY_LENGTH_FT));
+  // Per-wall panel count with 15% waste factor.
+  const wallBreakdowns = active.map(w => ({ ...w, ...panelsForWall(w.w, w.h, panelSize) }));
+  const rawPanelsPerWall = wallBreakdowns.reduce((s, w) => s + w.panels, 0);
+  const panelsForWalls = Math.max(1, Math.ceil(rawPanelsPerWall * WASTE_FACTOR));
+  const panelsNeeded = panelsForWalls + ATTIC_STOCK_PANELS;
 
-  // Inside corners: 4 assumed for a typical room
-  const avgHeight = active.reduce((s, w) => s + w.h, 0) / active.length;
-  const insideCornersNeeded = DEFAULT_INSIDE_CORNERS * Math.ceil(avgHeight / ACCESSORY_LENGTH_FT);
+  // Division bars: 1 between every pair of panels in a row, so (bays − 1) × rows per wall.
+  // 2 panels in a row = 1 bar, 3 panels = 2 bars, etc.
+  const dividerBarsNeeded = wallBreakdowns.reduce(
+    (s, w) => s + Math.max(0, w.bays - 1) * w.rows, 0
+  );
 
-  // End caps: per user-specified exposed edges
-  let endCapLinearFt = 0;
-  for (const w of active) endCapLinearFt += w.exposedEdges * w.h;
-  const endCapsNeeded = Math.ceil(endCapLinearFt / ACCESSORY_LENGTH_FT);
+  // Inside corners: user-entered count × ceil(height / 8ft moulding stick).
+  const insideCornerCount = Math.max(0, parseInt(state.insideCorners) || 0);
+  const insideCornersNeeded = insideCornerCount * heightFactor;
 
-  const outsideCornersNeeded = state.outsideCorners * Math.ceil(avgHeight / ACCESSORY_LENGTH_FT);
+  // Outside corners: user-entered count × height factor.
+  const outsideCornerCount = Math.max(0, parseInt(state.outsideCorners) || 0);
+  const outsideCornersNeeded = outsideCornerCount * heightFactor;
+
+  // End caps: cover the top edge of every wall, distributed across panel widths.
+  // 1 end-cap stick (8ft) per 8 ft of total wall width, plus user-specified
+  // additional sticks for any unusual exposed edges (open ends, bulkhead returns).
+  const additionalEndCaps = Math.max(0, parseInt(state.additionalEndCaps) || 0);
+  const endCapsNeeded = Math.ceil(totalWallWidth / ACCESSORY_LENGTH_FT) + additionalEndCaps;
+
   const rivetPacksNeeded = Math.max(1, Math.ceil((panelsNeeded * RIVETS_PER_PANEL) / RIVETS_PER_PACK));
-  const adhesiveGallons = Math.max(1, Math.ceil(areaAfterDeductions / ADHESIVE_COVERAGE));
+
+  // Adhesive: 4-gallon pails. 1 pail covers ~192 sq ft of panel face, so the
+  // panels-per-pail ratio scales with panel size (6 for 8×4, ~4.8 for 10×4, etc.).
+  const panelSqFt = PANEL_SIZES[panelSize].sqFt;
+  const panelsPerPailForSize = ADHESIVE_PAIL_SQFT / panelSqFt;
+  const adhesivePails = Math.max(1, Math.ceil((panelsForWalls * panelSqFt) / ADHESIVE_PAIL_SQFT));
+  const adhesiveGallons = adhesivePails * ADHESIVE_PAIL_GAL;
 
   const hdPanelInfo: HdPanelInfo = HD_PANEL_INFO[`${panelSize}_${state.surface}`]
     ?? { price: null, available: false, note: "Not available at Home Depot" };
@@ -194,22 +235,22 @@ function calculate(state: EstimatorState, panelSize: PanelSize): EstimatorResult
   const isCustomSize = corePanelUnitPrice === null;
   const outsideCornerCorePrice = panelSize === "10x4" ? CORE_OUTSIDE_CORNER_LG : CORE_OUTSIDE_CORNER_STD;
 
-  // HD panel line — use price if available, zero otherwise (shown as unavailable in UI)
   const panelHdUnit: PriceRange = hdPanelInfo.available && hdPanelInfo.price !== null
     ? { min: hdPanelInfo.price, max: hdPanelInfo.price }
     : { min: 0, max: 0 };
 
   const panelItems: LineItem[] = [
-    { item: `FRP Panel (${PANEL_SIZES[panelSize].label})`, qty: panelsNeeded, unit: "panels", hdUnit: panelHdUnit, coreUnit: corePanelUnitPrice },
+    { item: `FRP Panel (${PANEL_SIZES[panelSize].label})`, qty: panelsForWalls, unit: "panels", hdUnit: panelHdUnit, coreUnit: corePanelUnitPrice, note: `${rawPanelsPerWall} panels (per-wall cut math) × 15% waste` },
+    { item: "Attic-stock spare", qty: ATTIC_STOCK_PANELS, unit: "panel", hdUnit: panelHdUnit, coreUnit: corePanelUnitPrice, note: "Repair stock + matching dye lot — best practice" },
   ];
 
   const accessoryItems: LineItem[] = [
-    { item: "FRP Division Bar (8ft)",   qty: dividerBarsNeeded,    unit: "pcs",   hdUnit: HD_ACC.divider_bar,    coreUnit: CORE_TRIM },
-    { item: "FRP Inside Corner (8ft)",  qty: insideCornersNeeded,  unit: "pcs",   hdUnit: HD_ACC.inside_corner,  coreUnit: CORE_TRIM },
-    { item: "FRP End Cap (8ft)",        qty: endCapsNeeded,        unit: "pcs",   hdUnit: HD_ACC.end_cap,        coreUnit: CORE_TRIM },
-    { item: "FRP Outside Corner",       qty: outsideCornersNeeded, unit: "pcs",   hdUnit: HD_ACC.outside_corner, coreUnit: outsideCornerCorePrice },
+    { item: "FRP Division Bar (8ft)",   qty: dividerBarsNeeded,    unit: "pcs",   hdUnit: HD_ACC.divider_bar,    coreUnit: CORE_TRIM,                  note: "1 between every 2 panels in a row" },
+    { item: "FRP Inside Corner (8ft)",  qty: insideCornersNeeded,  unit: "pcs",   hdUnit: HD_ACC.inside_corner,  coreUnit: CORE_TRIM,                  note: insideCornerCount > 0 ? `${insideCornerCount} corner${insideCornerCount === 1 ? "" : "s"} × ${heightFactor} stick${heightFactor === 1 ? "" : "s"} tall` : "Set count below" },
+    { item: "FRP End Cap (8ft)",        qty: endCapsNeeded,        unit: "pcs",   hdUnit: HD_ACC.end_cap,        coreUnit: CORE_TRIM,                  note: `${Math.ceil(totalWallWidth / ACCESSORY_LENGTH_FT)} for top of walls${additionalEndCaps > 0 ? ` + ${additionalEndCaps} additional` : ""}` },
+    { item: "FRP Outside Corner",       qty: outsideCornersNeeded, unit: "pcs",   hdUnit: HD_ACC.outside_corner, coreUnit: outsideCornerCorePrice,     note: outsideCornerCount > 0 ? `${outsideCornerCount} corner${outsideCornerCount === 1 ? "" : "s"} × ${heightFactor} stick${heightFactor === 1 ? "" : "s"} tall` : "Set count below" },
     { item: "Nylon Rivets (50-pk)",     qty: rivetPacksNeeded,     unit: "packs", hdUnit: HD_ACC.nylon_rivets,   coreUnit: CORE_RIVETS },
-    { item: "Adhesive",                 qty: adhesiveGallons,      unit: "gal",   hdUnit: HD_ACC.adhesive,       coreUnit: CORE_ADHESIVE_EST },
+    { item: "FRP Adhesive (4-gal pail)", qty: adhesivePails,       unit: "pails", hdUnit: { min: HD_ACC.adhesive.min * ADHESIVE_PAIL_GAL, max: HD_ACC.adhesive.max * ADHESIVE_PAIL_GAL }, coreUnit: CORE_ADHESIVE_EST * ADHESIVE_PAIL_GAL, note: `1 pail (4 gal) covers ${panelsPerPailForSize % 1 === 0 ? panelsPerPailForSize : panelsPerPailForSize.toFixed(1)} × ${PANEL_SIZES[panelSize].label} panels (≈ ${ADHESIVE_PAIL_SQFT} sq ft) — total ${adhesiveGallons} gal` },
   ];
 
   function sumHd(acc: PriceRange, item: LineItem): PriceRange {
@@ -231,43 +272,106 @@ function calculate(state: EstimatorState, panelSize: PanelSize): EstimatorResult
       (dividerBarsNeeded + insideCornersNeeded + endCapsNeeded) * CORE_TRIM
       + outsideCornersNeeded * outsideCornerCorePrice
       + rivetPacksNeeded * CORE_RIVETS
-      + adhesiveGallons * CORE_ADHESIVE_EST
+      + adhesivePails * CORE_ADHESIVE_EST * ADHESIVE_PAIL_GAL
     );
     const total = corePanelTotal + coreAccessoryTotal;
     coreTotal = { min: total, max: total };
   }
 
+  const installedTotal: PriceRange = {
+    min: Math.round(totalWallArea * INSTALL_RATE_MIN),
+    max: Math.round(totalWallArea * INSTALL_RATE_MAX),
+  };
+
   return {
-    isValid: true, totalWallArea, areaAfterDeductions, panelsNeeded,
+    isValid: true, totalWallArea, totalWallWidth,
+    panelsForWalls, atticStockPanels: ATTIC_STOCK_PANELS, panelsNeeded,
     dividerBarsNeeded, insideCornersNeeded, endCapsNeeded,
-    outsideCornersNeeded, rivetPacksNeeded, adhesiveGallons,
+    outsideCornersNeeded, rivetPacksNeeded,
+    adhesivePails, adhesiveGallons,
     panelItems, accessoryItems, hdPanelTotal, hdAccessoryTotal,
     hdTotal, corePanelTotal, coreAccessoryTotal, coreTotal,
-    corePanelUnitPrice, isCustomSize, hdPanelInfo,
+    corePanelUnitPrice, isCustomSize, hdPanelInfo, installedTotal,
   };
+}
+
+// ── Helper: build a plain-text estimate summary for the lead capture ──────────
+function buildEstimateSummary(
+  state: EstimatorState,
+  panelSize: PanelSize,
+  results: EstimatorResults
+): string {
+  if (!results.isValid) return "";
+  const lines = [
+    "FRP Material Estimate (from corevance.ca/estimate)",
+    "",
+    `Panel size: ${PANEL_SIZES[panelSize].label} (${PANEL_SIZES[panelSize].dims})`,
+    `Surface: ${state.surface === "smooth" ? "Smooth" : "Pebbled"}`,
+    `Colour: ${state.color.name}`,
+    "",
+    "Walls:",
+    ...state.walls
+      .filter(w => w.active && parseFloat(w.height) > 0 && parseFloat(w.width) > 0)
+      .map(w => `  Wall ${w.id}: ${w.height}ft H × ${w.width}ft W`),
+    "",
+    `Total wall area: ${Math.round(results.totalWallArea)} sq ft`,
+    `Total wall width: ${Math.round(results.totalWallWidth)} ft`,
+    "",
+    `Inside corners: ${parseInt(state.insideCorners) || 0}`,
+    `Outside corners: ${parseInt(state.outsideCorners) || 0}`,
+    `Additional end caps requested: ${parseInt(state.additionalEndCaps) || 0}`,
+    "",
+    "Materials needed:",
+    `  Panels (incl. attic stock + 15% waste): ${results.panelsNeeded}`,
+    `  Division bars (8ft): ${results.dividerBarsNeeded}`,
+    `  Inside corners (8ft): ${results.insideCornersNeeded}`,
+    `  End caps (8ft): ${results.endCapsNeeded}`,
+    `  Outside corners: ${results.outsideCornersNeeded}`,
+    `  Nylon rivet packs (50-pk): ${results.rivetPacksNeeded}`,
+    `  Adhesive: ${results.adhesivePails} × 4-gal pail (${results.adhesiveGallons} gal total — 1 pail per 192 sq ft of panel)`,
+    "",
+    results.coreTotal
+      ? `Corevance materials price: $${results.coreTotal.min} CAD (before tax)`
+      : "Corevance materials price: contact for custom-size quote",
+    `Installed price range (materials + install): $${results.installedTotal.min}–$${results.installedTotal.max} CAD`,
+    "",
+    "Please send a written quote and confirm availability.",
+  ];
+  return lines.filter(Boolean).join("\n");
 }
 
 // ── Component ──────────────────────────────────────────────────────────────────
 export default function MaterialEstimator() {
   const [state, setState] = useState<EstimatorState>({
     walls: INITIAL_WALLS,
-    color: COLORS[0],   // White by default
+    color: COLORS[0],
     surface: "smooth",
-    outsideCorners: 0,
-    doorWindowArea: "",
-    showAdvanced: false,
+    insideCorners: "",
+    outsideCorners: "",
+    additionalEndCaps: "",
   });
 
-  const { effectivePanelSize, maxActiveHeight, results } = useMemo(() => {
+  const [leadState, leadAction, leadPending] = useActionState(submitQuote, INITIAL_QUOTE_STATE);
+
+  const { effectivePanelSize, maxActiveHeight, results, estimateSummary } = useMemo(() => {
     const effectivePanelSize: PanelSize = recommendPanelSize(state.walls);
     const results = calculate(state, effectivePanelSize);
     const hs = state.walls.filter(w => w.active).map(w => parseFloat(w.height) || 0).filter(h => h > 0);
     const maxActiveHeight = hs.length ? Math.max(...hs) : 0;
-    return { effectivePanelSize, maxActiveHeight, results };
+    const estimateSummary = buildEstimateSummary(state, effectivePanelSize, results);
+    return { effectivePanelSize, maxActiveHeight, results, estimateSummary };
   }, [state]);
 
-  function updateWall(id: number, field: keyof WallInput, value: string | boolean | number) {
+  function updateWall(id: number, field: keyof WallInput, value: string | boolean) {
     setState(s => ({ ...s, walls: s.walls.map(w => w.id === id ? { ...w, [field]: value } : w) }));
+  }
+
+  function activateNextWall() {
+    setState(s => {
+      const idx = s.walls.findIndex(w => !w.active);
+      if (idx === -1) return s;
+      return { ...s, walls: s.walls.map((w, i) => i === idx ? { ...w, active: true } : w) };
+    });
   }
 
   function fmt(n: number) {
@@ -279,6 +383,9 @@ export default function MaterialEstimator() {
       active ? "bg-[#1e3a5f] text-white border-[#1e3a5f]" : "bg-white text-[#1e3a5f] border-gray-200 hover:border-[#1e3a5f]"
     }`;
 
+  const activeWallCount = state.walls.filter(w => w.active).length;
+  const canAddWall = activeWallCount < MAX_WALLS;
+
   return (
     <div className="py-12 px-5">
       <div className="max-w-6xl mx-auto">
@@ -289,8 +396,8 @@ export default function MaterialEstimator() {
             Material &amp; Budget Estimator
           </h1>
           <p className="text-gray-500 text-lg max-w-2xl mx-auto">
-            Enter your wall dimensions for an instant material list and price comparison.
-            All estimates include a 10% waste allowance for cuts and fitting.
+            Enter wall dimensions and trim counts for an instant material list.
+            Per-wall cut math, 15% waste, 1 attic-stock panel, and 1 four-gallon adhesive pail per 192 sq ft of panel face (= 6 panels at 8′ × 4′, ~4.8 at 10′ × 4′) — the way commercial installers actually order.
           </p>
         </div>
 
@@ -300,10 +407,9 @@ export default function MaterialEstimator() {
           <div className="bg-white rounded-2xl shadow-md border-2 border-gray-200 p-6 sm:p-8">
 
             <h2 className="text-lg font-bold text-[#1e3a5f] mb-5">Wall Dimensions</h2>
-            <div className="space-y-3 mb-4">
-              {state.walls.map(wall => (
-                <div key={wall.id}
-                  className={`flex items-center gap-2 transition-opacity ${wall.active ? "opacity-100" : "opacity-40"}`}>
+            <div className="space-y-3 mb-3">
+              {state.walls.filter(w => w.active).map(wall => (
+                <div key={wall.id} className="flex items-center gap-2">
                   <input
                     type="checkbox"
                     id={`wall-${wall.id}`}
@@ -318,79 +424,73 @@ export default function MaterialEstimator() {
                   <div className="flex-1 grid grid-cols-[1fr_auto_1fr] items-center gap-1.5 min-w-0">
                     <input
                       type="number" placeholder="Height (ft)"
-                      value={wall.height} disabled={!wall.active} min="0" step="0.5"
+                      value={wall.height} min="0" step="0.5"
                       onChange={e => updateWall(wall.id, "height", e.target.value)}
-                      className="w-full px-2 py-2 border-2 border-gray-200 rounded-lg text-sm text-black focus:outline-none focus:border-[#ff6b35] transition-colors disabled:bg-gray-50 disabled:cursor-not-allowed"
+                      className="w-full px-2 py-2 border-2 border-gray-200 rounded-lg text-sm text-black focus:outline-none focus:border-[#ff6b35] transition-colors"
                     />
                     <span className="text-gray-400 text-sm text-center px-0.5">×</span>
                     <input
                       type="number" placeholder="Width (ft)"
-                      value={wall.width} disabled={!wall.active} min="0" step="0.5"
+                      value={wall.width} min="0" step="0.5"
                       onChange={e => updateWall(wall.id, "width", e.target.value)}
-                      className="w-full px-2 py-2 border-2 border-gray-200 rounded-lg text-sm text-black focus:outline-none focus:border-[#ff6b35] transition-colors disabled:bg-gray-50 disabled:cursor-not-allowed"
+                      className="w-full px-2 py-2 border-2 border-gray-200 rounded-lg text-sm text-black focus:outline-none focus:border-[#ff6b35] transition-colors"
                     />
                   </div>
                 </div>
               ))}
             </div>
 
-            {/* Advanced toggle */}
-            <button
-              onClick={() => setState(s => ({ ...s, showAdvanced: !s.showAdvanced }))}
-              className="text-sm text-[#ff6b35] font-semibold hover:underline mb-5 flex items-center gap-1"
-            >
-              <span>{state.showAdvanced ? "▲" : "▼"}</span>
-              <span>Advanced options (doors, windows, outside corners)</span>
-            </button>
-
-            {state.showAdvanced && (
-              <div className="bg-gray-50 rounded-xl p-4 mb-6 space-y-4 border border-gray-200">
-                <div>
-                  <label className="block text-sm font-semibold text-[#1e3a5f] mb-1">
-                    Subtract doors &amp; windows (sq ft total)
-                  </label>
-                  <input
-                    type="number" placeholder="e.g. 21"
-                    value={state.doorWindowArea} min="0"
-                    onChange={e => setState(s => ({ ...s, doorWindowArea: e.target.value }))}
-                    className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#ff6b35] transition-colors"
-                  />
-                  <p className="text-xs text-gray-400 mt-1">Standard door ≈ 20 sq ft · Window ≈ 9–15 sq ft</p>
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-[#1e3a5f] mb-1">Outside corners (count)</label>
-                  <input
-                    type="number" placeholder="0"
-                    value={state.outsideCorners || ""} min="0" max="20"
-                    onChange={e => setState(s => ({ ...s, outsideCorners: parseInt(e.target.value) || 0 }))}
-                    className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#ff6b35] transition-colors"
-                  />
-                </div>
-                {state.walls.some(w => w.active) && (
-                  <div>
-                    <label className="block text-sm font-semibold text-[#1e3a5f] mb-2">Exposed panel edges (for end caps)</label>
-                    <div className="space-y-2">
-                      {state.walls.filter(w => w.active).map(wall => (
-                        <div key={wall.id} className="flex items-center gap-3">
-                          <span className="text-sm text-gray-500 w-14 flex-shrink-0">Wall {wall.id}</span>
-                          <select
-                            value={wall.exposedEdges}
-                            onChange={e => updateWall(wall.id, "exposedEdges", parseInt(e.target.value))}
-                            className="flex-1 px-3 py-2 border-2 border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#ff6b35] transition-colors"
-                          >
-                            {[0, 1, 2].map(n => (
-                              <option key={n} value={n}>{n} exposed edge{n !== 1 ? "s" : ""}</option>
-                            ))}
-                          </select>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
+            {canAddWall && (
+              <button
+                onClick={activateNextWall}
+                className="text-sm text-[#ff6b35] font-semibold hover:underline mb-6 flex items-center gap-1"
+              >
+                <span aria-hidden>+</span>
+                <span>Add another wall ({activeWallCount}/{MAX_WALLS})</span>
+              </button>
+            )}
+            {!canAddWall && (
+              <p className="text-xs text-gray-400 mb-6">All {MAX_WALLS} walls in use — call us for larger projects.</p>
             )}
 
             <div className="border-t border-gray-100 pt-6 space-y-6">
+
+              {/* Trim configuration — all manual */}
+              <div>
+                <h2 className="text-base font-bold text-[#1e3a5f] mb-3">Trim &amp; Corners</h2>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div>
+                    <label className="block text-xs font-semibold text-[#1e3a5f] mb-1">Inside corners</label>
+                    <input
+                      type="number" placeholder="0" min="0" max="40"
+                      value={state.insideCorners}
+                      onChange={e => setState(s => ({ ...s, insideCorners: e.target.value }))}
+                      className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#ff6b35] transition-colors"
+                    />
+                    <p className="text-[11px] text-gray-400 mt-1">Where 2 walls meet at 90° inside.</p>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-[#1e3a5f] mb-1">Outside corners</label>
+                    <input
+                      type="number" placeholder="0" min="0" max="40"
+                      value={state.outsideCorners}
+                      onChange={e => setState(s => ({ ...s, outsideCorners: e.target.value }))}
+                      className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#ff6b35] transition-colors"
+                    />
+                    <p className="text-[11px] text-gray-400 mt-1">Wraps around column / bulkhead.</p>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-[#1e3a5f] mb-1">Additional end caps</label>
+                    <input
+                      type="number" placeholder="0" min="0" max="40"
+                      value={state.additionalEndCaps}
+                      onChange={e => setState(s => ({ ...s, additionalEndCaps: e.target.value }))}
+                      className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#ff6b35] transition-colors"
+                    />
+                    <p className="text-[11px] text-gray-400 mt-1">Top edge auto-counted. Add extras here.</p>
+                  </div>
+                </div>
+              </div>
 
               {/* Color */}
               <div>
@@ -430,12 +530,14 @@ export default function MaterialEstimator() {
               <div>
                 <h2 className="text-base font-bold text-[#1e3a5f] mb-2">Panel Size</h2>
                 {maxActiveHeight > 0 ? (
-                  <div className="flex items-center gap-3">
+                  <div className="flex flex-wrap items-center gap-3">
                     <span className="bg-[#1e3a5f] text-white font-semibold px-4 py-2 rounded-full text-sm">
                       {PANEL_SIZES[effectivePanelSize].label}
                     </span>
                     <span className="text-xs text-[#ff6b35] font-medium">
-                      ✓ Selected for your {maxActiveHeight}ft walls
+                      {effectivePanelSize === "10x4"
+                        ? `✓ Recommended for your ${maxActiveHeight}ft walls`
+                        : `✓ Default — your walls are under ${PANEL_10x4_HEIGHT_THRESHOLD}ft`}
                     </span>
                   </div>
                 ) : (
@@ -458,9 +560,8 @@ export default function MaterialEstimator() {
                 <h2 className="text-lg font-bold text-[#1e3a5f] mb-1">Material Summary</h2>
                 <p className="text-xs text-gray-400 mb-4">
                   Total wall area: <strong className="text-gray-600">{Math.round(results.totalWallArea)} sq ft</strong>
-                  {(parseFloat(state.doorWindowArea) || 0) > 0 && (
-                    <> · After deductions: <strong className="text-gray-600">{Math.round(results.areaAfterDeductions)} sq ft</strong></>
-                  )}
+                  {" · "}
+                  Total wall width: <strong className="text-gray-600">{Math.round(results.totalWallWidth)} ft</strong>
                 </p>
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
@@ -477,7 +578,10 @@ export default function MaterialEstimator() {
                       <tr><td colSpan={4} className="pt-3 pb-1 text-xs font-bold text-[#1e3a5f] uppercase tracking-widest">Panels</td></tr>
                       {results.panelItems.map((item, i) => (
                         <tr key={`p${i}`} className={`border-b border-gray-100 ${item.qty === 0 ? "opacity-35" : ""}`}>
-                          <td className="py-2.5 text-gray-700">{item.item}</td>
+                          <td className="py-2.5 text-gray-700">
+                            <div>{item.item}</div>
+                            {item.note && <div className="text-[11px] text-gray-400 mt-0.5">{item.note}</div>}
+                          </td>
                           <td className="py-2.5 text-center font-bold text-[#1e3a5f]">{item.qty}</td>
                           <td className="py-2.5 text-right text-gray-400 text-xs hidden sm:table-cell">${item.hdUnit.min}–${item.hdUnit.max}</td>
                           <td className="py-2.5 text-right font-semibold text-[#1e3a5f]">
@@ -485,10 +589,11 @@ export default function MaterialEstimator() {
                           </td>
                         </tr>
                       ))}
-                      {/* Panel subtotal */}
                       {!results.isCustomSize && (
                         <tr className="bg-gray-50">
-                          <td colSpan={2} className="py-2 pl-2 text-xs font-bold text-gray-500">Panel subtotal</td>
+                          <td colSpan={2} className="py-2 pl-2 text-xs font-bold text-gray-500">
+                            Panel subtotal ({results.panelsNeeded} panels)
+                          </td>
                           <td className="py-2 text-right text-xs text-gray-400 hidden sm:table-cell">${results.hdPanelTotal.min}–${results.hdPanelTotal.max}</td>
                           <td className="py-2 text-right text-xs font-bold text-[#ff6b35]">{results.corePanelTotal !== null ? `$${results.corePanelTotal}` : "—"}</td>
                         </tr>
@@ -498,7 +603,10 @@ export default function MaterialEstimator() {
                       <tr><td colSpan={4} className="pt-4 pb-1 text-xs font-bold text-[#1e3a5f] uppercase tracking-widest">Accessories</td></tr>
                       {results.accessoryItems.map((item, i) => (
                         <tr key={`a${i}`} className={`border-b border-gray-100 ${item.qty === 0 ? "opacity-35" : ""}`}>
-                          <td className="py-2.5 text-gray-700">{item.item}</td>
+                          <td className="py-2.5 text-gray-700">
+                            <div>{item.item}</div>
+                            {item.note && <div className="text-[11px] text-gray-400 mt-0.5">{item.note}</div>}
+                          </td>
                           <td className="py-2.5 text-center font-bold text-[#1e3a5f]">{item.qty}</td>
                           <td className="py-2.5 text-right text-gray-400 text-xs hidden sm:table-cell">${item.hdUnit.min}–${item.hdUnit.max}</td>
                           <td className="py-2.5 text-right font-semibold text-[#1e3a5f]">
@@ -506,7 +614,6 @@ export default function MaterialEstimator() {
                           </td>
                         </tr>
                       ))}
-                      {/* Accessory subtotal */}
                       {!results.isCustomSize && (
                         <tr className="bg-gray-50">
                           <td colSpan={2} className="py-2 pl-2 text-xs font-bold text-gray-500">Accessories subtotal</td>
@@ -519,9 +626,37 @@ export default function MaterialEstimator() {
                 </div>
               </div>
 
+              {/* Installed cost — primary CTA surface */}
+              <div className="bg-gradient-to-br from-[#0d1b2a] to-[#1e3a5f] rounded-2xl p-6 shadow-md text-white">
+                <div className="flex items-start gap-3 mb-3">
+                  <span className="bg-[#ff6b35] text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">Recommended</span>
+                  <h2 className="text-lg font-bold">Installed price — Corevance does the install</h2>
+                </div>
+                <p className="text-white/70 text-sm mb-4">
+                  Materials + certified install by Corevance crew. CFIA-compliant joint detail,
+                  nylon rivets, PVC mouldings, food-safe sealant. 1–3 day turnaround across the GTA.
+                </p>
+                <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
+                  <div>
+                    <p className="text-3xl font-bold">
+                      {fmt(results.installedTotal.min)} – {fmt(results.installedTotal.max)}
+                    </p>
+                    <p className="text-white/60 text-xs mt-1">
+                      Based on {Math.round(results.totalWallArea)} sq ft · ${INSTALL_RATE_MIN}–${INSTALL_RATE_MAX}/sq ft installed · before tax
+                    </p>
+                  </div>
+                  <a
+                    href="#estimate-lead"
+                    className="bg-[#ff6b35] text-white font-bold px-6 py-3 rounded-full hover:bg-[#e55a28] transition-all whitespace-nowrap text-center no-underline"
+                  >
+                    Get exact installed quote →
+                  </a>
+                </div>
+              </div>
+
               {/* Budget comparison */}
               <div>
-                <h2 className="text-lg font-bold text-[#1e3a5f] mb-3">Budget Comparison</h2>
+                <h2 className="text-lg font-bold text-[#1e3a5f] mb-3">Materials-Only Comparison</h2>
 
                 {(() => {
                   const savings = results.coreTotal && results.hdPanelInfo.available
@@ -530,7 +665,7 @@ export default function MaterialEstimator() {
 
                   const comparisonRows = [
                     {
-                      feature: "Project Total",
+                      feature: "Materials Total",
                       hd: results.hdPanelInfo.available
                         ? { win: false, label: `${fmt(results.hdTotal.max)} – ${fmt(results.hdTotal.min)}`, sub: "retail, before tax" }
                         : { win: false, label: "Consultation Required", sub: results.hdPanelInfo.note },
@@ -575,9 +710,7 @@ export default function MaterialEstimator() {
 
                   return (
                     <div className="rounded-2xl overflow-hidden border-2 border-gray-200 shadow-md">
-                      {/* Header row — Corevance LEFT, HD RIGHT */}
                       <div className="grid grid-cols-[1fr_80px_1fr]">
-                        {/* Corevance header — white bg, natural logo */}
                         <div className="bg-white p-3 flex items-center justify-center border-r border-gray-200 relative">
                           <Image
                             src="/corevance-logo-symbol.png"
@@ -593,7 +726,6 @@ export default function MaterialEstimator() {
                         <div className="bg-gray-50 px-4 flex items-center justify-center border-r border-gray-200">
                           <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">vs</span>
                         </div>
-                        {/* HD header */}
                         <div className="bg-white p-3 flex items-center justify-center">
                           <div className="bg-[#F96302] rounded px-2.5 py-1.5">
                             <span className="text-white font-black text-[11px] tracking-tight leading-none">
@@ -603,10 +735,8 @@ export default function MaterialEstimator() {
                         </div>
                       </div>
 
-                      {/* Comparison rows — Corevance LEFT, Feature CENTER, HD RIGHT */}
                       {comparisonRows.map((row, i) => (
                         <div key={i} className={`grid grid-cols-[1fr_80px_1fr] border-t border-gray-100 ${row.highlight ? "bg-gray-50" : ""}`}>
-                          {/* Corevance cell */}
                           <div className={`p-3 sm:p-4 border-r border-gray-100 ${row.highlight ? "bg-green-50" : "bg-[#f0f7ff]"}`}>
                             <div className="flex items-start gap-1.5">
                               <span className="text-green-500 font-bold text-base leading-none mt-0.5 flex-shrink-0">✓</span>
@@ -621,14 +751,12 @@ export default function MaterialEstimator() {
                             </div>
                           </div>
 
-                          {/* Feature label */}
                           <div className="px-2 sm:px-3 flex items-center justify-center bg-gray-50 border-r border-gray-100">
                             <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wide text-center leading-tight w-full">
                               {row.feature}
                             </p>
                           </div>
 
-                          {/* HD cell */}
                           <div className="p-3 sm:p-4 bg-white">
                             <div className="flex items-start gap-1.5">
                               <span className="text-red-400 font-bold text-base leading-none mt-0.5 flex-shrink-0">✕</span>
@@ -644,7 +772,6 @@ export default function MaterialEstimator() {
                   );
                 })()}
 
-                {/* Disclaimers */}
                 <div className="mt-3 space-y-1 text-center">
                   <p className="text-xs text-gray-400">* All prices before applicable taxes (HST/GST). Retail rates shown — bulk discounts available from Corevance.</p>
                   <p className="text-xs text-gray-400">† Delivery to project site or business anywhere in Canada — contact us for rates.</p>
@@ -670,16 +797,68 @@ export default function MaterialEstimator() {
                 </div>
               </div>
 
-              {/* CTAs */}
+              {/* Lead capture — Email this estimate */}
+              <div id="estimate-lead" className="bg-white rounded-2xl border-2 border-[#ff6b35] p-6 shadow-md scroll-mt-24">
+                {leadState.ok ? (
+                  <div className="text-center py-3">
+                    <div className="text-3xl mb-2">✓</div>
+                    <p className="font-bold text-[#1e3a5f] text-lg mb-1">Estimate sent.</p>
+                    <p className="text-sm text-gray-500">
+                      We&apos;ll reply within 24 hours with a written quote and confirm availability.
+                      Need it sooner? Call <a href="tel:4378493781" className="text-[#ff6b35] font-semibold">437-849-3781</a>.
+                    </p>
+                  </div>
+                ) : (
+                  <>
+                    <h2 className="text-lg font-bold text-[#1e3a5f] mb-1">Email me this estimate + a written quote</h2>
+                    <p className="text-xs text-gray-500 mb-4">
+                      We&apos;ll send a copy of this material list and follow up with bulk pricing,
+                      installed cost, and lead time within 24 hours. No spam.
+                    </p>
+                    <form action={leadAction} className="space-y-3">
+                      <input type="hidden" name="project" value={estimateSummary} />
+                      <input type="text" name="company" tabIndex={-1} autoComplete="off" aria-hidden="true" className="hidden" />
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <input
+                          type="text" name="name" placeholder="Your name" required
+                          defaultValue={leadState.values?.name ?? ""}
+                          className="w-full px-3 py-2.5 border-2 border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#ff6b35] transition-colors"
+                        />
+                        <input
+                          type="tel" name="phone" placeholder="Phone" required
+                          defaultValue={leadState.values?.phone ?? ""}
+                          className="w-full px-3 py-2.5 border-2 border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#ff6b35] transition-colors"
+                        />
+                      </div>
+                      <input
+                        type="email" name="email" placeholder="Email" required
+                        defaultValue={leadState.values?.email ?? ""}
+                        className="w-full px-3 py-2.5 border-2 border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#ff6b35] transition-colors"
+                      />
+                      {leadState.ok === false && leadState.error && (
+                        <p className="text-xs text-red-600">{leadState.error}</p>
+                      )}
+                      <button
+                        type="submit"
+                        disabled={leadPending}
+                        className="w-full bg-[#ff6b35] text-white font-bold px-6 py-3 rounded-full hover:bg-[#e55a28] transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+                      >
+                        {leadPending ? "Sending…" : "Email me this estimate"}
+                      </button>
+                    </form>
+                  </>
+                )}
+              </div>
+
               {!results.isCustomSize && (
                 <div className="flex flex-col sm:flex-row gap-3">
                   <a href="/#contact"
                     className="flex-1 bg-[#ff6b35] text-white font-semibold px-6 py-3.5 rounded-full hover:bg-[#e55a28] hover:-translate-y-0.5 transition-all text-center">
                     Contact Us for Bulk Pricing
                   </a>
-                  <a href="/#contact"
+                  <a href="tel:4378493781"
                     className="flex-1 border-2 border-[#1e3a5f] text-[#1e3a5f] font-semibold px-6 py-3.5 rounded-full hover:bg-[#1e3a5f] hover:text-white hover:-translate-y-0.5 transition-all text-center">
-                    Get Free Consultation
+                    Call 437-849-3781
                   </a>
                 </div>
               )}
@@ -690,7 +869,7 @@ export default function MaterialEstimator() {
               <div className="text-5xl mb-5">📐</div>
               <p className="font-bold text-[#1e3a5f] text-xl mb-2">Your estimate will appear here</p>
               <p className="text-gray-400 text-sm max-w-xs">
-                Enter at least one wall&apos;s height and width to see your material list and price comparison.
+                Enter at least one wall&apos;s height and width to see your material list and installed cost.
               </p>
             </div>
           )}

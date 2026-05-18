@@ -64,16 +64,6 @@ export default function EstimatePage() {
         <MaterialEstimator />
       </main>
 
-      {/* Minimal footer */}
-      <footer className="border-t border-gray-200 bg-white py-6 px-5 mt-4">
-        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-gray-400">
-          <p>© {new Date().getFullYear()} Corevance Inc. · Greater Toronto Area</p>
-          <div className="flex gap-5">
-            <a href="mailto:corevancesales@gmail.com" className="hover:text-[#1e3a5f] transition-colors">corevancesales@gmail.com</a>
-            <a href="tel:4378493781" className="hover:text-[#1e3a5f] transition-colors">437-849-3781</a>
-          </div>
-        </div>
-      </footer>
 
     </div>
   );

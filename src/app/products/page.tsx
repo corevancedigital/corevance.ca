@@ -241,19 +241,6 @@ export default function ProductsPage() {
           </div>
         </section>
       </main>
-
-      <footer className="bg-white border-t-4 border-[#ff6b35] py-8 px-5 text-center">
-        <p className="text-[#1e3a5f] font-semibold text-sm">© 2025 Corevance. All rights reserved.</p>
-        <p className="text-gray-400 text-xs mt-1">
-          <a href="tel:4378493781" className="hover:text-[#ff6b35] transition-colors">437-849-3781</a>
-          {" · "}
-          <Link href="/" className="hover:text-[#ff6b35] transition-colors">Home</Link>
-          {" · "}
-          <Link href="/services" className="hover:text-[#ff6b35] transition-colors">Services</Link>
-          {" · "}
-          <Link href="/estimate" className="hover:text-[#ff6b35] transition-colors">Estimate</Link>
-        </p>
-      </footer>
     </div>
   );
 }

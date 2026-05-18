@@ -273,20 +273,6 @@ export default function ServicesPage() {
           </div>
         </section>
       </main>
-
-      {/* Footer */}
-      <footer className="bg-white border-t-4 border-[#ff6b35] py-8 px-5 text-center">
-        <p className="text-[#1e3a5f] font-semibold text-sm">© 2025 Corevance. All rights reserved.</p>
-        <p className="text-gray-400 text-xs mt-1">
-          <a href="tel:4378493781" className="hover:text-[#ff6b35] transition-colors">437-849-3781</a>
-          {" · "}
-          <a href="mailto:corevancesales@gmail.com" className="hover:text-[#ff6b35] transition-colors">corevancesales@gmail.com</a>
-          {" · "}
-          <Link href="/" className="hover:text-[#ff6b35] transition-colors">Home</Link>
-          {" · "}
-          <Link href="/products" className="hover:text-[#ff6b35] transition-colors">Products</Link>
-        </p>
-      </footer>
     </div>
   );
 }
